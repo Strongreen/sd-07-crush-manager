@@ -26,7 +26,9 @@ app.get('/crush', (_req, res) => {
   res.status(SUCCESS).json(crushJSON);
 });
 
-app.get('/crush/:id', (req, res) => {
+const routeCrushId = '/crush/:id';
+
+app.get(routeCrushId, (req, res) => {
   const { id } = req.params;
   const filteredCrush = getJSON().find((crush) => crush.id === Number(id));
   if (filteredCrush) {
@@ -175,7 +177,7 @@ app.post('/crush', (req, res) => {
   }
 });
 
-app.put('/crush/:id', (req, res) => {
+app.put(routeCrushId, (req, res) => {
   const crushToEdit = req.body;
   const { authorization } = req.headers;
 
@@ -189,6 +191,17 @@ app.put('/crush/:id', (req, res) => {
 
     fs.writeFileSync(PATH_CRUSH, JSON.stringify(crushsArray));
     res.status(SUCCESS).json(crushsArray[index]);
+  }
+});
+
+app.delete(routeCrushId, (req, res) => {
+  const { authorization } = req.headers;
+  if (!validateToken(authorization, res)) {
+    const crushsArray = [...getJSON()];
+    const id = Number(req.params.id);
+    const newCrushsArray = crushsArray.filter((crush) => crush.id !== id);
+    fs.writeFileSync(PATH_CRUSH, JSON.stringify(newCrushsArray));
+    res.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
   }
 });
 
