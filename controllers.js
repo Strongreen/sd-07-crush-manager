@@ -1,5 +1,15 @@
 const fs = require('fs');
 
+const generateToken = (withToken) => {
+  let token = (Math.random() * withToken).toString().replace('.', '');
+  if (token.length === 17) {
+    token = token.split('');
+    token.pop();
+    token = token.join('');
+  }
+  return token;
+};
+
 module.exports = {
   async getCrushList(request, response) {
     try {
@@ -14,7 +24,6 @@ module.exports = {
       console.log(e);
     }
   },
-
   async getCrushById(request, response) {
     try {
       const { id } = request.params;
@@ -28,6 +37,16 @@ module.exports = {
       }
 
       response.json(crush);
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  async login(request, response) {
+    try {
+      const withToken = 10 ** 16;
+      const token = generateToken(withToken);
+      await fs.promises.writeFile('./token.txt', token);
+      response.json({ token });
     } catch (e) {
       console.log(e);
     }
