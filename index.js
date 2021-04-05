@@ -22,19 +22,18 @@ const readCrushFile = async () => {
 app.get('/crush', async (_req, res) => {
   const result = await readCrushFile();
   if (result.length === 0) res.status(200).send([]);
-  res.status(200).send(result);
+  return res.status(200).send(result);
 });
 app.get('/crush/:id', async (req, res) => {
   const result = await readCrushFile();
   const { id } = req.params;
   const crushId = parseInt(id, 10);  
   const filteredCrush = result.find((crush) => crush.id === crushId);
-  if (filteredCrush) res.status(200).send(filteredCrush);
-  res.status(404).send({ message: 'Crush não encontrado' });  
+  if (filteredCrush) return res.status(200).send(filteredCrush);
+  return res.status(404).send({ message: 'Crush não encontrado' });  
 });
 
-app.use((err, _req, res, _next) => {
-  res.status(500).send(`Algo deu errado! Mensagem: ${err.message}`);
-});
+app.use((err, _req, res, _next) => 
+res.status(500).send(`Algo deu errado! Mensagem: ${err.message}`));
 
 app.listen(PORT, () => { console.log('Online'); });
