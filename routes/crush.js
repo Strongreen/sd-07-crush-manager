@@ -55,7 +55,9 @@ app.use(express.json());
 
 app.post('/', authMiddleware, validatingCrushesMiddleware.validatingAgeOfCrushes,
 validatingCrushesMiddleware.validatingNameOfCrushes,
-validatingCrushesMiddleware.validatingDateAndRatesOfCrushes, rescue(async (req, res) => {
+validatingCrushesMiddleware.validatingDateAndRatesOfCrushes,
+validatingCrushesMiddleware.validatingDateFormatOfCrushes,
+validatingCrushesMiddleware.validatingRatesOfCrushes, rescue(async (req, res) => {
   const size = crush.length;
   const { name, age, date } = req.body;
   const { datedAt, rate } = date;

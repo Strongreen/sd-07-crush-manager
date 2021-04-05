@@ -36,7 +36,7 @@ app.post('/', (req, res) => {
     return res.status(FAIL).send({ message: 'O campo "password" é obrigatório' });
   }
   if (password.length < 6) {
-    return res.status(FAIL).send({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+    return res.status(FAIL).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
   return res.status(SUCCESS).send(makeToken());
 });

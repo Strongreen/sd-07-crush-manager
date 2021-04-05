@@ -29,15 +29,24 @@ function validarData(data) {
 
 const validatingDateAndRatesOfCrushes = (req, res, next) => {
   const { date } = req.body;
-
   if (!date || !date.rate || !date.datedAt) {
     return res.status(400).send({
       message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
     });
   }
+  return next();
+};
+
+const validatingDateFormatOfCrushes = (req, res, next) => {
+  const { date } = req.body;
   if (!validarData(date.datedAt)) {
     return res.status(400).send({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
   } 
+  return next();
+};
+
+const validatingRatesOfCrushes = (req, res, next) => {
+  const { date } = req.body;
   if (date.rate < 1 || date.rate > 5 || !Number.isInteger(date.rate)) {
     // https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Number/isInteger
     return res.status(400).send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
@@ -49,4 +58,6 @@ module.exports = {
   validatingNameOfCrushes,
   validatingAgeOfCrushes,
   validatingDateAndRatesOfCrushes,
+  validatingDateFormatOfCrushes,
+  validatingRatesOfCrushes,
 };
