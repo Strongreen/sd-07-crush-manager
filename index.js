@@ -33,19 +33,6 @@ function validarSenha(password) {
   }
 }
 
-// function validaToken(token) {
-//   let contaNum = 0;
-//   let contaChar = 0;
-//   for (let i = 0; i < token.length; i += 1) {
-//     if (isNaN(parseInt(token.charAt(i)))) {
-//       contaNum += 1;
-//     } else {
-//       contaChar += 1;
-//     }
-//   }
-//   console.log(contaNum + ' ' + contaChar)
-// }
-
 function validaNome(name) {
   if (name === '' || name === undefined) {
     throw new Error('O campo "name" é obrigatório');
@@ -148,24 +135,32 @@ app.post('/login', (req, res) => {
   });  
 });
 
-function req4validations(newCrush) {
-  validaNome(newCrush.name);
-  validaIdade(newCrush.age);
-  validaDate(newCrush);
-  validaDatedAt(newCrush.date.datedAt);
-  validaRate(newCrush.date.rate);
+function validaRegras(newData) {
+  validaNome(newData.name);
+  validaIdade(newData.age);
+  validaDate(newData);
+  validaDatedAt(newData.date.datedAt);
+  validaRate(newData.date.rate);
+}
+
+function validaToken(token) {
+  let message = 'OK';
+  if (token === undefined) {
+    message = 'Token não encontrado';
+  } else if (token.length < 16) {
+    message = 'Token inválido';
+  }
+  return message;
 }
 
 // REQUISITO 4
 app.post('/crush', (req, res) => {
   const newCrush = req.body;
   const token = req.headers.authorization;
-  if (token === undefined) {
-    res.status(401).send({ message: 'Token não encontrado' });
-  } else if (token.length < 16) {
-    res.status(401).send({ message: 'Token inválido' });
+  if (validaToken(token) !== 'OK') {
+    res.status(401).send({ message: validaToken(token) });
   }
-  req4validations(newCrush);
+  validaRegras(newCrush);
   const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
   let lastId = 0;
   for (let i = 0; i < data.length; i += 1) {
@@ -174,8 +169,30 @@ app.post('/crush', (req, res) => {
     }
   }
   newCrush.id = lastId + 1;
-  fs.writeFileSync(jsonPath, JSON.stringify(data.push(newCrush)));
+  data.push(newCrush);
+  fs.writeFileSync(jsonPath, JSON.stringify(data));
   res.status(201).send(newCrush);
+});
+
+// REQUISITO 5
+app.put('/crush/:id', (req, res) => {
+  let resData = {};
+  const { id } = req.params;
+  const newData = req.body;
+  const token = req.headers.authorization;
+  if (validaToken(token) !== 'OK') { res.status(401).send({ message: validaToken(token) }); }
+  validaRegras(newData);
+  const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+  for (let i = 0; i < data.length; i += 1) {
+    if (parseInt(id, 0) === data[i].id) {
+      data[i].name = newData.name;
+      data[i].age = newData.age;
+      data[i].date = newData.date;
+      resData = data[i];
+    }
+  }
+  fs.writeFileSync(jsonPath, JSON.stringify(data));
+  res.status(200).send(resData);
 });
 
 /* MIDDLEWARE DE ERRO */
