@@ -66,13 +66,22 @@ app.get('/crush', (_request, response) => {
   if (!data) return response.status(200).json([]);
   response.status(SUCCESS).json(data);
 });
+// --------------------- REQ 7 ---------------------
+app.get('/crush/search', validateTokenMiddleware, (request, response) => {
+  const data = JSON.parse(fs.readFileSync(PATH));
+  const { q } = request.query;
+  const result = data.filter((item) => item.name.toUpperCase().includes(q.toUpperCase()));
+  if (result) return response.status(200).json(result);
+  if (!result) return response.status(200).send([]);
+  if (!q) return response.status(200).json(data);
+});
 // --------------------- REQ 2 ---------------------
 app.get('/crush/:id', (request, response) => {
   const data = JSON.parse(fs.readFileSync(PATH));
   const { id } = request.params;
   const result = data.find((item) => item.id === Number(id));
   if (result) return response.status(200).send(result);
-  response.status(404).json({ message: 'Crush não encontrado' });
+  if (request.params !== 'search') return response.status(404).json({ message: 'Crush não encontrado' });
 });
 // --------------------- REQ 3 ---------------------
 app.post('/login', (request, response) => {
@@ -102,6 +111,7 @@ app.delete('/crush/:id', (request, response) => {
   fs.writeFileSync(PATH, JSON.stringify(newData, null, 2));
   response.status(200).json({ message: 'Crush deletado com sucesso' });
 });
+
 // --------------------- REQ 4 ---------------------
 // https://www.codegrepper.com/code-examples/javascript/javascript+validate+date+dd%2Fmm%2Fyyyy
 app.use(validateNameMiddleware);
@@ -119,8 +129,6 @@ app.post('/crush', (request, response) => {
 });
 
 // --------------------- REQ 5 ---------------------
-
-// --------------------- REQ 7 ---------------------
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
