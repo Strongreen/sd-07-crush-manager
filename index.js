@@ -124,7 +124,6 @@ app.post('/login', (req, res) => {
   return res.status(SUCCESS).json({ token });
 });
 
-
 app.use(tokenMiddleware);
 
 // Req 6 ---------------------------------------------------------------------------
