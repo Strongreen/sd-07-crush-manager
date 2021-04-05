@@ -5,9 +5,9 @@ const dateRegexMiddleWare = function (req, res, next) {
   const { date } = req.body;
 
   if (!date || !date.rate || !date.datedAt) {
-    res.status(ApiStatus.BAD_REQUEST).json({ message: ApiMessages.DATE_MISSING });
+    return res.status(ApiStatus.BAD_REQUEST).json({ message: ApiMessages.DATE_MISSING });
   } if (!regex.test(date.datedAt)) {
-    res.status(ApiStatus.BAD_REQUEST).json({ message: ApiMessages.DATED_AT_WRONG_FORMAT });
+    return res.status(ApiStatus.BAD_REQUEST).json({ message: ApiMessages.DATED_AT_WRONG_FORMAT });
   }
 
   next();

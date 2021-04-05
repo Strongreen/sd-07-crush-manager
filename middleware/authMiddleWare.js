@@ -5,7 +5,7 @@ const authMiddleWare = function (req, res, next) {
 
   if (!authorization) {
     res.status(ApiStatus.ERROR_UNAUTHORIZED).json({ message: ApiMessages.TOKEN_NOT_FOUND });
-  } else if (authorization.length < 16) {
+  } if (authorization.length < 16) {
     res.status(ApiStatus.ERROR_UNAUTHORIZED).json({ message: ApiMessages.UNAUTHORIZED_TOKEN });
   }
 

@@ -89,7 +89,7 @@ app.put(`${crushPath}/:id`, (req, res) => {
 
   const newData = [...filtered, { ...req.body, id: parseInt(id, 10) }];
   fs.writeFileSync(`${__dirname}/crush.json`, JSON.stringify(newData));
-  res.status(ApiStatus.SUCCESS).json({ ...req.body, id: parseInt(id, 10) });
+  return res.status(ApiStatus.SUCCESS).json({ ...req.body, id: parseInt(id, 10) });
 });
 
 app.listen(3000, () => {
