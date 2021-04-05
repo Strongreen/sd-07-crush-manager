@@ -19,15 +19,18 @@ app.get('/crush', (_request, response) => {
 // getCrushById
 app.get('/crush/:id', (request, response) => {
   const { id } = request.params;
-  const obj = { status: 404, response: { message: 'Crush não encontrado' } };
+  let obj = null;
   const content = JSON.parse(fs.readFileSync(`${__dirname}/crush.json`));
   content.forEach((crush) => {
     if (crush.id === id) {
-      obj.status = SUCCESS;
-      obj.response = crush;
+      obj = crush;
     }
   });
-  response.status(obj.status).json(obj.response);
+  if (obj) {
+    response.status(SUCCESS).json(obj);
+  } else {
+    response.status(404).json({ message: 'Crush não encontrado' });
+  }
 });
 
 app.listen(PORT, () => { console.log('Online'); });
