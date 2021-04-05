@@ -21,8 +21,7 @@ const readCrushFile = async () => {
 
 app.get('/crush', async (_req, res) => {
   const result = await readCrushFile();
-  const emptyArray = [];
-  if (result.length === 0) res.status(200).send({ emptyArray });
+  if (result.length === 0) res.status(200).send([]);
   res.status(200).send(result);
 });
 app.get('/crush/:id', async (_req, _res) => {
