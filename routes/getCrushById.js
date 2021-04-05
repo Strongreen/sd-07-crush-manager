@@ -1,14 +1,13 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const fs = require('fs');
 const STATUSCODE = require('../statusCode.json');
 
-const app = express.Router();
-app.use(bodyParser.json());
+const router = express.Router();
+router.use(express.json());
 
 const DATAPATH = `${__dirname}/../crush.json`;
 
-app.get('/:id', (request, response) => {
+router.get('/:id', (request, response) => {
   const { id } = request.params;
   const crushes = JSON.parse(fs.readFileSync(DATAPATH));
   const crush = crushes.find((data) => data.id === parseInt(id, 10));
@@ -16,4 +15,4 @@ app.get('/:id', (request, response) => {
   response.status(STATUSCODE.NOT_FOUND).json({ message: 'Crush não encontrado' });
 });
 
-module.exports = app;
+module.exports = router;
