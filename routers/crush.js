@@ -6,7 +6,7 @@ const status = require('../helpers/status');
 
 crushRouter.get('/search', async (request, response, next) => {
   const { q } = request.query;
-  console.log(q);
+  // console.log(q);
   const crushData = await readCrushFile();
   const filteredResult = crushData.filter((e) => e.name.includes(q));
   response.status(status.SUCCESS).json(filteredResult);
@@ -16,7 +16,7 @@ crushRouter.get('/search', async (request, response, next) => {
 crushRouter.get('/', async (_request, response) => {
   // const { authorization } = request.headers;
   const result = await readCrushFile();
-  console.log(result);
+  // console.log(result);
   response.status(status.SUCCESS).json(result);
 });
 

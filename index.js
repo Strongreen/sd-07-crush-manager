@@ -46,4 +46,9 @@ app.delete('/crush/:id', authMiddleware);
 app.use('/login', loginRoute);
 app.use('/crush', routeCrush);
 
+app.use((err, _req, res, _next) => {
+  console.error(err.stack);
+  res.status(status.INTERNAL_SERVER_ERROR).send('Something broke!');
+});
+
 app.listen(PORT, () => { console.log('Online'); });
