@@ -13,8 +13,8 @@ module.exports = function postCrushes(app) {
     try {
       const data = await fs.readFile(crushFile);
       const response = JSON.parse(data);
-      response.push(req.body);
-      const result = { ...req.body, id: 5 };
+      const finalId = response.reduce((prev, cur) => ((prev.id > cur.id) ? prev : cur)).id + 1;
+      const result = { ...req.body, id: finalId };
       const total = JSON.stringify([result, ...response]);
       await fs.writeFile(crushFile, total);
       return res.status(201).json(result);

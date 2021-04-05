@@ -12,6 +12,7 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
+require('./Endpoints/exercise7')(app);
 require('./Endpoints/exercise1')(app);
 require('./Endpoints/exercise2')(app);
 require('./Endpoints/exercise3')(app);

@@ -6,7 +6,6 @@ module.exports = function getCrushesById(app) {
       const data = await fs.readFile('./crush.json');
       const response = JSON.parse(data);
       const result = response.find((crush) => crush.id === parseInt(req.params.id, 10));
-      console.log(result);
       if (result === undefined) {
         return res.status(404).json({ message: 'Crush não encontrado' });
       }

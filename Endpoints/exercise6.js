@@ -3,7 +3,7 @@ const verifyToken = require('./Middleware/verifytoken');
 
 const crushFile = './crush.json';
 
-module.exports = function putCrushes(app) {
+module.exports = function deleteCrushes(app) {
   app.delete('/crush/:id', verifyToken, async (req, res) => {
     try {
       const { id } = req.params;
