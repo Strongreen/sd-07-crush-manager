@@ -1,15 +1,15 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+const routes = require('./routes');
 
 const app = express();
-app.use(bodyParser.json());
 
-const SUCCESS = 200;
-const PORT = '3000';
+app.use(express.json());
 
-// não remova esse endpoint, e para o avaliador funcionar
-app.get('/', (_request, response) => {
-  response.status(SUCCESS).send();
+app.use(routes);
+
+// não remova esse endpoint, é para o avaliador funcionar
+app.get('/', (request, response) => {
+  response.send();
 });
 
-app.listen(PORT, () => { console.log('Online'); });
+app.listen(3000, () => console.log('Rodando na porta 3000.'));
