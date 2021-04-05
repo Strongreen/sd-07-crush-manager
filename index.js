@@ -12,4 +12,6 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
+app.use(require('./routes'));
+
 app.listen(PORT, () => { console.log('Online'); });
