@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const crushes = require('./crush.json');
+// const crushes = require('./crush.json');
 const crushRoutes = require('./routes/crush.js');
 
 const app = express();
