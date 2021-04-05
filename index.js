@@ -26,6 +26,30 @@ app.get('/crush', (_req, res) => {
   res.status(SUCCESS).json(crushJSON);
 });
 
+const validateToken = (token, res) => {
+  if (!token) {
+    return res
+      .status(UNAUTHORIZED)
+      .json({ message: 'Token não encontrado' });
+  } if (token.length < 16) {
+    return res
+      .status(UNAUTHORIZED)
+      .json({ message: 'Token inválido' });
+  }
+};
+
+app.get('/crush/search', (req, res) => {
+  const { authorization } = req.headers;
+  if (!validateToken(authorization, res)) {
+    let crushsArray = [...getJSON()];
+    const { q } = req.query;
+    if (q) {
+      crushsArray = crushsArray.filter(({ name }) => name.includes(q));
+    }
+    res.status(200).send(crushsArray);
+  }
+});
+
 const routeCrushId = '/crush/:id';
 
 app.get(routeCrushId, (req, res) => {
@@ -74,18 +98,6 @@ app.post('/login', (req, res) => {
   const tokenLength = 8;
   res.status(SUCCESS).json({ token: generateToken(tokenLength) });
 });
-
-const validateToken = (token, res) => {
-  if (!token) {
-    return res
-      .status(UNAUTHORIZED)
-      .json({ message: 'Token não encontrado' });
-  } if (token.length < 16) {
-    return res
-      .status(UNAUTHORIZED)
-      .json({ message: 'Token inválido' });
-  }
-};
 
 const validateName = (name, res) => {
   if (!name) {
