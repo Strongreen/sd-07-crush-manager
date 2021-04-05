@@ -11,9 +11,8 @@ app.get('/', (request, response) => {
 });
 
 app.get('/:id', (request, response) => {
-  const { id } = request.params;
-  let output = crushes.find((crush) => crush.id === id);
-
+  const { id: idpedido } = request.params;
+  let output = crushes.find((crush) => parseInt(crush.id, 10) === idpedido);
   if (output != null) {
     response.status(200).send(output);
   }
