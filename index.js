@@ -1,5 +1,6 @@
 const express = require('express');
 const fs = require('fs');
+const { parse } = require('url');
 
 const app = express();
 const SUCCESS = 200;
@@ -13,6 +14,23 @@ function gerarToken(tamanhoToken) {
     token += caracteres.charAt(sorteado);
   }
   return token;
+}
+
+function validarEmail(email) {
+  const parseEmail = /\S+@\S+\.\S+/;
+  if (email === '' || email === undefined) {
+    throw new Error('O campo \"email\" é obrigatório');
+  } else if (parseEmail.test(email) === false) {
+    throw new Error('O \"email\" deve ter o formato \"email@email.com\"');
+  }
+}
+
+function validarSenha(password) {
+  if (password === '' || password === undefined) {
+    throw new Error('O campo \"password\" é obrigatório');
+  } else if (password.toString().length < 6) {
+    throw new Error('O \"password\" deve ter pelo menos 6 caracteres');
+  }
 }
 
 app.use(express.json());
@@ -49,13 +67,20 @@ app.get('/crush/:id', (req, res) => {
 });
 
 // REQUISITO 3
-// app.post('/login', (req, res) => {
-//   const email = req.body.email;
-//   const password = req.body.password;
-//   const token = gerarToken(16)
-//   res.send({
-//     token, // CONTINUAR REQUISITO 3 (VALIDAÇÕES DE EMAIL E SENHA)
-//   });  
-// });
+app.post('/login', (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  validarEmail(email);
+  validarSenha(password);
+  const token = gerarToken(16)
+  res.send({
+    token,
+  });  
+});
+
+/* MIDDLEWARE DE ERRO */
+app.use((err, req, res, next) => {
+  res.status(400).json({ message: err.message})
+  }); 
 
 app.listen(3000, () => { console.log('Rodando...'); });
