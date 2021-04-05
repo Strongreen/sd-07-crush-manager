@@ -1,9 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const crush = require('./routes/crush');
+const login = require('./routes/login');
 
 const app = express();
 app.use(bodyParser.json());
-
+app.use('/crush', crush);
+app.use('/login', login);
 const SUCCESS = 200;
 const PORT = '3000';
 
