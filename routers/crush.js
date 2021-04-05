@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const data = require('../crush.json');
 
-router.get('/', (req, res) => res.status(200).send(JSON.parse(data)));
+router.get('/', (req, res) => res.status(200).json(data));
 
 router.get('/:id', (req, res) => {
   const id = Number(req.params.id);
@@ -13,7 +13,7 @@ router.get('/:id', (req, res) => {
     message: 'Crush não encontrado',
   }); 
 }
-  return res.status(200).send();
+  return res.status(200).send(object);
 });
 
 module.exports = router;
