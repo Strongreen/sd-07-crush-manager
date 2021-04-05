@@ -89,9 +89,7 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.get('/crush', rescue((_req, res) => {
-  return allCrushes(res);
-}));
+app.get('/crush', rescue((_req, res) => allCrushes(res)));
 
 app.get('/crush/search', rescue((req, res) => {
   const { authorization } = req.headers;
@@ -99,12 +97,14 @@ app.get('/crush/search', rescue((req, res) => {
   const param = req.query.q;
   if (!param || param === '') return allCrushes(res);
   const results = crushes.filter((item) => item.name.startsWith(param));
+  console.log(crushes);
   return res.status(200).send(results);
 }));
 
 app.get(crushWithId, rescue((req, res) => {
   const { id } = req.params;
   const crush = crushes.find((item) => item.id === parseInt(id, 10));
+  console.log(crushes);
   checkCrush(res, crush);
   return res.status(SUCCESS).send(crush);
 }));
@@ -146,6 +146,7 @@ app.post('/crush', rescue((req, res) => {
     },
   };
   crushes.push(crush);
+  console.log(crushes);
   fs.writeFile(crushFile, JSON.stringify(crushes));
   return res.status(201).send(crush);
 }));
