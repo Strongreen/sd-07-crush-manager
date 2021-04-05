@@ -25,6 +25,9 @@ app.get('/crush', async (_req, res) => {
   if (result.length === 0) res.status(200).send({ emptyArray });
   res.status(200).send(result);
 });
+app.get('/crush/:id', async (_req, _res) => {
+  // const result = await readCrushFile();
+});
 
 app.use((err, _req, res, _next) => {
   res.status(500).send(`Algo deu errado! Mensagem: ${err.message}`);
