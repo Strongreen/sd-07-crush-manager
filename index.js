@@ -13,7 +13,7 @@ const readFile = async () => {
     const content = await fs.readFile('./crush.json');
     return JSON.parse(content.toString('utf-8'));
   } catch (error) {
-    throw new Error("Não foi possível ler o arquivo de dados");
+    throw new Error('Não foi possível ler o arquivo de dados');
   }
 };
 
@@ -50,14 +50,13 @@ app.get('/crush/:id', async (req, res) => {
   const { id } = req.params;
   try {
     const crushs = await readFile();
-    const crush = crushs.find(element => element.id === parseInt(id, 10));
+    const crush = crushs.find((element) => element.id === parseInt(id, 10));
     if (crush) return res.status(SUCCESS).json(crush);
-    return res.status(404).json({ message: "Crush não encontrado" });
+    return res.status(404).json({ message: 'Crush não encontrado' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 });
-
 
 /*
 +---------------------------------------------------------------------+
@@ -68,10 +67,10 @@ app.get('/crush/:id', async (req, res) => {
 +---------------------------------------------------------------------+
 */
 app.use('*', (_req, res) => {
-  res.status(404).json({ message: "endpoint não existe!" });
+  res.status(404).json({ message: 'endpoint não existe!' });
 });
 
-app.use(function (err, req, res, next) {
+app.use((err, req, res, _next) => {
   res.status(500).send(`Algo deu errado! Mensagem: ${err.message}`);
 });
 /*
