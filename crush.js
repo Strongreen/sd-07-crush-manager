@@ -22,6 +22,7 @@ app.get('/', (_req, res) => {
 //   console.log(typeof crushFile);
 //   console.log(typeof JSON.parse(crushFile));
 //   console.log(Array.isArray(crushFile));
+//   console.log(JSON.parse(crushFile).find((item) => item.id === id));
 // }
 
 // app.get('/:id', (req, res) => {
