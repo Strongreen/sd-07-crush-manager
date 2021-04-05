@@ -8,8 +8,8 @@ const ApiMessages = {
   EMAIL_WRONG_FORMAT: 'O "email" deve ter o formato "email@email.com"',
 
   PASSWORD_MISSING: 'O campo "password" é obrigatório',
-  PASSWORD_WRONG_FORMAT: 'O "password" deve ter pelo menos 6 caracteres',
-
+  PASSWORD_WRONG_FORMAT: "A \"senha\" deve ter pelo menos 6 caracteres",
+  
   NAME_MISSING: 'O campo "name" é obrigatório',
   NAME_WRONG_FORMAT: 'O "name" deve ter pelo menos 3 caracteres',
 
