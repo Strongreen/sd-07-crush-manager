@@ -8,10 +8,7 @@ const app = express();
 app.use(bodyParser.json());
 
 app.get('/', (_req, res) => {
-  if (crushFile.length === 0) {
-    return res.status(200).send([]);
-  }
-  return res.status(200).send(crushFile);
+  res.status(200).send(JSON.parse(crushFile));
 });
 
 function isValidId(id) {
