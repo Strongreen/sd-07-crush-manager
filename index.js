@@ -63,6 +63,7 @@ app.post('/login', (request, response) => {
 });
 
 app.use(tokenvalid);
+
 app.use(crushvalid);
 app.use(datavalid);
 
