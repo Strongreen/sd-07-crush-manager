@@ -21,15 +21,7 @@ router.get('/:id', (req, res) => {
   return res.status(SUCCESS).send(crush);
 });
 
-const tokenExistsMiddleware = (req, res, next) => {
-  const { authorization: token } = req.header;
-  if (!token) {
-    return res.status(401).json({ message: 'Token não encontrado' });
-  }
-  next();
-};
-
-router.post('/', tokenExistsMiddleware, rescue(async (req, res) => {
+router.post('/', rescue(async (req, res) => {
   try {
     const { name, age, date } = req.body;
     data.push({ name, age, date });
