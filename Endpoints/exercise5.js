@@ -11,7 +11,6 @@ module.exports = function putCrushes(app) {
   app.put('/crush/:id', verifyToken, validateName,
   validateAge, checkDate, validateDate, validateAge, async (req, res) => {
     try {
-      console.log('put');
       const { id } = req.params;
       const data = await fs.readFile(crushFile);
       const response = JSON.parse(data);

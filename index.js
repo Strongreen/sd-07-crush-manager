@@ -17,5 +17,6 @@ require('./Endpoints/exercise2')(app);
 require('./Endpoints/exercise3')(app);
 require('./Endpoints/exercise4')(app);
 require('./Endpoints/exercise5')(app);
+require('./Endpoints/exercise6')(app);
 
 app.listen(PORT, () => { console.log('Online'); });
