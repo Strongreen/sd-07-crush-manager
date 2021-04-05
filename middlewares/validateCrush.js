@@ -38,11 +38,16 @@ function validateDate(datedAt) {
   return true;
 }
 
+function isRateValid(rate) {
+  return rate === '' || rate == null || rate === undefined;
+}
+
 function isDateEmpty(date) {
   if (
     !date
     || date.datedAt === ''
-    || date.rate === ''
+    || !date.datedAt
+    || isRateValid(date.rate)
   ) throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
 }
 
