@@ -42,7 +42,7 @@ const datavalid = (request, response, next) => {
   if (!regexDATA.test(datedAt)) {
     response.status(400).json({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
   }
-  if (pontos.includes(rate)) {
+  if (!pontos.includes(rate)) {
     response.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
   next();
