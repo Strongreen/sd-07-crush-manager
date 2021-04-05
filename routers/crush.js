@@ -70,18 +70,13 @@ crushRouter.put('/:id', async (request, response) => {
 response.status(status.SUCCESS).json(newCrush);
 });
 
-crushRouter.delete('/:id', (request, response) => {
+crushRouter.delete('/:id', async (request, response) => {
   const { id: crushId } = request.params;
 
-  const crushData = readCrushFile();
-  console.log(crushData);
-  const removeResult = crushData.findIndex(({ id }) => id === parseFloat(crushId));
-  crushData.splice(removeResult, 1);
-  console.log(`Remove Results ${removeResult}`);
-  console.log(`CrushData ${crushData}`);
-
-  writeCrushFile(crushData);
-  response.status(status.SUCCESS).json({ messade: 'Crush deletado com sucesso' });
+  const crushData = await readCrushFile();
+  const removeResult = await crushData.filter(({ id }) => id !== parseFloat(crushId));
+   await writeCrushFile(removeResult);
+  return response.status(status.SUCCESS).json({ message: 'Crush deletado com sucesso' });
 });
 
 module.exports = crushRouter;
