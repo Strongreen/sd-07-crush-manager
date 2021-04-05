@@ -12,4 +12,7 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
+require('./Endpoints/exercise1')(app);
+require('./Endpoints/exercise2')(app);
+
 app.listen(PORT, () => { console.log('Online'); });
