@@ -25,7 +25,7 @@ const passwordEvaluator = (password) => {
   }
 
   if (!regexPassword.test(password)) {
-    return 'O "password" deve ter pelo menos 6 caracteres';
+    return 'A "senha" deve ter pelo menos 6 caracteres';
   }
 
   return false;

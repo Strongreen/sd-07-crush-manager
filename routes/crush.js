@@ -4,6 +4,9 @@ const data = require('../crush.json');
 const app = express();
 
 app.get('/', (_req, res) => {
+  if (data.length === 0) {
+    res.status(200).send([]);
+  }
   res.status(200).send(data);
 });
 
