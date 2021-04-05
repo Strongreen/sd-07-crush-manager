@@ -8,6 +8,7 @@ const app = express();
 const SUCCESS = 200;
 const PORT = 3000;
 const PATH = './crush.json';
+const CRUSHIDPATH = '/crush/:id';
 // não remova esse endpoint, e para o avaliador funcionar
 app.use(express.json());
 app.get('/', (_request, response) => {
@@ -76,7 +77,7 @@ app.get('/crush/search', validateTokenMiddleware, (request, response) => {
   if (!q) return response.status(200).json(data);
 });
 // --------------------- REQ 2 ---------------------
-app.get('/crush/:id', (request, response) => {
+app.get(CRUSHIDPATH, (request, response) => {
   const data = JSON.parse(fs.readFileSync(PATH));
   const { id } = request.params;
   const result = data.find((item) => item.id === Number(id));
@@ -106,7 +107,7 @@ app.post('/login', (request, response) => {
 
 // --------------------- REQ 6 ---------------------
 app.use(validateTokenMiddleware);
-app.delete('/crush/:id', (request, response) => {
+app.delete(CRUSHIDPATH, (request, response) => {
   const { id } = request.params;
   const data = JSON.parse(fs.readFileSync(PATH));
   const newData = data.filter((item) => item.id !== Number(id));
@@ -131,7 +132,16 @@ app.post('/crush', (request, response) => {
 });
 
 // --------------------- REQ 5 ---------------------
+app.put(CRUSHIDPATH, (request, response) => {
+  const { id } = request.params;
+  const { name, age, date } = request.body;
+  const data = JSON.parse(fs.readFileSync(PATH));
+  const newData = data.filter((item) => item.id !== Number(id));
+  newData.push({ id: Number(id), name, age, date });
+  fs.writeFileSync(PATH, JSON.stringify(newData, null, 2));
+  response.status(200).send(newData[Number(id) - 1]);
+});
 
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Aplicação rodando na porta ${PORT}`);
 });
