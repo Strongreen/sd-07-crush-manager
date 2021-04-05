@@ -13,9 +13,11 @@ const status = require('../helpers/status');
   if (filteredResult === []) next();
 });
  */
-crushRouter.get('/', (_request, response) => {
+crushRouter.get('/', async (_request, response) => {
   // const { authorization } = request.headers;
-  response.status(status.SUCCESS).json(readCrushFile());
+  const result = await readCrushFile();
+  console.log(result);
+  response.status(status.SUCCESS).json(result);
 });
 
 // 2. Crie o endpoint GET /crush/:id
