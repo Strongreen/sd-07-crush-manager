@@ -224,4 +224,15 @@ app.post('/crush', (req, res) => {
  add(req, res);
 });
 
+app.put(caminhoId, async (req, res) => {
+  const { name, age, date } = req.body;
+  const { id } = req.params;
+  const crushJson = await lerArquivo();
+  const crushFiltradoId = crushJson.filter((item) => item.id === parseInt(id, 10));
+  const novoCrush = { name, age, id: crushFiltradoId[0].id, date };
+  return res.status(200).send(novoCrush);
+
+ // const novoArquivoCrush = crushJson.filter((item) => item.id !== parseInt(id, 10));
+});
+
 app.listen(3000);
