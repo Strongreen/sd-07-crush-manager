@@ -23,7 +23,9 @@ function validateAge(age) {
 function validateRate(rate) {
   if (!(Number(rate) >= 1
     && Number(rate) <= 5
-    && Number(rate) / Number.isInteger(rate))) throw new Error('O campo "rate" deve ser um inteiro de 1 à 5');
+    && Number(rate) / Number.isInteger(rate))) {
+      throw new Error('O campo "rate" deve ser um inteiro de 1 à 5');
+    }
 
   return true;
 }
@@ -36,17 +38,18 @@ function validateDate(datedAt) {
   return true;
 }
 
-function validateCrush(request, _response, next) {
-  const { name, age, date } = request.body;
-
+function isDateEmpty(date) {
   if (
     !date
     || date.datedAt === ''
     || date.rate === ''
-    || !date.datedAt
-    || date.rate === null
-    || date.rate === undefined
   ) throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
+}
+
+function validateCrush(request, _response, next) {
+  const { name, age, date } = request.body;
+
+  isDateEmpty(date);
 
   if (
     validateName(name)
