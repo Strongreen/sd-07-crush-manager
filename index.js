@@ -58,11 +58,11 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/crush', (req, res) => {
-  const { token } = req.headers;
-  if (!token) {
+  const { authorization } = req.headers;
+  if (!authorization) {
     res.status(401).send({ message: 'Token não encontrado' });
   }
-  if (token.length !== 18) {
+  if (authorization.length !== 16) {
     res.status(401).send({ message: 'Token inválido' });
   }
 });
