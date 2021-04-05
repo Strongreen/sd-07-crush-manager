@@ -67,6 +67,10 @@ const newLogin = (email, password) => {
   if (statusPassword.status === 400) {
     return statusPassword;
   }  
+
+  return {
+    status: 200,
+  };
 };
 
 module.exports = {
