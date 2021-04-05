@@ -19,12 +19,12 @@ function validatePassword(req, res, next) {
     return res.status(400).json({ message: 'O campo "password" é obrigatório' });
   }
   if (password.length < 6) {
-    return res.status(400).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+    return res.status(400).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
   next();
 }
 
 module.exports = function login(app) {
   app.post('/login', validateEmail, validatePassword, (req, res) =>
-    res.json({ token: 'airhsurso012345a' }));
+    res.status(200).json({ token: 'airhsurso012345a' }));
 };
