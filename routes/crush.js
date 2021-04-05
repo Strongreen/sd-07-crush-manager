@@ -39,4 +39,13 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+router.put('/:id', middlewares.checkToken,
+middlewares.checkName,
+middlewares.checkAge,
+middlewares.checkDate,
+middlewares.checkFormatDate,
+middlewares.editedCrush);
+
+router.delete('/:id', middlewares.checkToken, middlewares.deletedCrushMiddware);
+
 module.exports = router;

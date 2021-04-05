@@ -7,6 +7,9 @@ const checkDate = require('./checkDate');
 const checkName = require('./checkName');
 const registerCrush = require('./registerCrush');
 const checkFormatDate = require('./checkFormatDate');
+const editedCrush = require('./editedCrush');
+const errorMidware = require('./error');
+const deletedCrushMiddware = require('./deleteCrush');
 
 module.exports = {
     loginCheckEmail,
@@ -18,4 +21,7 @@ module.exports = {
     checkName,
     registerCrush,
     checkFormatDate,
+    editedCrush,
+    errorMidware,
+    deletedCrushMiddware,
 };
