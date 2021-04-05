@@ -13,13 +13,14 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.get('/crush', async (req, res) => {
-  await fs.readFile('./crush.json', 'utf-8', (err, data) => {
-    if (err) {
-      console.log(`Não foi possível ler o arquivo. Erro: ${err.message}`);
-    }
-    return res.status(SUCCESS).send(data);
-  });
+app.get('/crush', (req, res) => {
+  const crushs = fs.readFileSync('./crush.json', 'utf-8');
+  if (crushs.length === 0) {
+    console.log(crushs);
+    res.status(200).send([]);
+  }
+  console.log(crushs);
+  res.status(200).send(crushs);
 });
 
 app.listen(PORT, () => {
