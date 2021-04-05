@@ -11,6 +11,6 @@ router.use(emptyEmail);
 router.use(emptyPassword);
 router.use(passwordLength);
 
-router.post('/', (req, res) => res.status(200).send({ token: 'Art39430Lu49' }));
+router.post('/', (req, res) => res.status(200).send({ token: 'Art394384FG0Lu49' }));
 
 module.exports = router;
