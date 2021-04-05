@@ -7,12 +7,12 @@ const crushFile = () => fs.promises.readFile('./crush.json', 'utf8');
 const app = express();
 app.use(bodyParser.json());
 
-app.get('/', (_req, res) => {
-  res.status(200).json(JSON.parse(crushFile));
+app.get('/', async (_req, res) => {
+  res.status(200).json(JSON.parse(await crushFile()));
 });
 
-function isValidId(id) {
-  const crushFileArray = JSON.parse(crushFile);
+async function isValidId(id) {
+  const crushFileArray = JSON.parse(await crushFile());
   return crushFileArray.find((item) => item.id.toString() === id);
 }
 
