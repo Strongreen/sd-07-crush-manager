@@ -1,23 +1,21 @@
 const checkNameMidware = (req, res, next) => {
-
     const { body } = req;
 
     if (!body.age) {
         res.status(400).send(
             {
-                "message": "O campo \"age\" é obrigatório"
-            }
+                message: 'O campo "age" é obrigatório',
+            },
         );
     } else if (body.age < 18) {
         res.status(400).send(
             {
-                "message": "O crush deve ser maior de idade"
-            }
+                message: 'O crush deve ser maior de idade',
+            },
         );
     } else {
-        next()
+        next();
     }
-
-}
+};
 
 module.exports = checkNameMidware;

@@ -1,9 +1,6 @@
-
-
 const checkToken = (token) => /^(\d|\w){16}$/gm.test(token);
 
-const checkTokenMidware  = (req,res,next) => {
-    
+const checkTokenMidware = (req, res, next) => {
     const { authorization } = req.headers;
 
     if (!authorization) {
@@ -19,9 +16,8 @@ const checkTokenMidware  = (req,res,next) => {
             },
         );
     } else {
-        next()
+        next();
     }
+};
 
-}
-
-module.exports =checkTokenMidware;
+module.exports = checkTokenMidware;
