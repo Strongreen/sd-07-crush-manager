@@ -1,15 +1,21 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+const route = require('./routes/index');
+// const bodyParser = require('body-parser');
 
 const app = express();
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
-const SUCCESS = 200;
+// const SUCCESS = 200;
 const PORT = '3000';
 
 // não remova esse endpoint, e para o avaliador funcionar
-app.get('/', (_request, response) => {
-  response.status(SUCCESS).send();
-});
+// app.get('/', (_request, response) => {
+//   response.status(SUCCESS).send();
+// });
+
+app.use(express.json());
+app.use('/crush', route);
+app.use('/crush/:id', route);
+app.use('/', route);
 
 app.listen(PORT, () => { console.log('Online'); });
