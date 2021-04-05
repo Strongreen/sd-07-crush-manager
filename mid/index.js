@@ -17,7 +17,7 @@ const crushvalid = (request, response, next) => {
     response.status(400).json({ message: 'O campo "name" é obrigatório' });
   }
   if (name.length < 3) {
-    response.status(400).json({ message: 'O "name" deve ter pelo menos 3 caracteresponse' });
+    response.status(400).json({ message: 'O "name" deve ter pelo menos 3 caracteres' });
   }
   if (!age) {
     response.status(400).json({ message: 'O campo "age" é obrigatório' });
@@ -27,6 +27,7 @@ const crushvalid = (request, response, next) => {
   }
   next();
 };
+const verificação = (date) => !date || !date.datedAt || (!date.rate && date.rate !== 0);
 
 const datavalid = (request, response, next) => {
   const { date } = request.body;
@@ -34,7 +35,7 @@ const datavalid = (request, response, next) => {
   const regexDATA = /\d{2}[/]\d{2}[/]\d{4}/;
   const pontos = [0, 1, 2, 3, 4, 5];
 
-  if (!datedAt || !rate) {
+  if (verificação(date)) {
     response.status(400).json({
       message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
     });
