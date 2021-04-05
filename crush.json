@@ -22,5 +22,11 @@
     "age": 24,
     "id": 4,
     "date": { "datedAt": "23/10/2020", "rate": 5 }
+  },
+  {
+    "name": "Eriquy Jhordan",
+    "age": 23,
+    "id": 5,
+    "date": { "datedAt": "05/04/2021", "rate": 100 }
   }
 ]
