@@ -11,10 +11,10 @@ function isValidEmail(email) {
 
   if (!email) {
     responseBool = true;
-    response = 'O campo email é obrigatório';
+    response = 'O campo "email" é obrigatório';
   } else if (!email.includes('@') && !email.includes('.com')) {
     responseBool = true;
-    response = 'O email deve ter o formato email@email.com';
+    response = 'O "email" deve ter o formato email@email.com';
   } else {
     responseBool = false;
   }

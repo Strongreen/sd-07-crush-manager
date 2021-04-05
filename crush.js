@@ -2,13 +2,13 @@ const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const crushFile = fs.readFileSync('./crush.json', 'utf8');
+const crushFile = () => fs.promises.readFile('./crush.json', 'utf8');
 
 const app = express();
 app.use(bodyParser.json());
 
 app.get('/', (_req, res) => {
-  res.status(200).send(JSON.parse(crushFile));
+  res.status(200).json(JSON.parse(crushFile));
 });
 
 function isValidId(id) {
