@@ -10,7 +10,7 @@ const validatePassword = (req, res, next) => {
 
   if (strPassword.length < 6) {
     return res.status(400).json({
-      message: 'O "password" ter pelo menos 6 caracteres',
+      message: 'A "senha" deve ter pelo menos 6 caracteres',
     });
   }
   next();
