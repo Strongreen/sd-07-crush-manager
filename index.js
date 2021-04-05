@@ -26,13 +26,13 @@ app.get('/', (_request, response) => {
 });
 
 app.get('/crush', getCrushes);
-app.get(PATH_ID_CRUSH, getCrushesById);
+app.get('/crush/search', validateUser, searchCrush);
 app.post('/login', login);
 app
   .post('/crush', validateUser, validateName, validateAge, validateDate, validateRate, createCrush);
+app.get(PATH_ID_CRUSH, getCrushesById);
 app.put(PATH_ID_CRUSH, 
   validateUser, validateName, validateAge, validateDate, validateRate, updateCrush);
 app.delete(PATH_ID_CRUSH, validateUser, deleteCrush);
-app.get('/crush/search', searchCrush);
 
 app.listen(3000, () => console.log('listening on port 3000'));
