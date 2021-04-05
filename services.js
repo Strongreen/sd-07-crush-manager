@@ -124,6 +124,26 @@ const updateCrush = async (req, res) => {
   return res.status(200).json(searchCrush);
 };
 
+const deleteCrush = async (req, res) => {
+  const { id } = req.params;
+  const file = await readCrushFile();
+  const indexId = parseFloat(id);
+  file.splice(indexId, 1);
+  res.status(200).json({ message: 'Crush deletado com sucesso' });
+};
+
+const searchCrush = async (req, res) => {
+  const { q } = req.query;
+
+  const file = await readCrushFile();
+  if (!q) {
+    return res.status(200).json(file);
+  }
+
+  const results = file.filter((crush) => crush.name.includes(q));
+  return res.status(200).json(results);
+};
+
 module.exports = {
   getCrushes,
   getCrushesById,
@@ -134,4 +154,6 @@ module.exports = {
   validateRate,
   createCrush,
   updateCrush,
+  deleteCrush,
+  searchCrush,
 };

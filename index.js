@@ -11,6 +11,8 @@ const {
   validateRate,
   createCrush,
   updateCrush,
+  deleteCrush,
+  searchCrush,
 } = require('./services');
 
 const app = express();
@@ -28,7 +30,9 @@ app.get(PATH_ID_CRUSH, getCrushesById);
 app.post('/login', login);
 app
   .post('/crush', validateUser, validateName, validateAge, validateDate, validateRate, createCrush);
-app.put('/crush/:id', 
+app.put(PATH_ID_CRUSH, 
   validateUser, validateName, validateAge, validateDate, validateRate, updateCrush);
+app.delete(PATH_ID_CRUSH, validateUser, deleteCrush);
+app.get('/crush/search', searchCrush);
 
 app.listen(3000, () => console.log('listening on port 3000'));
