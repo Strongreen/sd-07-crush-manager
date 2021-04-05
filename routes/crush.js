@@ -7,20 +7,20 @@ app.get('/', (request, response) => {
   if (crushes.length < 1) {
     response.status(200).send([]);
   }
-  response.status(200).send(crushes);
+  response.status(200).send(JSON.stringify(crushes));
 });
 
 app.get('/:id', (request, response) => {
   const { id } = request.params;
-  const output = crushes.find((crush) => crush.id === id);
+  let output = crushes.find((crush) => crush.id === id);
 
   if (output != null) {
-    response.status(200).send(output);
+    response.status(200).send(JSON.stringify(output));
   }
-
-  response.status(404).send({
+  output = {
     message: 'Crush não encontrado',
-  });
+  };
+  response.status(404).send(JSON.stringify(output));
 });
 
 module.exports = app;
