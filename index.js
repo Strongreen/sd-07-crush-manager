@@ -44,7 +44,7 @@ app.post('/login', (req, res) => {
 
   if (!password) { res.status(400).send({ message: 'O campo "password" é obrigatório' }); }
   if (password.length < 6) {
-    res.status(400).send({ message: 'O "password" ter pelo menos 6 caracteres' }); 
+    res.status(400).send({ message: 'O "password" ter pelo menos 6 caracteres' });
   }
   if (!email) { res.status(400).send({ message: 'O campo "email" é obrigatório' }); }
   if (!regexValidation) {
@@ -55,6 +55,16 @@ app.post('/login', (req, res) => {
   res.send({
     token: generatedToken,
   });
+});
+
+app.post('/crush', (req, res) => {
+  const { token } = req.headers;
+  if (!token) {
+    res.status(401).send({ message: 'Token não encontrado' });
+  }
+  if (token.length !== 18) {
+    res.status(401).send({ message: 'Token inválido' });
+  }
 });
 
 app.listen(PORT, () => { console.log('Online'); });
