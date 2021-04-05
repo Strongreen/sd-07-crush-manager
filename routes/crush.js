@@ -7,7 +7,7 @@ app.get('/', (request, response) => {
   if (crushes.length < 1) {
     response.status(200).send([]);
   }
-  response.status(200).send(JSON.stringify(crushes));
+  response.status(200).send(crushes);
 });
 
 app.get('/:id', (request, response) => {
@@ -15,12 +15,12 @@ app.get('/:id', (request, response) => {
   let output = crushes.find((crush) => crush.id === id);
 
   if (output != null) {
-    response.status(200).send(JSON.stringify(output));
+    response.status(200).send(output);
   }
   output = {
     message: 'Crush não encontrado',
   };
-  response.status(404).send(JSON.stringify(output));
+  response.status(404).send(output);
 });
 
 module.exports = app;
