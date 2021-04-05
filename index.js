@@ -4,6 +4,7 @@ const fs = require('fs');
 
 const app = express();
 app.use(bodyParser.json());
+const NF = 404;
 const SUCCESS = 200;
 const PORT = '3000';
 
@@ -19,18 +20,15 @@ app.get('/crush', (_request, response) => {
 // getCrushById
 app.get('/crush/:id', (request, response) => {
   const { id } = request.params;
-  let obj = null;
+  const obj = { status: NF, response: { message: 'Crush não encontrado' } };
   const content = JSON.parse(fs.readFileSync(`${__dirname}/crush.json`));
   content.forEach((crush) => {
-    if (crush.id === id) {
-      obj = crush;
+    if (crush.id === Number(id)) {
+      obj.status = SUCCESS;
+      obj.response = crush;
     }
   });
-  if (obj) {
-    response.status(SUCCESS).json(obj);
-  } else {
-    response.status(404).json({ message: 'Crush não encontrado' });
-  }
+  response.status(obj.status).json(obj.response);
 });
 
 app.listen(PORT, () => { console.log('Online'); });
