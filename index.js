@@ -11,7 +11,7 @@ const CREATED = 201;
 const BAD_REQUEST = 400;
 const UNAUTHORIZED = 401;
 const NOT_FOUND = 404;
-
+const PATH_CRUSH = './crush.json';
 const PORT = '3000';
 
 // não remova esse endpoint, e para o avaliador funcionar
@@ -19,7 +19,7 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-const getJSON = () => JSON.parse(fs.readFileSync('./crush.json', 'utf-8'));
+const getJSON = () => JSON.parse(fs.readFileSync(PATH_CRUSH, 'utf-8'));
 
 app.get('/crush', (_req, res) => {
   const crushJSON = getJSON();
@@ -110,14 +110,16 @@ const validateAge = (age, res) => {
   }
 };
 const messageDate = 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios';
+
+const checkIsNumberAndRange = (number) => number < 1 || number > 5 || Number.isNaN(number);
+
 const validateRate = (rate, res) => {
   const rateNumber = Number(rate);
-  if (!rate) {
+  if (!rate && rateNumber !== 0) {
     return res
       .status(BAD_REQUEST)
       .json({ message: messageDate });
-  } 
-  if (rateNumber < 1 || rateNumber > 5 || Number.isNaN(rateNumber)) {
+  } if (checkIsNumberAndRange(rateNumber)) {
     return res
       .status(BAD_REQUEST)
       .json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
@@ -151,22 +153,42 @@ const validateDate = (date, res) => {
   }
 };
 
+const validateCrush = (crush, token, res) => {
+  const { name, age, date } = crush;
+  return !validateToken(token, res)
+  && !validateName(name, res)
+  && !validateAge(Number(age), res)
+  && !validateDate(date, res);
+};
+
 app.post('/crush', (req, res) => {
-  const { name, age, date } = req.body;
+  const crush = req.body;
   const { authorization } = req.headers;
 
-  if (
-    !validateToken(authorization, res)
-    && !validateName(name, res)
-    && !validateAge(Number(age), res)
-    && !validateDate(date, res)
-  ) {
+  if (validateCrush(crush, authorization, res)) {
     const crushsArray = getJSON();
     const id = crushsArray.length + 1;
-    const newCrush = { id, name, age, date };
+    const newCrush = { id, ...crush };
     const newCrushsArray = [...crushsArray, newCrush];
-    fs.writeFileSync('./crush.json', JSON.stringify(newCrushsArray));
+    fs.writeFileSync(PATH_CRUSH, JSON.stringify(newCrushsArray));
     res.status(CREATED).json(newCrush);
+  }
+});
+
+app.put('/crush/:id', (req, res) => {
+  const crushToEdit = req.body;
+  const { authorization } = req.headers;
+
+  if (validateCrush(crushToEdit, authorization, res)) {
+    const crushsArray = [...getJSON()];
+    const id = Number(req.params.id);
+
+    const index = crushsArray.findIndex((crush) => crush.id === id);
+
+    crushsArray[index] = { ...crushToEdit, id };
+
+    fs.writeFileSync(PATH_CRUSH, JSON.stringify(crushsArray));
+    res.status(SUCCESS).json(crushsArray[index]);
   }
 });
 
