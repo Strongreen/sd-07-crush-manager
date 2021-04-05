@@ -3,7 +3,7 @@ const { Router } = require('express');
 const loginRouter = Router();
 const { genRanHex } = require('../helpers');
 const status = require('../helpers/status');
-const { emailMiddleware, passwordMiddleware } = require('../middlewares');
+// const { emailMiddleware, passwordMiddleware } = require('../middlewares');
 
 // 3.  Crie o endpoint POST /login
 
