@@ -1,13 +1,15 @@
 const express = require('express');
+const fs = require('fs');
 const data = require('../crush.json');
 
 const app = express();
 
-app.get('/', (_req, res) => {
-  if (data.length === 0) {
-    res.status(200).send([]);
-  }
-  res.status(200).send(data);
+app.get('/', async (_req, res) => {
+  const response = await fs.promises.readFile(
+    `${__dirname}/../crush.json`,
+    'utf8',
+  );
+  res.status(200).send(response);
 });
 
 app.get('/:id', (req, res) => {
