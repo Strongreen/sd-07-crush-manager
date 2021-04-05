@@ -28,10 +28,16 @@ crushRouter.get('/:id', async (request, response) => {
 
   // console.log((parseFloat(crushId)));
   const crushData = await readCrushFile();
-  const result = crushData.find(({ id }) => id === parseFloat(crushId));
+  
+  const resultData = crushData.find(({ id }) => id === parseFloat(crushId));
   // console.log(result);
-  if (!result) return response.status(status.NOT_FOUND).json({ message: 'Crush não encontrado' });
-  response.status(status.SUCCESS).json(result);
+  
+  if (!resultData) {
+ return response.status(status.NOT_FOUND).json(
+    { message: 'Crush não encontrado' },
+    ); 
+}
+  response.status(status.SUCCESS).json(resultData);
 });
 
 // 4. Crie o endpoint POST /crush
@@ -50,7 +56,7 @@ crushRouter.post('/', (request, response) => {
   response.status(status.CREATED).json(newCrush);
 });
 
-crushRouter.put('/:id', (request, response) => {
+/* crushRouter.put('/:id', (request, response) => {
   const { id: crushId } = request.params;
   // const { id: crushId, ...reqs } = request.body;
 
@@ -60,22 +66,22 @@ crushRouter.put('/:id', (request, response) => {
   // console.log(result);
   // console.log(typeof crushData);
   // console.log(crushData);
-  const crushData = readCrushFile();
+  // const crushData = readCrushFile();
   // console.log(crushData);
-  const array = [];
-  array.push(crushData);
+  // const array = [];
+  // array.push(crushData);
   // const result = Object.values({ crushData });
-  const newCrushData = { ...request.body };
-  console.log(array);
+  // const newCrushData = { ...request.body };
+  // console.log(array);
   // const removeResult = crushData.filter((e) => e.id !== result.id);
   // console.log(removeResult);
-  writeCrushFile(newCrushData);
+  // writeCrushFile(newCrushData);
   // console.log(readCrushFile());
-  const result = array.find(({ id }) => id === parseFloat(crushId));
+/*  const result = array.find(({ id }) => id === parseFloat(crushId));
   if (!result) return response.status(status.NOT_FOUND).json({ message: 'Crush não encontrado' });
   response.status(status.SUCCESS).json(newCrushData);
 });
-
+ */
 crushRouter.delete('/:id', (request, response) => {
   const { id: crushId } = request.params;
 

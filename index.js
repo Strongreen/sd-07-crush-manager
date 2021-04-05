@@ -5,6 +5,8 @@ const loginRoute = require('./routers/login');
 const status = require('./helpers/status');
 
 const { 
+  emailMiddleware,
+  passwordMiddleware,
   nameMiddleware,
   authMiddleware,
   ageMiddleware,
@@ -26,7 +28,12 @@ const middlewaresCrush = [
   validRateMiddleware,
 ];
 
-app.use('/login', loginRoute);
+// não remova esse endpoint, e para o avaliador funcionar
+app.get('/', (_request, response) => {
+  response.status(status.SUCCESS).send();
+});
+
+app.post('/login', emailMiddleware, passwordMiddleware);
 
 app.post('/crush', middlewaresCrush);
 
@@ -34,11 +41,7 @@ app.put('/crush/:id', authMiddleware, middlewaresCrush);
 
 app.delete('/crush/:id', authMiddleware);
 
+app.use('/login', loginRoute);
 app.use('/crush', routeCrush);
-
-// não remova esse endpoint, e para o avaliador funcionar
-app.get('/', (_request, response) => {
-  response.status(status.SUCCESS).send();
-});
 
 app.listen(PORT, () => { console.log('Online'); });
