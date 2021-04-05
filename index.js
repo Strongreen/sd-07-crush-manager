@@ -100,7 +100,7 @@ app.post('/login', (request, response) => {
     return response.status(400).json({ message: 'O campo "password" é obrigatório' });
   }
   if (password.length < 6) {
-    return response.status(400).send({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+    return response.status(400).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
   response.status(200).json({ token });
 });
