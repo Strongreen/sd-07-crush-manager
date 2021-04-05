@@ -1,5 +1,5 @@
 const express = require('express');
-const crypto = require('crypto');
+// const crypto = require('crypto');
 
 const connection = require('./connection');
 const addCrush = require('./middleware/addCrush');
@@ -7,7 +7,7 @@ const checkLogin = require('./middleware/checkLogin');
 const checkToken = require('./middleware/checkToken');
 
 const routes = express.Router();
-const generateToken = () => crypto.randomBytes(8).toString('hex');
+// const generateToken = () => crypto.randomBytes(8).toString('hex');
 
 routes.get('/crush', checkToken, async (req, res) => {
   const data = await connection.dbRead();
