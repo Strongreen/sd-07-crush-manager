@@ -5,6 +5,7 @@ const fs = require('fs');
 const app = express();
 app.use(bodyParser.json());
 const NF = 404;
+const INVALID = 400;
 const SUCCESS = 200;
 const PORT = '3000';
 
@@ -29,6 +30,35 @@ app.get('/crush/:id', (request, response) => {
     }
   });
   response.status(obj.status).json(obj.response);
+});
+// login
+function tokens() {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const tamanho = 16;
+  let token = '';
+  for (let index = 0; index < tamanho; index += 1) {
+    token += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return token;
+}
+app.POST('/login', (request, response) => {
+  const { email, password } = request.body;
+  const regexPassword = 5;
+  const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._%+-]+\.com$/;
+  if (!email) {
+    response.status(INVALID).json({ message: 'O campo "email" é obrigatório' });
+  }
+  if (!password) {
+    response.status(INVALID).json({ message: 'O campo "password" é obrigatório' });
+  }
+  if (!regexEmail.test(email)) {
+    response.status(INVALID).json({ message: 'O "email" deve ter o formato "email@email.com"' });
+  }
+  if (!password.toString().length > regexPassword) {
+    response.status(INVALID).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+  }
+  const token = tokens();
+  response.status(SUCCESS).json({ token });
 });
 
 app.listen(PORT, () => { console.log('Online'); });
