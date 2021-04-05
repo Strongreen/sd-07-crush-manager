@@ -11,7 +11,7 @@ module.exports = {
     }
     next();
   },
-  validatePassword(request, response, next){
+  validatePassword(request, response, next) {
     const { password } = request.body;
     if (password === '' || password === undefined) {
       return response.status(400).json({ message: 'O campo "password" é obrigatório' });
