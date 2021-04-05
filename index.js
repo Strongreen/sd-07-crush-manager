@@ -55,7 +55,7 @@ app.post('/login', (request, response) => {
     response.status(INVALID).json({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
   if (password.toString().length < regexPassword) {
-    response.status(INVALID).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+    response.status(INVALID).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
   const token = tokens();
   response.status(SUCCESS).json({ token });
