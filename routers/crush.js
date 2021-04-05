@@ -7,7 +7,7 @@ const data = require('../crush.json');
 router.get('/', (req, res) => {
   const crushs = fs.readFileSync('../crush.json');
   const response = JSON.parse(crushs);
-  res.status(200).send([...response]);
+  return res.status(200).send([...response]);
 });
 
 router.get('/:id', (req, res) => {
