@@ -15,24 +15,19 @@ app.get('/', (_req, res) => {
   }
 });
 
-// function isValidId(id) {
-//   // return crushFile.find((item) => item.id === id);
-//   JSON.parse(crushFile);
-//   console.log(crushFile);
-//   console.log(typeof crushFile);
-//   console.log(typeof JSON.parse(crushFile));
-//   console.log(Array.isArray(crushFile));
-//   console.log(JSON.parse(crushFile).find((item) => item.id === id));
-// }
+function isValidId(id) {
+  const crushFileArray = JSON.parse(crushFile);
+  return crushFileArray.find((item) => item.id.toString() === id);
+}
 
-// app.get('/:id', (req, res) => {
-//   const isId = isValidId(req.params.id);
-//   if (isId) {
-//     res.status(200).send(isId);
-//   } else {
-//     res.status(404).send({ message: 'Crush não encontrado' });
-//   }
-// });
+app.get('/:id', (req, res) => {
+  const isId = isValidId(req.params.id);
+  if (isId) {
+    res.status(200).send(isId);
+  } else {
+    res.status(404).send({ message: 'Crush não encontrado' });
+  }
+});
 
 app.use((err, _req, res, _next) => {
   res.status(500).send(`Algo deu errado! Mensagem: ${err.message}`);
