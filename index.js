@@ -14,7 +14,7 @@ app.get('/', (_request, response) => {
 });
 
 app.get('/crush', (req, res) => {
-  return res.status(SUCCESS).send(crush);
+  res.status(SUCCESS).send(crush);
 });
 
 app.listen(PORT, () => { console.log('Online'); });
