@@ -23,15 +23,15 @@ crushRouter.get('/', async (_request, response) => {
 // 2. Crie o endpoint GET /crush/:id
 // const findUserId = (id, crushData) => crushData.find(({ id }) => id === id);
 
-crushRouter.get('/:id', (request, response) => {
+crushRouter.get('/:id', async (request, response) => {
   const { id: crushId } = request.params;
 
   // console.log((parseFloat(crushId)));
-  const crushData = readCrushFile();
+  const crushData = await readCrushFile();
   const result = crushData.find(({ id }) => id === parseFloat(crushId));
   // console.log(result);
   if (!result) return response.status(status.NOT_FOUND).json({ message: 'Crush não encontrado' });
-  response.status(200).json(result);
+  response.status(status.SUCCESS).json(result);
 });
 
 // 4. Crie o endpoint POST /crush
