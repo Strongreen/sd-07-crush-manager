@@ -1,14 +1,14 @@
 {
   "name": "sd-0x-crush-manager",
   "version": "1.0.0",
-  "description": "",
+  "description": "Ao iniciar este projeto, você concorda com as diretrizes do Código de Ética e Conduta e do Manual da Pessoa Estudante da Trybe.",
   "main": "index.js",
   "scripts": {
     "test": "jest --runInBand",
     "restore": "cp tests/seed.json crush.json",
     "debug": "nodemon -w --exec node index.js",
     "start": "node index.js",
-     "lint": "eslint --no-inline-config --no-error-on-unmatched-pattern -c .eslintrc.json . --ext .js,.jsx"
+    "lint": "eslint --no-inline-config --no-error-on-unmatched-pattern -c .eslintrc.json . --ext .js,.jsx"
   },
   "keywords": [],
   "author": "",
@@ -16,7 +16,7 @@
   "dependencies": {
     "body-parser": "1.19.0",
     "crypto-js": "4.0.0",
-    "express": "4.17.1",
+    "express": "^4.17.1",
     "express-rescue": "1.1.30"
   },
   "devDependencies": {
@@ -25,5 +25,16 @@
     "frisby": "2.1.3",
     "jest": "26.6.1",
     "nodemon": "2.0.6"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tryber/sd-07-crush-manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tryber/sd-07-crush-manager/issues"
+  },
+  "homepage": "https://github.com/tryber/sd-07-crush-manager#readme"
 }
