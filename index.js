@@ -168,6 +168,8 @@ const add = async (req, res) => {
   return res.status(201).send(novoCrush);
 };
 
+
+
 app.get('/crush/search', condicaoAuthMiddleware, async (req, res) => {
   const searchTerm = req.query.q;
   const crushJson = await lerArquivo();
@@ -178,14 +180,6 @@ app.get('/crush/search', condicaoAuthMiddleware, async (req, res) => {
   default:
     return res.status(SUCCESS).json(crushFiltrado);
   }
-});
-
-app.delete(caminhoId, async (req, res) => {
-  const { id } = req.params;
-  const crushJson = await lerArquivo(); 
-  const novoArquivoCrush = crushJson.filter((item) => item.id !== parseInt(id, 10));
-  await escreverArquivo(novoArquivoCrush);
-  res.status(200).send({ message: 'Crush deletado com sucesso' });
 });
 
 app.get('/crush', async (req, res) => {
@@ -214,6 +208,14 @@ app.post('/login', (req, res) => {
   condicaoPassword(req, res);
 });
 
+app.delete(caminhoId, condicaoAuthMiddleware, async (req, res) => {
+  const { id } = req.params;
+  const crushJson = await lerArquivo(); 
+  const novoArquivoCrush = crushJson.filter((item) => item.id !== parseInt(id, 10));
+  await escreverArquivo(novoArquivoCrush);
+  return res.status(200).send({ message: 'Crush deletado com sucesso' });
+});
+
 app.use(condicaoAuthMiddleware);
 app.use(condicaoNameMiddleware);
 app.use(condicaoNameMiddleware);
@@ -222,10 +224,6 @@ app.use(condicaoDateAtRateMiddleware);
 app.use(condicaoDateMiddleware);
 app.post('/crush', (req, res) => {
  add(req, res);
-});
-
-app.put(caminhoId, async (req, res) => {
-  
 });
 
 app.listen(3000);
