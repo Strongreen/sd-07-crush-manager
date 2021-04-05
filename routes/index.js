@@ -1,11 +1,11 @@
 const express = require('express');
 const fs = require('fs');
 
-const router = express();
+const routes = express();
 
 const FILE = 'crush.json';
 
-router.get('/', (req, res) => {
+routes.get('/', (req, res) => {
     const file = fs.readFileSync(FILE);
     const dataCrush = file.toString('utf-8');    
     const crushData = JSON.parse(dataCrush);
@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
     res.status(200).send([]);
 });
 
-router.get('/:id', async (req, res) => {
+routes.get('/:id', async (req, res) => {
   const { id } = req.params;
   const file = fs.readFileSync(FILE);
   const stringData = file.toString('utf-8');
