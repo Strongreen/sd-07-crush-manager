@@ -6,15 +6,15 @@ const app = express();
 app.use(bodyParser.json());
 
 function isValidEmail(email) {
-  let response = '';
   let responseBool = false;
+  let response = '';
 
   if (!email) {
+    responseBool = true;
     response = 'O campo email é obrigatório';
-    responseBool = true;
   } else if (!email.includes('@') && !email.includes('.com')) {
-    response = 'O email deve ter o formato email@email.com';
     responseBool = true;
+    response = 'O email deve ter o formato email@email.com';
   } else {
     responseBool = false;
   }
@@ -23,15 +23,15 @@ function isValidEmail(email) {
 }
 
 function isValidPassword(password) {
-  let response = '';
   let responseBool = false;
+  let response = '';
 
   if (!password) {
+    responseBool = true;
     response = 'O campo "password" é obrigatório';
-    responseBool = true;
   } else if (password.length < 6) {
-    response = 'A "senha" ter pelo menos 6 caracteres';
     responseBool = true;
+    response = 'A "senha" deve ter pelo menos 6 caracteres';
   } else {
     responseBool = false;
   }
