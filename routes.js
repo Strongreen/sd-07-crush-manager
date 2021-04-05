@@ -12,23 +12,32 @@ const validationEmail = (email) => {
 
 const validationPass = (password) => password.length >= 6;
 
-routes.post('/login', (req, res) => {
-  const { email, password } = req.body;
+const checkEmail = (email) => {
   if (!email || email.length === 0) {
-    res.status(400).send({ message: 'O campo "email" é obrigatório' });
+    return { message: 'O campo "email" é obrigatório' };
   }
   if (!validationEmail(email)) {
-    res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
+    return { message: 'O "email" deve ter o formato "email@email.com"' };
   }
+  return null;
+};
+
+routes.post('/login', (req, res) => {
+  const { email, password } = req.body;
+
+  const emailErrorMessage = checkEmail(email);
+  if (emailErrorMessage) return res.status(400).send(emailErrorMessage);
+
   if (!password || password.length === 0) {
     res.status(400).send({ message: 'O campo "password" é obrigatório' });
   }
   if (!validationPass(password)) {
     res.status(400).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
-  if (validationEmail(email) && validationPass(password)) {
-    res.status(200).send({ token: generateToken() });
-  }
+  // if (validationEmail(email) && validationPass(password)) {
+  //   res.status(200).send({ token: generateToken() });
+  // }
+  res.status(200).send({ token: generateToken() });
 });
 
 module.exports = routes;
