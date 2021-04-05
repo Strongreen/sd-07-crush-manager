@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const express = require('express');
 const bodyParser = require('body-parser');
+
 const app = express();
 app.use(bodyParser.json());
 
@@ -38,35 +39,22 @@ app.get('/crush/:idtofind', (req, res) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  const regex = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+  const regex = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
   const regexValidation = regex.test(email);
 
-  if (!password) {
-    res.status(400).send({
-      "message": "O campo \"password\" é obrigatório"
-    })
-  }
+  if (!password) { res.status(400).send({ message: 'O campo "password" é obrigatório' }); }
   if (password.length < 6) {
-    res.status(400).send({
-      "message": "O \"password\" ter pelo menos 6 caracteres"
-    })
+    res.status(400).send({ message: 'O "password" ter pelo menos 6 caracteres' }); 
   }
-  if (!email) {
-    res.status(400).send({
-      "message": "O campo \"email\" é obrigatório"
-    })
-  }
+  if (!email) { res.status(400).send({ message: 'O campo "email" é obrigatório' }); }
   if (!regexValidation) {
-    res.status(400).send({
-      "message": "O \"email\" deve ter o formato \"email@email.com\""
-    })
+    res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
-  // res.send("chegou ao final")
 
-  const generatedToken = crypto.randomBytes(8).toString("hex");;
+  const generatedToken = crypto.randomBytes(8).toString('hex');
   res.send({
-    "token": generatedToken
-  })
-})
+    token: generatedToken,
+  });
+});
 
 app.listen(PORT, () => { console.log('Online'); });
