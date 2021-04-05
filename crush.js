@@ -9,10 +9,9 @@ app.use(bodyParser.json());
 
 app.get('/', (_req, res) => {
   if (crushFile.length === 0) {
-    res.status(200).send([]);
-  } else {
-    res.status(200).send(JSON.parse(crushFile));
+    return res.status(200).send([]);
   }
+  return res.status(200).send(crushFile);
 });
 
 function isValidId(id) {
