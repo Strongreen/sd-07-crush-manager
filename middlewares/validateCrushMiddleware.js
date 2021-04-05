@@ -33,20 +33,15 @@ const validateRate = (rate) => {
 };
 
 const validateDate = (date) => {
-  console.log(date);
   if (!date) {
-    console.log('(!date)', !date);
     throw new ErrorHandler(400,
        'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
   }
-  
   if (!Object.prototype.hasOwnProperty.call(date, 'datedAt') 
   || !Object.prototype.hasOwnProperty.call(date, 'rate')) {
-    console.log('!date.datedAt || !date.rate', !date.datedAt || !date.rate);
     throw new ErrorHandler(400, 
       'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
   }
-  
   validateRate(date.rate);
   validateDateAt(date.datedAt);
 };
