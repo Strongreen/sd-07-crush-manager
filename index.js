@@ -8,7 +8,7 @@ app.use(bodyParser.json());
 const SUCCESS = 200;
 const PORT = '3000';
 
-const crushs = fs.readFileSync('./crush.json');
+const crushs = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
@@ -26,12 +26,11 @@ app.get('/crush', (req, res) => {
 
 app.get('/crush/:id', (req, res) => {
   const { id: reqId } = req.params;
-  const crush = crushs.find(({ id }) => id === reqId);
-  console.log(crush);
+  const crush = crushs.find(({ id }) => id.toString() === reqId);
   if (crush) {
-    return res.status(200).json(crush);
+    res.status(200).send(crush);
   }
-  return res.status(404).json({
+  return res.status(404).send({
     message: 'Crush não encontrado',
   });
 });
