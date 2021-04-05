@@ -11,7 +11,7 @@ app.get('/', (_req, res) => {
   if (crushFile.length === 0) {
     res.status(200).send([]);
   } else {
-    res.status(200).send(crushFile);
+    res.status(200).send(JSON.parse(crushFile));
   }
 });
 
