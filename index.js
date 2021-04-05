@@ -2,6 +2,7 @@ const express = require('express');
 const crypto = require('crypto');
 const fs = require('fs').promises;
 
+const caminhoId = '/crush/:id';
 const app = express();
 const SUCCESS = 200;
 app.use(express.json());
@@ -70,7 +71,7 @@ const condicaoPassword = (req, res) => {
   }
 };
 
-const condicaoName = (req, res) => {
+const condicaoNameMiddleware = (req, res, next) => {
   const { name } = req.body;
   switch (true) {
     case !name || name === '':
@@ -82,11 +83,12 @@ const condicaoName = (req, res) => {
         message: 'O "name" deve ter pelo menos 3 caracteres',
       });
     default:
-      return name;
+      break;
   }
+  next();
 };
 
-const condicaoAge = (req, res) => {
+const condicaoAgeMiddleware = (req, res, next) => {
   const age = parseInt(req.body.age, 10);
   switch (true) {
     case !age || age === '':
@@ -100,9 +102,10 @@ const condicaoAge = (req, res) => {
     default:
       break;
   }
+  next();
 };
 
-const condicaoDateAtRate = (req, res) => {
+const condicaoDateAtRateMiddleware = (req, res, next) => {
   const { date } = req.body;
   switch (true) {
     case !date || !date.datedAt || (!date.rate && date.rate !== 0):
@@ -113,9 +116,10 @@ const condicaoDateAtRate = (req, res) => {
     default:
       break;
   }
+  next();
 };
- 
-const condicaoDate = (req, res) => {
+
+const condicaoDateMiddleware = (req, res, next) => {
   const { date } = req.body;
   switch (true) {
     case date.rate < 1 || date.rate > 5:
@@ -129,9 +133,10 @@ const condicaoDate = (req, res) => {
     default:
       break;
   }
+  next();
 };
 
-const condicaoAuth = (req, res) => {
+const condicaoAuthMiddleware = (req, res, next) => {
   const { authorization } = req.headers;
   switch (true) {
     case !authorization:
@@ -145,6 +150,7 @@ const condicaoAuth = (req, res) => {
     default:
        break;
   }
+  next();
 };
 
 const add = async (req, res) => {
@@ -162,13 +168,33 @@ const add = async (req, res) => {
   return res.status(201).send(novoCrush);
 };
 
+app.get('/crush/search', condicaoAuthMiddleware, async (req, res) => {
+  const searchTerm = req.query.q;
+  const crushJson = await lerArquivo();
+  const crushFiltrado = crushJson.filter((item) => item.name.includes(searchTerm));
+  switch (true) {
+    case !searchTerm:
+    return res.status(SUCCESS).send(null);
+  default:
+    return res.status(SUCCESS).json(crushFiltrado);
+  }
+});
+
+app.delete(caminhoId, async (req, res) => {
+  const { id } = req.params;
+  const crushJson = await lerArquivo(); 
+  const novoArquivoCrush = crushJson.filter((item) => item.id !== parseInt(id, 10));
+  await escreverArquivo(novoArquivoCrush);
+  res.status(200).send({ message: 'Crush deletado com sucesso' });
+});
+
 app.get('/crush', async (req, res) => {
   const crushJson = await lerArquivo();
   if (crushJson) return res.status(SUCCESS).send(crushJson);
   return res.status(SUCCESS).send(null);
 });
 
-app.get('/crush/:id', async (req, res) => {
+app.get(caminhoId, async (req, res) => {
   const crushJson = await lerArquivo();
   const { id } = req.params;
   const number = 1;
@@ -188,20 +214,18 @@ app.post('/login', (req, res) => {
   condicaoPassword(req, res);
 });
 
+app.use(condicaoAuthMiddleware);
+app.use(condicaoNameMiddleware);
+app.use(condicaoNameMiddleware);
+app.use(condicaoAgeMiddleware);
+app.use(condicaoDateAtRateMiddleware);
+app.use(condicaoDateMiddleware);
 app.post('/crush', (req, res) => {
-  condicaoAuth(req, res);
-  condicaoName(req, res);
-  condicaoAge(req, res);
-  condicaoDateAtRate(req, res);
-  condicaoDate(req, res);
  add(req, res);
 });
 
-app.put('/crush/:id', async (req, res) => {
-  condicaoAuth(req, res);
-  condicaoName(req, res);
-  condicaoAge(req, res);
-  condicaoDate(req, res);
+app.put(caminhoId, async (req, res) => {
+  
 });
 
 app.listen(3000);
