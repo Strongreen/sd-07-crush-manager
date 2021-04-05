@@ -37,6 +37,8 @@ app.post('/login', emailMiddleware, passwordMiddleware);
 
 app.post('/crush', authMiddleware, middlewaresCrush);
 
+app.get('/crush/search', authMiddleware);
+
 app.put('/crush/:id', authMiddleware, middlewaresCrush);
 
 app.delete('/crush/:id', authMiddleware);

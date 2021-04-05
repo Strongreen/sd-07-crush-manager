@@ -4,7 +4,7 @@ const crushRouter = Router();
 const { readCrushFile, writeCrushFile } = require('../helpers');
 const status = require('../helpers/status');
 
-crushRouter.get('/', async (request, response, next) => {
+crushRouter.get('/search', async (request, response, next) => {
   const { q } = request.query;
   console.log(q);
   const crushData = await readCrushFile();
