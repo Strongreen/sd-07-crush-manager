@@ -4,15 +4,15 @@ const crushRouter = Router();
 const { readCrushFile, writeCrushFile } = require('../helpers');
 const status = require('../helpers/status');
 
-/* crushRouter.get('/', async (request, response, next) => {
+crushRouter.get('/', async (request, response, next) => {
   const { q } = request.query;
   console.log(q);
   const crushData = await readCrushFile();
-  const filteredResult = await crushData.filter((e) => e.name.includes(q));
+  const filteredResult = crushData.filter((e) => e.name.includes(q));
   response.status(status.SUCCESS).json(filteredResult);
   if (filteredResult === []) next();
 });
- */
+
 crushRouter.get('/', async (_request, response) => {
   // const { authorization } = request.headers;
   const result = await readCrushFile();
