@@ -109,9 +109,14 @@ const validateAge = (age, res) => {
       .json({ message: 'O crush deve ser maior de idade' });
   }
 };
-
+const messageDate = 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios';
 const validateRate = (rate, res) => {
   const rateNumber = Number(rate);
+  if (!rate) {
+    return res
+      .status(BAD_REQUEST)
+      .json({ message: messageDate });
+  } 
   if (rateNumber < 1 || rateNumber > 5 || Number.isNaN(rateNumber)) {
     return res
       .status(BAD_REQUEST)
@@ -121,10 +126,15 @@ const validateRate = (rate, res) => {
 
 const valiDatedAt = (datedAt, res) => {
   const regexDateFormat = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
+  if (!datedAt) {
+    return res
+      .status(BAD_REQUEST)
+      .json({ message: messageDate });
+  } 
   if (!regexDateFormat.test(datedAt)) {
     return res
       .status(BAD_REQUEST)
-      .json({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa' });
+      .json({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
   } 
 };
 
@@ -132,46 +142,32 @@ const validateDate = (date, res) => {
   if (!date) {
     return res
       .status(BAD_REQUEST)
-      .json({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
+      .json({ message: messageDate });
   }
 
   const { datedAt, rate } = date;
-  if (!rate || !datedAt) {
-    return res
-      .status(BAD_REQUEST)
-      .json({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
-  } else if (
-    valiDatedAt(datedAt, res) ||
-    validateRate(rate, res)
-  ) {
+  if (valiDatedAt(datedAt, res) || validateRate(rate, res)) {
     return true;
   }
 };
 
 app.post('/crush', (req, res) => {
   const { name, age, date } = req.body;
-  const { token } = req.headers;
+  const { authorization } = req.headers;
+
   if (
-    !validateToken(token, res) &&
-    !validateName(name, res) &&
-    !validateAge(Number(age), res) &&
-    !validateDate(date, res)
+    !validateToken(authorization, res)
+    && !validateName(name, res)
+    && !validateAge(Number(age), res)
+    && !validateDate(date, res)
   ) {
     const crushsArray = getJSON();
-    const newCrush = {
-      id: crushsArray.length + 1,
-      name,
-      age,
-      date,
-    };
+    const id = crushsArray.length + 1;
+    const newCrush = { id, name, age, date };
     const newCrushsArray = [...crushsArray, newCrush];
-  
     fs.writeFileSync('./crush.json', JSON.stringify(newCrushsArray));
-  
     res.status(CREATED).json(newCrush);
   }
-
-
 });
 
 app.listen(PORT, () => { console.log('Online'); });
