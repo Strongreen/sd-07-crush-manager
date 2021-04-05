@@ -14,5 +14,7 @@ app.get('/', (_request, response) => {
 
 require('./Endpoints/exercise1')(app);
 require('./Endpoints/exercise2')(app);
+require('./Endpoints/exercise3')(app);
+require('./Endpoints/exercise4')(app);
 
 app.listen(PORT, () => { console.log('Online'); });
