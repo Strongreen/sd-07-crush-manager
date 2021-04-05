@@ -34,16 +34,16 @@ app.get('/crush/:id', (request, response) => {
 // login
 function tokens() {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const tamanho = 16;
   let token = '';
+  const tamanho = 16;
   for (let index = 0; index < tamanho; index += 1) {
     token += characters.charAt(Math.floor(Math.random() * characters.length));
   }
   return token;
 }
-app.POST('/login', (request, response) => {
+app.post('/login', (request, response) => {
   const { email, password } = request.body;
-  const regexPassword = 5;
+  const regexPassword = 6;
   const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._%+-]+\.com$/;
   if (!email) {
     response.status(INVALID).json({ message: 'O campo "email" é obrigatório' });
@@ -54,7 +54,7 @@ app.POST('/login', (request, response) => {
   if (!regexEmail.test(email)) {
     response.status(INVALID).json({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
-  if (!password.toString().length > regexPassword) {
+  if (password.toString().length < regexPassword) {
     response.status(INVALID).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
   }
   const token = tokens();
