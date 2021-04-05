@@ -69,10 +69,10 @@ app.get('/', (_request, response) => {
 });
 
 // Req 1 ---------------------------------------------------------------------------
-app.get('/crush', async (req, res) => {
+app.get('/crush', async (_req, res) => {
   const crush = await readCrush();
   if (crush.length > 0) {
-    res.status(SUCCESS).json(readCrush);
+    res.status(SUCCESS).json(crush);
   }
   res.status(SUCCESS).json([]);
 });
