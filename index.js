@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const { tokenvalid, crushvalid, datavalid } = require('./mid');
 
 const app = express();
 app.use(bodyParser.json());
@@ -59,6 +60,25 @@ app.post('/login', (request, response) => {
   }
   const token = tokens();
   response.status(SUCCESS).json({ token });
+});
+
+app.use(tokenvalid);
+app.use(crushvalid);
+app.use(datavalid);
+
+app.post('/crush', (req, res) => {
+  try {
+    const content = JSON.parse(fs.readFileSync(`${__dirname}/crush.json`));
+    const newContent = {
+      id: content[content.length - 1].id + 1,
+      ...req.body,
+    };
+    fs.writeFileSync(`${__dirname}/crush.json`, JSON.stringify([...content, newContent], null, 2));
+
+    return res.status(201).json(newContent);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
 });
 
 app.listen(PORT, () => { console.log('Online'); });
