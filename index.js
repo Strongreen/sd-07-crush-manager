@@ -168,8 +168,6 @@ const add = async (req, res) => {
   return res.status(201).send(novoCrush);
 };
 
-
-
 app.get('/crush/search', condicaoAuthMiddleware, async (req, res) => {
   const searchTerm = req.query.q;
   const crushJson = await lerArquivo();
