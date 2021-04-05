@@ -1,5 +1,4 @@
 const express = require('express');
-
 const routes = require('./routes');
 
 const app = express();
@@ -12,7 +11,7 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.get('/crush', routes.crush);
-app.get('/crush', routes.crushId);
+app.use('/crush', routes.crush);
+app.use('/crush', routes.crushId);
 
 app.listen(PORT, () => { console.log(`Online on port ${PORT}`); });

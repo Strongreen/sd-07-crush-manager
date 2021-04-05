@@ -6,15 +6,18 @@ const route = express.Router();
 
 route.get('/:id', rescue(async (req, res) => {
   try {
-    const id = req.params;
+    const { id } = req.params;
+    console.log(typeof id, id);
+
     const content = await fs.promises.readFile(`${__dirname}/../crush.json`);
     const crushesArray = JSON.parse(content);
-    const resultCrush = crushesArray.find((crush) => crush.id === id);
+
+    const resultCrush = crushesArray.find((crush) => crush.id === Number(id));
 
     if (!resultCrush) {
-      res.staus(404).send({ message: 'Crush não encontrado' });
+      return res.status(404).send({ message: 'Crush não encontrado' });
     }
-    
+
     res.status(200).json(resultCrush);
   } catch (e) {
     throw new Error(e);

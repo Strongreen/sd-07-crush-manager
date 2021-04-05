@@ -8,7 +8,8 @@ route.get('/', rescue(async (_req, res) => {
   try {
     const content = await fs.promises.readFile(`${__dirname}/../crush.json`);
     const crushesArray = JSON.parse(content);
-    res.status(200).json(crushesArray);
+    
+    return res.status(200).json(crushesArray);
   } catch (e) {
     throw new Error(e);
   }
