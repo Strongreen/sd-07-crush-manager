@@ -4,15 +4,18 @@ const fs = require('fs').promises;
 let crushes = require('./crush.json');
 const tokens = require('./tokens.json');
 
+const crushFile = './crush.json';
+const crushWithId = '/crush/:id';
+
 const app = express();
 const SUCCESS = 200;
 
 function obrigatoryField(res, field, date) {
   if (!date) {
-    return res.status(400).send({ message: `O campo \"${field}\" é obrigatório` });
+    return res.status(400).send({ message: `O campo "${field}" é obrigatório` });
   }
   return res.status(400).send(
-    { message: `O campo \"${field}\" é obrigatório e \"datedAt\" e \"rate\" não podem ser vazios` },
+    { message: `O campo "${field}" é obrigatório e "datedAt" e "rate" não podem ser vazios` },
   );
 }
 
@@ -31,7 +34,7 @@ function checkFields(res, name, age) {
     return obrigatoryField(res, 'name');
   }
   if (name.length < 3) {
-    return res.status(400).send({ message: 'O \"name\" deve ter pelo menos 3 caracteres' });
+    return res.status(400).send({ message: 'O "name" deve ter pelo menos 3 caracteres' });
   }
   if (!age) {
     return obrigatoryField(res, 'age');
@@ -43,7 +46,7 @@ function checkFields(res, name, age) {
 
 function checkRate(res, rate) {
   if (rate < 1 || rate > 5) {
-    return res.status(400).send({ message: 'O campo \"rate\" deve ser um inteiro de 1 à 5' });
+    return res.status(400).send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
   if (!rate) return obrigatoryField(res, 'date', 1);
 }
@@ -56,7 +59,7 @@ function checkDate(res, date) {
   const dateRegex = /^(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/](19|20)\d\d$/;
   if (!dateRegex.test(datedAt)) {
     return res.status(400).send(
-      { message: 'O campo \"datedAt\" deve ter o formato \"dd/mm/aaaa\"' },
+      { message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' },
     );
   }
  checkRate(res, rate);
@@ -69,12 +72,12 @@ function checkCrush(res, crush) {
 async function checkMail(res, email) {
   const regex = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
   if (!regex.test(email)) {
-    await res.status(400).send({ message: 'O \"email\" deve ter o formato \"email@email.com"' });
+    await res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
 }
 
 async function allCrushes(res) {
-  const readFile = await fs.readFile('./crush.json');
+  const readFile = await fs.readFile(crushFile);
   res.status(SUCCESS).send(JSON.parse(readFile));
 }
 
@@ -98,7 +101,7 @@ app.get('/crush/search', rescue(async (req, res) => {
   await res.status(200).send(results);
 }));
 
-app.get('/crush/:id', rescue(async (req, res) => {
+app.get(crushWithId, rescue(async (req, res) => {
   const { id } = req.params;
   const crush = crushes.find((item) => item.id === parseInt(id, 10));
   checkCrush(res, crush);
@@ -115,7 +118,7 @@ app.post('/login', rescue(async (req, res) => {
     await obrigatoryField(res, 'password');
   }
   if (password.length < 6) {
-    await res.status(400).send({ message: 'O \"password\" deve ter pelo menos 6 caracteres' });
+    await res.status(400).send({ message: 'O "password" deve ter pelo menos 6 caracteres' });
   }
   const generateToken = () => Math.random().toString(36).substr(2);
   const initialToken = `${generateToken()}${generateToken()}`;
@@ -142,11 +145,11 @@ app.post('/crush', rescue(async (req, res) => {
     },
   };
   crushes.push(crush);
-  fs.writeFile('./crush.json', JSON.stringify(crushes));
+  fs.writeFile(crushFile, JSON.stringify(crushes));
   await res.status(201).send(crush);
 }));
 
-app.put('/crush/:id', rescue(async (req, res) => {
+app.put(crushWithId, rescue(async (req, res) => {
   const { authorization } = req.headers;
   verifyToken(res, authorization);
   const id = parseInt(req.params.id, 10);
@@ -158,7 +161,7 @@ app.put('/crush/:id', rescue(async (req, res) => {
   crush.name = name;
   crush.age = age;
   crush.date = date;
-  fs.writeFile('./crush.json', JSON.stringify(crushes));
+  fs.writeFile(crushFile, JSON.stringify(crushes));
   await res.status(200).send({
     id: crush.id,
     name,
@@ -167,14 +170,14 @@ app.put('/crush/:id', rescue(async (req, res) => {
   });
 }));
 
-app.delete('/crush/:id', rescue(async (req, res) => {
+app.delete(crushWithId, rescue(async (req, res) => {
   const { authorization } = req.headers;
   verifyToken(res, authorization);
   const id = parseInt(req.params.id, 10);
   const crush = crushes.find((item) => item.id === id);
   checkCrush(res, crush);
   crushes = crushes.filter((item) => item.id !== id);
-  fs.writeFile('./crush.json', JSON.stringify(crushes));
+  fs.writeFile(crushFile, JSON.stringify(crushes));
   await res.status(200).send({ message: 'Crush deletado com sucesso' });
 }));
 
