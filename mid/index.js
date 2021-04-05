@@ -27,7 +27,7 @@ const crushvalid = (request, response, next) => {
   }
   next();
 };
-const verificação = (date) => !date || !date.datedAt || (!date.rate && date.rate !== 0);
+const verificação = (date) => (!date || !date.datedAt || !date.rate);
 
 const datavalid = (request, response, next) => {
   const { date } = request.body;

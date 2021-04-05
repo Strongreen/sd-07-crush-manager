@@ -77,7 +77,7 @@ app.post('/crush', (req, res) => {
 
     return res.status(201).json(newContent);
   } catch (error) {
-    return res.status(500).json(error);
+    return res.status(400).json(error);
   }
 });
 
