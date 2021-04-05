@@ -14,9 +14,7 @@ routes.get('/', (req, res) => {
        res.status(200).send(crushData);
     } 
     res.status(200).send([]);
-});
-
-routes.get('/:id', async (req, res) => {
+}).get('/:id', async (req, res) => {
   const { id } = req.params;
   const file = fs.readFileSync(FILE);
   const stringData = file.toString('utf-8');
@@ -34,4 +32,4 @@ routes.get('/:id', async (req, res) => {
   res.status(200).send(filterCrush);
 });
 
-module.exports = router;
+module.exports = routes;
