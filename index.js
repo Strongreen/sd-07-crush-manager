@@ -72,9 +72,9 @@ app.get('/', (_request, response) => {
 app.get('/crush', async (_req, res) => {
   const crush = await readCrush();
   if (crush.length > 0) {
-    res.status(SUCCESS).json(crush);
+    return res.status(SUCCESS).json(crush);
   }
-  res.status(SUCCESS).json([]);
+  return res.status(SUCCESS).json([]);
 });
 
 // Req 2 ---------------------------------------------------------------------------
@@ -87,9 +87,9 @@ app.get('/crush/:id', async (req, res) => {
   const jsonCrush = JSON.parse(crush);
   const findId = jsonCrush.find((star) => star.id === parseInt(id, 10));
   if (findId == null) {
-    res.status(404).json({ message: 'Crush não encontrado' });
+    return res.status(404).json({ message: 'Crush não encontrado' });
   }
-  res.status(SUCCESS).json(findId);
+  return res.status(SUCCESS).json(findId);
 });
 
 // Req 3 ---------------------------------------------------------------------------
@@ -98,20 +98,20 @@ app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const validatorEmail = validator.validate(email);
   if (!email) {
-    res.status(400).json({ message: 'O campo "email" é obrigatório' });
+    return res.status(400).json({ message: 'O campo "email" é obrigatório' });
   }
   if (!validatorEmail) {
-    res.status(400).json({
+    return res.status(400).json({
       message: 'O "email" deve ter o formato "email@email.com"',
     });
   }
   if (!password) {
-    res.status(400).json({ message: 'O campo "password" é obrigatório' });
+    return res.status(400).json({ message: 'O campo "password" é obrigatório' });
   }
   if (password.length < 6) {
-    res.status(400).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
+    return res.status(400).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
-  res.status(SUCCESS).json({ token });
+  return res.status(SUCCESS).json({ token });
 });
 
 app.use(tokenMiddleware);
@@ -123,7 +123,7 @@ app.delete('/crush/:id', async (req, res) => {
   const newFileCrush = crush.filter((star) => star.id !== parseInt(id, 10));
   console.log(newFileCrush);
   await fs.writeFile('./crush.json', JSON.stringify(newFileCrush, null, 2));
-  res.status(200).json({ message: 'Crush deletado com sucesso' });
+  return res.status(200).json({ message: 'Crush deletado com sucesso' });
 });
 
 app.use(nameAgeMiddleware);
@@ -138,7 +138,7 @@ app.post('/crush', async (req, res) => {
   const numId = crushDocument.length + 1;
   crushDocument.push({ id: numId, name, age, date });
   await fs.writeFile('./crush.json', JSON.stringify(crushDocument, null, 2));
-  res.status(201).json({ id: numId, name, age, date });
+  return res.status(201).json({ id: numId, name, age, date });
 });
 
 // Req 5 ---------------------------------------------------------------------------
