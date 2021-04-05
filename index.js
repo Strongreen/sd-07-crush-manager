@@ -77,6 +77,16 @@ app.get('/crush', async (_req, res) => {
   return res.status(SUCCESS).json([]);
 });
 
+// Req 7 ---------------------------------------------------------------------------
+app.get('/crush/search', tokenMiddleware, async (req, res) => {
+  const { q } = req.query;
+  const crushs = await readCrush();
+  const search = crushs.filter((star) => star.name.toUpperCase().includes(q.toUpperCase()));
+  if (!q || q === '') return res.status(200).json(crushs);
+  if (search) return res.status(200).json(search);
+  if (!search) return res.status(200).json([]);
+});
+
 // Req 2 ---------------------------------------------------------------------------
 app.get('/crush/:id', async (req, res) => {
   const { id } = req.params;
@@ -114,6 +124,7 @@ app.post('/login', (req, res) => {
   return res.status(SUCCESS).json({ token });
 });
 
+
 app.use(tokenMiddleware);
 
 // Req 6 ---------------------------------------------------------------------------
@@ -121,7 +132,6 @@ app.delete('/crush/:id', async (req, res) => {
   const { id } = req.params;
   const crush = await readCrush();
   const newFileCrush = crush.filter((star) => star.id !== parseInt(id, 10));
-  console.log(newFileCrush);
   await fs.writeFile('./crush.json', JSON.stringify(newFileCrush, null, 2));
   return res.status(200).json({ message: 'Crush deletado com sucesso' });
 });
@@ -143,5 +153,4 @@ app.post('/crush', async (req, res) => {
 
 // Req 5 ---------------------------------------------------------------------------
 
-// Req 7 ---------------------------------------------------------------------------
 app.listen(PORT, () => { console.log('Online'); });
