@@ -10,7 +10,7 @@ const SUCCESS = 200;
 const FAIL = 404;
 
 async function getCrushes() {
-  // sempre tentar trabalhar com promisses e não callbacks
+  // sempre tentar trbalhar com promisses e não callbacks
   // queremos transfromar o fluxo assincrono em sincrono
   // por isso além do fs.promises usamos async await
   try {
