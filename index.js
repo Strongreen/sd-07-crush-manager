@@ -122,9 +122,9 @@ app.post('/login', rescue((req, res) => {
   const generateToken = () => Math.random().toString(36).substr(2);
   const initialToken = `${generateToken()}${generateToken()}`;
   const token = initialToken.slice(0, 16);
-  res.status(SUCCESS).send({ token });
   tokens.push(token);
-  return fs.writeFile('./tokens.json', JSON.stringify(tokens));
+  fs.writeFile('./tokens.json', JSON.stringify(tokens));
+  return res.status(SUCCESS).send({ token });
 }));
 
 app.post('/crush', rescue((req, res) => {
@@ -180,8 +180,6 @@ app.delete(crushWithId, rescue((req, res) => {
   return res.status(200).send({ message: 'Crush deletado com sucesso' });
 }));
 
-app.use((err, _req, res, _next) => {
-  res.status(500).json({ error: `Erro: ${err.message}` });
-});
+app.use((err, _req, res, _next) => res.status(500).json({ error: `Erro: ${err.message}` }));
 
 app.listen(3000, () => console.log('App rodando na porta 3000'));
