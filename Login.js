@@ -11,7 +11,7 @@ const isEmail = (text) => {
 const isEmpty = (text) => {
   if (text === '') {  
     return true;
-  } 
+  }  
 
   return false;
 };
