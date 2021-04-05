@@ -18,9 +18,9 @@ app.listen(PORT, () => { console.log('Online'); });
 app.get('/crush', (_request, response) => {
   const data = JSON.parse(fs.readFileSync('./crush.json', 'utf-8'));
   if (data.length != 0) {
-    return response.status(SUCCESS).send(data);
+    response.status(SUCCESS).send(data);
   }
   else {
-    return response.status(SUCCESS).send([]);
+    response.status(SUCCESS).send([]);
   }
 });
