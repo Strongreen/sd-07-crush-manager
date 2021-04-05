@@ -81,7 +81,9 @@ app.get('/crush/:id', (request, response) => {
   const { id } = request.params;
   const result = data.find((item) => item.id === Number(id));
   if (result) return response.status(200).send(result);
-  if (request.params !== 'search') return response.status(404).json({ message: 'Crush não encontrado' });
+  if (request.params !== 'search') {
+    return response.status(404).json({ message: 'Crush não encontrado' });
+  }
 });
 // --------------------- REQ 3 ---------------------
 app.post('/login', (request, response) => {
