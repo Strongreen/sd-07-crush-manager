@@ -42,17 +42,17 @@ crushRouter.get('/:id', async (request, response) => {
 
 // 4. Crie o endpoint POST /crush
 
-crushRouter.post('/', (request, response) => {
+crushRouter.post('/', async (request, response) => {
   /* const { name, age, date } = request.body; */
 
   /*   const message = validInputs(name, age, date);
     if (message !== 'xablau') return response.status(status.BAD_REQUEST).json({ message }); */
 
-  const crushData = readCrushFile();
+  const crushData = await readCrushFile();
   const newCrush = { id: !crushData.length ? 1 : crushData.length + 1, ...request.body };
   const newCrushData = [...crushData, newCrush];
-  // console.log(newCrush);
-  writeCrushFile(newCrushData);
+  console.log(newCrushData);
+  await writeCrushFile(newCrushData);
   response.status(status.CREATED).json(newCrush);
 });
 

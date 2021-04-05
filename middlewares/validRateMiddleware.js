@@ -3,7 +3,8 @@ const status = require('../helpers/status');
 const validRateMiddleware = (request, response, next) => {
   const { date } = request.body;
 
-  const isRateNotNumber = typeof rate !== 'number';
+  const isRateNotNumber = typeof date.rate !== 'number';
+  console.log(isRateNotNumber);
   const validRate = /^[1-5]/;
 
   if (isRateNotNumber || !validRate.test(date.rate.toString())) {

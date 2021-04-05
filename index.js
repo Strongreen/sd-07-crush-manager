@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const routeCrush = require('./routers/crush');
 const loginRoute = require('./routers/login');
+const routeCrush = require('./routers/crush');
 const status = require('./helpers/status');
 
 const { 
@@ -35,7 +35,7 @@ app.get('/', (_request, response) => {
 
 app.post('/login', emailMiddleware, passwordMiddleware);
 
-app.post('/crush', middlewaresCrush);
+app.post('/crush', authMiddleware, middlewaresCrush);
 
 app.put('/crush/:id', authMiddleware, middlewaresCrush);
 

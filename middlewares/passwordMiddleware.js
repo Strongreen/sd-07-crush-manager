@@ -10,7 +10,7 @@ const passwordMiddleware = (request, response, next) => {
   }
   if (password.length < 6) {
     return response.status(status.BAD_REQUEST).json(
-      { message: 'A "senha" deve ter pelo menos 6 caracteres' },
+      { message: 'O "password" deve ter pelo menos 6 caracteres' },
     );
   }
   next();

@@ -7,8 +7,8 @@ const status = require('../helpers/status');
 
 // 3.  Crie o endpoint POST /login
 
-loginRouter.post('/', async (_request, response) => {
-  const newToken = await genRanHex(16);
+loginRouter.post('/', (_request, response) => {
+  const newToken = genRanHex(16);
   response.setHeader('authorization', newToken);
   response.status(status.SUCCESS).json({ token: newToken });
 });
