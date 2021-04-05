@@ -20,7 +20,7 @@ const validateRequest = (email, password) => {
   }
   if (password.toString().length < 6) {
     return {
-      message: 'O "password" deve ter pelo menos 6 caracteres',
+      message: 'A "senha" deve ter pelo menos 6 caracteres',
     };
   }
 
