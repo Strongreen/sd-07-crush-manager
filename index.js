@@ -2,12 +2,19 @@ const express = require('express');
 const fs = require('fs');
 const crypto = require('crypto');
 
+const crushPath = '/crush';
+
 const app = express();
 const SUCCESS = 200;
 
 const { ApiMessages, ApiStatus } = require('./enums');
 
-const { loginMiddleWare, validationMiddleWare, authMiddleWare } = require('./middleware');
+const { 
+    loginMiddleWare,
+    authMiddleWare,
+    crushInfoMiddleWare,
+    dateInfoMiddleWare,
+    dateRegexMiddleWare } = require('./middleware');
 
 app.use(express.json());
 
@@ -16,13 +23,13 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.get('/crush', (_req, res) => {
+app.get(`${crushPath}`, (_req, res) => {
   const oldContent = fs.readFileSync(`${__dirname}/crush.json`);
   if (oldContent.length !== 0) res.status(ApiStatus.SUCCESS).json(JSON.parse(oldContent));
   else res.status(ApiStatus.SUCCESS).send([]);
 });
 
-app.get('/crush/search', authMiddleWare, (req, res) => {
+app.get(`${crushPath}/search`, authMiddleWare, (req, res) => {
   const oldContent = fs.readFileSync(`${__dirname}/crush.json`);
   const { q } = req.query;
 
@@ -35,7 +42,7 @@ app.get('/crush/search', authMiddleWare, (req, res) => {
   }
 });
 
-app.get('/crush/:id', (req, res) => {
+app.get(`${crushPath}/:id`, (req, res) => {
   const { id } = req.params;
   const content = fs.readFileSync(`${__dirname}/crush.json`);
   const data = JSON.parse(content);
@@ -50,7 +57,22 @@ app.post('/login', loginMiddleWare, (_req, res) => {
   res.status(ApiStatus.SUCCESS).json({ token });
 });
 
-app.post('/crush', validationMiddleWare, (req, res) => {
+app.delete(`${crushPath}/:id`, authMiddleWare, (req, res) => {
+  const oldContent = fs.readFileSync(`${__dirname}/crush.json`);
+  const { id } = req.params;
+
+  const filtered = JSON.parse(oldContent).filter((crush) => crush.id !== parseInt(id, 10));
+
+  fs.writeFileSync(`${__dirname}/crush.json`, JSON.stringify(filtered));
+  res.status(ApiStatus.SUCCESS).json({ message: ApiMessages.CRUSH_DELETED });
+});
+
+app.use(authMiddleWare);
+app.use(crushInfoMiddleWare);
+app.use(dateInfoMiddleWare);
+app.use(dateRegexMiddleWare);
+
+app.post(`${crushPath}`, (req, res) => {
   const oldContent = fs.readFileSync(`${__dirname}/crush.json`);
   const idx = JSON.parse(oldContent).length;
 
@@ -59,7 +81,7 @@ app.post('/crush', validationMiddleWare, (req, res) => {
   res.status(ApiStatus.SUCCESS_CREATED).json({ ...req.body, id: idx + 1 });
 });
 
-app.put('/crush/:id', validationMiddleWare, (req, res) => {
+app.put(`${crushPath}/:id`, (req, res) => {
   const oldContent = fs.readFileSync(`${__dirname}/crush.json`);
   const { id } = req.params;
 
@@ -68,16 +90,6 @@ app.put('/crush/:id', validationMiddleWare, (req, res) => {
   const newData = [...filtered, { ...req.body, id: parseInt(id, 10) }];
   fs.writeFileSync(`${__dirname}/crush.json`, JSON.stringify(newData));
   res.status(ApiStatus.SUCCESS).json({ ...req.body, id: parseInt(id, 10) });
-});
-
-app.delete('/crush/:id', authMiddleWare, (req, res) => {
-  const oldContent = fs.readFileSync(`${__dirname}/crush.json`);
-  const { id } = req.params;
-
-  const filtered = JSON.parse(oldContent).filter((crush) => crush.id !== parseInt(id, 10));
-
-  fs.writeFileSync(`${__dirname}/crush.json`, JSON.stringify(filtered));
-  res.status(ApiStatus.SUCCESS).json({ message: ApiMessages.CRUSH_DELETED });
 });
 
 app.listen(3000, () => {
