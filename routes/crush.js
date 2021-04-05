@@ -3,7 +3,7 @@ const { readFile } = require('fs').promises;
 
 const getCrushs = async () => JSON.parse(await readFile('./crush.json', 'utf8'));
 
-routes.get('/crush', async (req, res) => {
+routes.get('/', async (req, res) => {
   try {
     const crushs = await getCrushs();
     return res.status(200).json(crushs);
@@ -12,7 +12,7 @@ routes.get('/crush', async (req, res) => {
   }
 });
 
-routes.get('/crush/:id', async (req, res) => {
+routes.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const crushs = await getCrushs();
