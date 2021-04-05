@@ -1,6 +1,6 @@
 const emptyEmail = (req, res, next) => {
     const { email } = req.body;
-    if (email.length === 0 || !email) {
+    if (!email) {
         return res.status(400).send({
             message: 'O campo "email" é obrigatório',
         });

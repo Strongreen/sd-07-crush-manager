@@ -1,14 +1,9 @@
 const express = require('express');
 
 const router = express.Router();
-const fs = require('fs');
 const data = require('../crush.json');
 
-router.get('/', (req, res) => {
-  const crushs = fs.readFileSync('../crush.json');
-  const response = JSON.parse(crushs);
-  return res.status(200).send([...response]);
-});
+router.get('/', (req, res) => res.status(200).send([...data]));
 
 router.get('/:id', (req, res) => {
   const id = Number(req.params.id);
