@@ -4,6 +4,14 @@ const fs = require('fs');
 const validator = require('email-validator');
 const randtoken = require('rand-token');
 
+// --------------------- Middleware ---------------------
+const validateAgeMiddleware = require('./middlewares/validateAge');
+const validateTokenMiddleware = require('./middlewares/validateToken');
+const validateNameMiddleware = require('./middlewares/validateName');
+const validateDateMiddleware = require('./middlewares/validateDate');
+const validateDateFormateMiddleware = require('./middlewares/validateDateFormate');
+const validateRateRangeMiddleware = require('./middlewares/validateRateRange');
+
 const app = express();
 const SUCCESS = 200;
 const PORT = 3000;
@@ -14,53 +22,6 @@ app.use(express.json());
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
-// --------------------- MIDDLEWARES ---------------------
-const validateTokenMiddleware = (request, response, next) => {
-  const { authorization } = request.headers;
-  if (!authorization) return response.status(401).json({ message: 'Token não encontrado' });
-  if (authorization.length !== 16) return response.status(401).json({ message: 'Token inválido' });
-  next();
-};
-const validateNameMiddleware = (request, response, next) => {
-  const { name } = request.body;
-  if (!name) return response.status(400).json({ message: 'O campo "name" é obrigatório' });
-  if (name.length < 3) {
-    return response.status(400).json({ message: 'O "name" deve ter pelo menos 3 caracteres' });
-  }
-  next();
-};
-const validateDateMiddleware = (request, response, next) => {
-  const { date } = request.body;
-  if (!date || date.rate === undefined || !date.datedAt) {
-    return response.status(400)
-    .json({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
-  }
-  next();
-};
-const validateDateFormateMiddleware = (request, response, next) => {
-  const { date } = request.body;
-  const dateRegex = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/;
-  if (!(dateRegex.test(date.datedAt))) {
-    return response.status(400)
-    .json({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
-  }
-  next();
-};
-const validateAge = (request, response, next) => {
-  const { age } = request.body;
-  if (!age) return response.status(400).json({ message: 'O campo "age" é obrigatório' });
-  if (Number(age) < 18) {
-    return response.status(400).json({ message: 'O crush deve ser maior de idade' });
-  }
-  next();
-};
-const validateRateRangeMiddleware = (request, response, next) => {
-  const { date } = request.body;
-  if (Number(date.rate) < 1 || Number(date.rate) > 5) {
-    return response.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' }); 
-  }
-  next();
-};
 // --------------------- REQ 1 ---------------------
 app.get('/crush', (_request, response) => {
   const data = JSON.parse(fs.readFileSync(PATH));
@@ -119,7 +80,7 @@ app.delete(CRUSHIDPATH, (request, response) => {
 // https://www.codegrepper.com/code-examples/javascript/javascript+validate+date+dd%2Fmm%2Fyyyy
 app.use(validateNameMiddleware);
 app.use(validateDateMiddleware);
-app.use(validateAge);
+app.use(validateAgeMiddleware);
 app.use(validateDateFormateMiddleware);
 app.use(validateRateRangeMiddleware);
 app.post('/crush', (request, response) => {
