@@ -9,7 +9,7 @@ app.get('/', async (_req, res) => {
     `${__dirname}/../crush.json`,
     'utf8',
   );
-  res.status(200).send(response);
+  res.status(200).send(JSON.parse(response));
 });
 
 app.get('/:id', (req, res) => {
