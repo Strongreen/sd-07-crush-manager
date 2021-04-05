@@ -3,17 +3,35 @@ const fs = require('fs');
 
 const router = express();
 
-const File = 'crush.json';
+const FILE = 'crush.json';
 
 router.get('/', (req, res) => {
-    const file = fs.readFileSync(File);
-    const dataCrush = file.toString('utf8');
+    const file = fs.readFileSync(FILE);
+    const dataCrush = file.toString('utf-8');    
     const crushData = JSON.parse(dataCrush);
 
    if (crushData.length !== 0) {
        res.status(200).send(crushData);
     } 
     res.status(200).send([]);
+});
+
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  const file = fs.readFileSync(FILE);
+  const stringData = file.toString('utf-8');
+  const data = JSON.parse(stringData);
+
+  const filterCrush = data.find((crush) => crush.id === Number(id));
+
+  if (!filterCrush || filterCrush === 0) {
+     res.status(404).send(
+        {
+          message: 'Crush não encontrado',
+        },
+    );
+  }
+  res.status(200).send(filterCrush);
 });
 
 module.exports = router;
