@@ -24,8 +24,13 @@ app.get('/crush', async (_req, res) => {
   if (result.length === 0) res.status(200).send([]);
   res.status(200).send(result);
 });
-app.get('/crush/:id', async (_req, _res) => {
-  // const result = await readCrushFile();
+app.get('/crush/:id', async (req, res) => {
+  const result = await readCrushFile();
+  const { id } = req.params;
+  const crushId = parseInt(id, 10);  
+  const filteredCrush = result.find((crush) => crush.id === crushId);
+  if (filteredCrush) res.status(200).send(filteredCrush);
+  res.status(404).send({ message: 'Crush não encontrado' });  
 });
 
 app.use((err, _req, res, _next) => {
