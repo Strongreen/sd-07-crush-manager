@@ -15,35 +15,30 @@ app.get('/', (_request, response) => {
 });
 
 app.get('/crush', (_request, response) => {
-
   fs.promises.readFile('./crush.json', 'utf-8')
-    .then(content => {
-      const data = JSON.parse(content)
+    .then((content) => {
+      const data = JSON.parse(content);
       response.status(SUCCESS).send(data);
     })
-    .catch(error => { console.error(`Erro: ${error.message}`) })
-})
-
-
+    .catch((error) => { console.error(`Erro: ${error.message}`); });
+});
 
 app.get('/crush/:id', (request, response) => {
-  const { id } = (request.params)
-  console.log(typeof (id))
+  const { id } = (request.params);
+  console.log(typeof (id));
   fs.promises.readFile('./crush.json', 'utf-8')
-    .then(content => {
+    .then((content) => {
       const data = JSON.parse(content);
-      const findCrush = data.find(crush => crush.id === Number(id))
+      const findCrush = data.find((crush) => crush.id === Number(id));
       if (!findCrush) {
-        return response.status(NOTFOUND).send({ "message": "Crush não encontrado" })
-      } else {
+        return response.status(NOTFOUND).send({ message: 'Crush não encontrado' });
+      } 
         response.status(SUCCESS).send(findCrush);
-      }
     })
-    .catch(error => {
-      console.error(`Erro: ${error.message}`)
-      response.status(NOTFOUND).send({ "message": "Crush não encontrado" })
-    })
-})
-
+    .catch((error) => {
+      console.error(`Erro: ${error.message}`);
+      response.status(NOTFOUND).send({ message: 'Crush não encontrado' });
+    });
+});
 
 app.listen(PORT, () => { console.log('Online'); });
