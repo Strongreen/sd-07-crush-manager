@@ -1,4 +1,6 @@
 const express = require('express');
+const fs = require('fs');
+const rescue = require('express-rescue');
 const data = require('../crush.json');
 
 const router = express.Router();
@@ -18,5 +20,25 @@ router.get('/:id', (req, res) => {
   }
   return res.status(SUCCESS).send(crush);
 });
+
+const tokenExistsMiddleware = (req, res, next) => {
+  const { authorization: token } = req.header;
+  if (!token) {
+    return res.status(401).json({ message: 'Token não encontrado' });
+  }
+  next();
+};
+
+router.post('/', tokenExistsMiddleware, rescue(async (req, res) => {
+  try {
+    const { name, age, date } = req.body;
+    data.push({ name, age, date });
+    console.log(data);
+    await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));
+    res.status(200).send({ message: 'Novo crush adicionado com sucesso!' });
+  } catch (error) {
+    console.log(error);
+  }
+}));
 
 module.exports = router;
