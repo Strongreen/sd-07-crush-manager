@@ -22,7 +22,7 @@ const validatePassword = (password) => {
     throw new ErrorHandler(400, 'O campo "password" é obrigatório');
   }
   if (password.length < 6) {
-    throw new ErrorHandler(400, 'O "password" deve ter pelo menos 6 caracteres');
+    throw new ErrorHandler(400, 'A "senha" deve ter pelo menos 6 caracteres');
   }
 };
 
