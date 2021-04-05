@@ -18,6 +18,20 @@ routes.get('/', async (req, res) => {
   }
 });
 
+routes.get('/search', authMiddleware, async (req, res) => {
+  try {
+    const { q: query } = req.query;
+    const crushs = await getCrushs();
+    if (!query || query === '') return res.status(201).json(crushs);
+
+    const filteredCrushs = crushs.filter(({ name }) => name.includes(query));
+
+    return res.status(200).json(filteredCrushs);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
 routes.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
