@@ -19,7 +19,7 @@ routes.post('/login', (req, res) => {
     return res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
   if (!isPasswordValid) {
-    return res.status(400).send({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+    return res.status(400).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
 
   const token = generateToken();
