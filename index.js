@@ -115,6 +115,17 @@ app.post('/login', (req, res) => {
 });
 
 app.use(tokenMiddleware);
+
+// Req 6 ---------------------------------------------------------------------------
+app.delete('/crush/:id', async (req, res) => {
+  const { id } = req.params;
+  const crush = await readCrush();
+  const newFileCrush = crush.filter((star) => star.id !== parseInt(id, 10));
+  console.log(newFileCrush);
+  await fs.writeFile('./crush.json', JSON.stringify(newFileCrush, null, 2));
+  res.status(200).json({ message: 'Crush deletado com sucesso' });
+});
+
 app.use(nameAgeMiddleware);
 app.use(dateAndRateMiddleware);
 app.use(dateFormatMiddleware);
@@ -131,14 +142,6 @@ app.post('/crush', async (req, res) => {
 });
 
 // Req 5 ---------------------------------------------------------------------------
-// Req 6 ---------------------------------------------------------------------------
-app.delete('/crush/:id', async (req, res) => {
-  const { id } = req.params;
-  const crush = await readCrush();
-  const newFileCrush = crush.filter((star) => star.id !== parseInt(id, 10));
-  await fs.writeFile('./crush.json', JSON.stringify(newFileCrush, null, 2));
-  res.status(200).json({ message: 'Crush deletado com sucesso' });
-});
 
 // Req 7 ---------------------------------------------------------------------------
 app.listen(PORT, () => { console.log('Online'); });
