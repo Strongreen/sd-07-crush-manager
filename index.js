@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const middleware = require('./middleware');
-const routeCrush = require('./router');
+const middleware = require('./src/middleware');
+const routeCrush = require('./src/router');
 
 const app = express();
 app.use(bodyParser.json());
