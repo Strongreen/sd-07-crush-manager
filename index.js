@@ -13,6 +13,8 @@ const {
   auth,
   validateName,
   validateAge,
+  dateValidation,
+  dateRateMW,
 } = middlewares;
 
 app.use(express.json());
@@ -23,7 +25,7 @@ app.get('/', (_request, response) => {
 });
 
 app.post('/login', validateEmail, validatePassword);
-app.post('/crush', auth, validateName, validateAge /** middlewares requisito 4 */);
+app.post('/crush', auth, validateName, validateAge, dateValidation, dateRateMW);
 app.use('/crush', routes.crush);
 app.use('/crush', routes.crushId);
 app.use('/login', routes.login);
