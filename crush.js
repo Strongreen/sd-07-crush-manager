@@ -135,9 +135,6 @@ app.put('/:id', async (req, res) => {
   const { name, age, date } = req.body;
   const { authorization } = req.headers;
   const thisCrush = await findAsyncId(crushJson, id);
-  thisCrush.name = name;
-  thisCrush.age = age;
-  thisCrush.date = date;
   
   const isName = isValidName(name);
   const isAge = isValidAge(age);
@@ -148,6 +145,9 @@ app.put('/:id', async (req, res) => {
   if (isAge) return res.status(400).json({ message: isAge });
   if (isDate) return res.status(400).send({ message: isDate });
   
+  thisCrush.name = name;
+  thisCrush.age = age;
+  thisCrush.date = date;
   return res.status(201).json(thisCrush);
 });
 
