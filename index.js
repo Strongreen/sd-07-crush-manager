@@ -4,6 +4,7 @@ const fs = require('fs');
 const app = express();
 const SUCCESS = 200;
 const jsonPath = './crush.json';
+const crushIdPath = '/crush/:id';
 
 function gerarToken(tamanhoToken) {
   const caracteres = 'QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm0123456789';
@@ -108,7 +109,7 @@ app.get('/crush', (req, res) => {
 });
 
 // REQUISITO 2
-app.get('/crush/:id', (req, res) => {
+app.get(crushIdPath, (req, res) => {
   let { id } = req.params;
   id = parseInt(id, 2);
   const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
@@ -175,7 +176,7 @@ app.post('/crush', (req, res) => {
 });
 
 // REQUISITO 5
-app.put('/crush/:id', (req, res) => {
+app.put(crushIdPath, (req, res) => {
   let resData = {};
   const { id } = req.params;
   const newData = req.body;
@@ -193,6 +194,22 @@ app.put('/crush/:id', (req, res) => {
   }
   fs.writeFileSync(jsonPath, JSON.stringify(data));
   res.status(200).send(resData);
+});
+
+// REQUISITO 6
+app.delete(crushIdPath, (req, res) => {
+  const token = req.headers.authorization;
+  if (validaToken(token) !== 'OK') { res.status(401).send({ message: validaToken(token) }); }
+  const { id } = req.params;
+  const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+
+  for (let i = 0; i < data.length; i += 1) {
+    if (data[i].id === parseInt(id, 0)) {
+      data.splice(i, 1);
+    }
+  }
+  fs.writeFileSync(jsonPath, JSON.stringify(data));
+  res.status(200).send({ message: 'Crush deletado com sucesso' });
 });
 
 /* MIDDLEWARE DE ERRO */
