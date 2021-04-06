@@ -1,15 +1,20 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 
 const app = express();
-app.use(bodyParser.json());
-
 const SUCCESS = 200;
-const PORT = '3000';
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.listen(PORT, () => { console.log('Online'); });
+const routerCrush = require('./router/routerCrush');
+const routerLogin = require('./router/routerLogin');
+const routerSearchCrush = require('./router/routerSearchCrush');
+
+app.use(express.json());
+app.use('/crush/search', routerSearchCrush);
+app.use('/crush', routerCrush);
+app.use('/login', routerLogin);
+
+app.listen(3000, () => console.log('Servidor rodando no caminho http://localhost:3000'));
