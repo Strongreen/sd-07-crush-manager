@@ -41,7 +41,6 @@ module.exports = rescue(async (req, res) => {
   try {
     emailIsValid(email);
     passwordIsValid(password);
-    console.log(req.body, email, password);
     res.status(SUCCESS).json({ token: generateToken(8) });
   } catch (error) {
     return res.status(BAD_REQUEST).json({ message: error.message });

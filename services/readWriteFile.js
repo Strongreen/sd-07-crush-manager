@@ -9,9 +9,12 @@ const readFile = async () => {
   }
 };
 
-const readFile1 = async () => {
-  console.log('teste');
+const writeFile = async (data) => {
+  try {
+    return await fs.writeFile('./crush.json', JSON.stringify(data));
+  } catch (error) {
+    throw new Error('Não foi possível escrever no arquivo de dados');
+  }
 };
 
-// export default readFile;
-module.exports = { readFile, readFile1 };
+module.exports = { readFile, writeFile };
