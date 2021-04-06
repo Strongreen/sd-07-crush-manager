@@ -25,7 +25,7 @@ function validDate(date) {
 
   if (!date || !date.rate || !date.datedAt) {
     throw new Error(
-      'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios'
+      'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
     );
   }
 
