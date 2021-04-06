@@ -155,7 +155,7 @@ app.post('/login', (req, res) => {
     res.status(BAD_REQUEST).json({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
   if (!passwordVerify(password)) {
-    res.status(BAD_REQUEST).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+    res.status(BAD_REQUEST).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
   res.status(SUCCESS).json({ token: tokenGenerator(16) });
 });
