@@ -6,7 +6,6 @@ const app = express();
 app.use(bodyParser.json());
 
 const SUCCESS = 200;
-const BAD = 404;
 const PORT = '3000';
 
 // não remova esse endpoint, e para o avaliador funcionar
