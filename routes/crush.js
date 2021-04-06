@@ -82,8 +82,7 @@ app.post('/', (req, res) => {
   const newData = [...data, object];
 
   fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData)).then(() =>
-    res.status(201).send(object),
-  );
+    res.status(201).send(object));
 });
 
 // --------------------------------------------------------------------- METODOS PUT
@@ -98,8 +97,7 @@ app.put('/:id', (req, res) => {
   const newData = [...filteredData, crush];
 
   fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData)).then(() =>
-    res.status(200).send(crush),
-  );
+    res.status(200).send(crush));
 });
 
 module.exports = app;
