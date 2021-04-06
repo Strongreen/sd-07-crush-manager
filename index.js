@@ -10,6 +10,8 @@ app.use(express.json());
 
 const SUCCESS = 200;
 const PORT = '3000';
+const crushJson = './crush.json';
+const crushId = '/crush/:id';
 
 async function readCrush() {
   const crush = await fs.readFile(
@@ -55,7 +57,7 @@ function rateMiddleware(req, res, next) {
 }
 function dateAndRateMiddleware(req, res, next) {
   const { date } = req.body;
-  if (!date || !date.datedAt || !date.rate) {
+  if (!date || !date.datedAt || (!date.rate && date.rate !== 0)) {
     return res.status(400).json({
       message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
     });
@@ -88,7 +90,7 @@ app.get('/crush/search', tokenMiddleware, async (req, res) => {
 });
 
 // Req 2 ---------------------------------------------------------------------------
-app.get('/crush/:id', async (req, res) => {
+app.get(crushId, async (req, res) => {
   const { id } = req.params;
   const crush = await fs.readFile(
     path.join(__dirname, '.', 'crush.json'),
@@ -127,11 +129,11 @@ app.post('/login', (req, res) => {
 app.use(tokenMiddleware);
 
 // Req 6 ---------------------------------------------------------------------------
-app.delete('/crush/:id', async (req, res) => {
+app.delete(crushId, async (req, res) => {
   const { id } = req.params;
   const crush = await readCrush();
   const newFileCrush = crush.filter((star) => star.id !== parseInt(id, 10));
-  await fs.writeFile('./crush.json', JSON.stringify(newFileCrush, null, 2));
+  await fs.writeFile(crushJson, JSON.stringify(newFileCrush, null, 2));
   return res.status(200).json({ message: 'Crush deletado com sucesso' });
 });
 
@@ -146,10 +148,21 @@ app.post('/crush', async (req, res) => {
   const crushDocument = await readCrush();
   const numId = crushDocument.length + 1;
   crushDocument.push({ id: numId, name, age, date });
-  await fs.writeFile('./crush.json', JSON.stringify(crushDocument, null, 2));
+  await fs.writeFile(crushJson, JSON.stringify(crushDocument, null, 2));
   return res.status(201).json({ id: numId, name, age, date });
 });
 
 // Req 5 ---------------------------------------------------------------------------
+app.put(crushId, async (req, res) => {
+  const { name, age, date } = req.body;
+  const { id } = req.params;
+  const crushDocument = await readCrush();
+  const indexWriteDocument = id - 1;
+  crushDocument[indexWriteDocument].name = name;
+  crushDocument[indexWriteDocument].age = age;
+  crushDocument[indexWriteDocument].date = date;
+  await fs.writeFile(crushJson, JSON.stringify(crushDocument, null, 2));
+  return res.status(200).json(crushDocument[indexWriteDocument]);
+});
 
 app.listen(PORT, () => { console.log('Online'); });
