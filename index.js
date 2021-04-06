@@ -34,7 +34,10 @@ app.get('/crush', (req, res) => {
 // REQUISITO 7
 app.get('/crush/search', (req, res) => {
   const token = req.headers.authorization;
-  if (validaToken(token) !== 'OK') { res.status(401).send({ message: validaToken(token) }); }
+  if (validaToken(token) !== 'OK') {
+    res.status(401).send({ message: validaToken(token) });
+    return;
+  }
   const termo = req.query.q;
   const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
   const newData = [];
@@ -80,6 +83,7 @@ app.post('/crush', (req, res) => {
   const token = req.headers.authorization;
   if (validaToken(token) !== 'OK') {
     res.status(401).send({ message: validaToken(token) });
+    return;
   }
   validaRegras(newCrush);
   const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
@@ -101,14 +105,15 @@ app.put(crushIdPath, (req, res) => {
   const { id } = req.params;
   const newData = req.body;
   const token = req.headers.authorization;
-  if (validaToken(token) !== 'OK') { res.status(401).send({ message: validaToken(token) }); }
+  if (validaToken(token) !== 'OK') {
+    res.status(401).send({ message: validaToken(token) });
+    return;
+  }
   validaRegras(newData);
   const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
   for (let i = 0; i < data.length; i += 1) {
     if (parseInt(id, 0) === data[i].id) {
-      data[i].name = newData.name;
-      data[i].age = newData.age;
-      data[i].date = newData.date;
+      Object.assign(data[i], { name: newData.name, age: newData.age, date: newData.date });
       resData = data[i];
     }
   }
@@ -119,7 +124,10 @@ app.put(crushIdPath, (req, res) => {
 // REQUISITO 6
 app.delete(crushIdPath, (req, res) => {
   const token = req.headers.authorization;
-  if (validaToken(token) !== 'OK') { res.status(401).send({ message: validaToken(token) }); }
+  if (validaToken(token) !== 'OK') {
+    res.status(401).send({ message: validaToken(token) });
+    return;
+  }
   const { id } = req.params;
   const data = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
 
