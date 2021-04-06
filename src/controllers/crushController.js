@@ -1,4 +1,6 @@
 const file = require('../utils/files');
+const generateToken = require('../utils/token');
+const { validateEmail, validatePassword } = require('../utils/validations');
 
 const fileName = 'crush.json'; 
 
@@ -25,4 +27,16 @@ async function idIndex(request, response) {
   }
 }
 
-module.exports = { index, idIndex };
+function login(require, response) {
+  const { email, password } = require.body;
+  try {
+    if (validateEmail(email) && validatePassword(password)) {
+      const token = generateToken();
+      return response.status(200).json({ token });
+    }
+  } catch (error) {
+    return response.status(400).json({ message: error.message });
+  }
+}
+
+module.exports = { index, idIndex, login };
