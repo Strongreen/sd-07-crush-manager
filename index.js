@@ -9,6 +9,7 @@ app.use(bodyParser.json());
 
 const SUCCESS = 200;
 const PORT = '3000';
+const CRUSHID = '/crush/:id';
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
@@ -24,22 +25,14 @@ const readCrushFile = async () => {
   } 
 };
 
-// requisito 1
-app.get('/crush', async (req, res) => {
-  const crushes = await readCrushFile();
-  res.status(200).send(crushes);  
-});
+const writeCrushFile = async (data) => {    
+  try {  
+    await fs.writeFile(path.resolve(__dirname, '.', 'crush.json'), JSON.stringify(data));
+  } catch (error) {
+    return error;
+  }
+};
 
-// requisito 2
-app.get('/crush/:id', async (req, res) => {
-  const crushes = await readCrushFile();
-  const { id } = req.params;
-  const filteredCrush = crushes.find((crush) => crush.id === Number(id));
-  if (!filteredCrush) return res.status(404).send({ message: 'Crush não encontrado' });  
-  res.status(200).send(filteredCrush);  
-});
-
-// requisito 3
 const validateEmail = (email) => {
   const regexToValidateEmail = /[A-Z0-9]{1,}@[A-Z0-9]{2,}\.[A-Z0-9]{2,}/i;
   if (!email || email === '') return { message: 'O campo "email" é obrigatório' };
@@ -51,22 +44,6 @@ const validatePassword = (password) => {
   if (!password || password.length === 0) return { message: 'O campo "password" é obrigatório' };
   if (password.length < 6) return { message: 'O "password" deve ter pelo menos 6 caracteres' };
 };
-
-app.post('/login', (req, res, next) => {
-const { email, password } = req.body;
-const isEmailValid = validateEmail(email);
-const isPasswordValid = validatePassword(password);
-if (isEmailValid) return res.status(400).send(isEmailValid);
-if (isPasswordValid) return res.status(400).send(isPasswordValid);
-
-// source: https://www.w3schools.com/nodejs/ref_crypto.asp
-const token = crypto.randomBytes(8).toString('hex');
-req.body = { token };
-res.status(200).send(req.body);
-next();
-});
-
-// requisito 4
 
 const validateName = (name) => {
   if (!name || name.length === 0) return { message: 'O campo "name" é obrigatório' };
@@ -114,38 +91,88 @@ const validateToken = (req, res, next) => {
   next();
 };
 
-const writeCrushFile = async (data) => {    
-  try {  
-    await fs.writeFile(path.resolve(__dirname, '.', 'crush.json'), JSON.stringify(data));
-  } catch (error) {
-    return error;
-  }
-};
+// requisito 7
+app.get('/crush/search', validateToken, async (req, res) => {
+  const searchTerm = req.query.q;
+  const crushes = await readCrushFile();   
 
+  if (!searchTerm) res.status(SUCCESS).json(crushes);
+
+  const crushFound = crushes.filter((crush) => crush.name.includes(searchTerm));
+  res.status(SUCCESS).json(crushFound);
+});
+
+// requisito 1
+app.get('/crush', async (req, res) => {
+  const crushes = await readCrushFile();
+  res.status(SUCCESS).send(crushes);  
+});
+
+// requisito 2
+app.get(CRUSHID, async (req, res) => {
+  const crushes = await readCrushFile();
+  const { id } = req.params;
+  const filteredCrush = crushes.find((crush) => crush.id === Number(id));
+  if (!filteredCrush) return res.status(404).send({ message: 'Crush não encontrado' });  
+  res.status(SUCCESS).send(filteredCrush);  
+});
+
+// requisito 3
+app.post('/login', (req, res, next) => {
+const { email, password } = req.body;
+const isEmailValid = validateEmail(email);
+const isPasswordValid = validatePassword(password);
+if (isEmailValid) return res.status(400).send(isEmailValid);
+if (isPasswordValid) return res.status(400).send(isPasswordValid);
+
+// source: https://www.w3schools.com/nodejs/ref_crypto.asp
+const token = crypto.randomBytes(8).toString('hex');
+req.body = { token };
+res.status(SUCCESS).send(req.body);
+next();
+});
+
+// requisito 4
 app.post('/crush', validateToken, async (req, res) => {
   const { name, age, date } = req.body;
+
   const checkedData = validateCrushData(name, age, date);
   if (checkedData) return res.status(400).send(checkedData);
+
   const crushes = await readCrushFile();
   const id = crushes.length + 1;
   const newCrush = { id, ...req.body };
   const newCrushes = [...crushes, newCrush];
   await writeCrushFile(newCrushes);  
-  return res.status(201).send(newCrush);
+
+  res.status(201).send(newCrush);
 });
 
-app.put('/crush/:id', validateToken, async (req, res) => {
+// requisito 5
+app.put(CRUSHID, validateToken, async (req, res) => {
   const { name, age, date } = req.body;
+  const { id } = req.params;
   
   const checkedData = validateCrushData(name, age, date);
   if (checkedData) return res.status(400).send(checkedData);
-
-  const { id } = req.params;
+  
   const crushes = await readCrushFile();  
   const crushToEdit = { id: Number(id), ...req.body };
   crushes[id] = crushToEdit;
   await writeCrushFile(crushes);
-  return res.status(200).send(crushToEdit);
+
+  res.status(SUCCESS).send(crushToEdit);
+});
+
+//  requisito 6
+app.delete(CRUSHID, validateToken, async (req, res) => {
+  const { id } = req.params;
+  const crushes = await readCrushFile();  
+
+  const newCrushes = crushes.filter((crush) => crush.id !== Number(id));
+  await writeCrushFile(newCrushes);
+
+  res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
 });
 
 app.listen(PORT, () => { console.log('Online'); });
