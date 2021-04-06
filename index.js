@@ -1,11 +1,11 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+// const errorMiddleware = require('./middlewares/errorMiddleware');
 
 const routes = require('./routes');
 const { SUCCESS } = require('./statusCode.json');
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 
 const PORT = '3000';
 
@@ -17,5 +17,8 @@ app.get('/', (_request, response) => {
 app.use('/crush', routes.getAllCrushes);
 app.use('/crush', routes.getCrushById);
 app.use('/login', routes.login);
+app.use('/crush', routes.createCrush);
+
+// app.use(errorMiddleware);
 
 app.listen(PORT, () => { console.log('Online'); });
