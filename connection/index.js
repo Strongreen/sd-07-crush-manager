@@ -45,4 +45,17 @@ const dbEdit = (name, age, date, id) => new Promise((resolve, _reject) => {
     });
 });
 
-module.exports = { dbRead, dbPush, dbEdit };
+const dbDelete = (id) => new Promise((resolve, _reject) => {
+  dbRead()
+    .then((data) => {
+      const newData = data.filter((crush) => {
+        if (crush.id !== Number(id)) return crush;
+      });
+      const string = JSON.stringify(newData);
+      fs.writeFile(db, string, (_err) => {
+        resolve({ message: 'Crush deletado com sucesso' });
+      });
+    });
+});
+
+module.exports = { dbRead, dbPush, dbEdit, dbDelete };

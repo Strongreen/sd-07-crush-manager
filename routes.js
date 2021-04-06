@@ -42,6 +42,12 @@ routes.put('/crush/:id', checkToken, addCrush, async (req, res) => {
   });
 });
 
+routes.delete('/crush/:id', checkToken, async (req, res) => {
+  const { id } = req.params;
+  const response = await connection.dbDelete(id);
+  res.status(200).send(response);
+});
+
 routes.post('/login', checkLogin, (req, res) => {
   res.status(200).send({ token: '7mqaVRXJSp886CGr' });
   // res.status(200).send({ token: generateToken() });
