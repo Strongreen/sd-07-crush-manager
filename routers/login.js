@@ -13,7 +13,7 @@ router.use(passwordLength);
 
 router.post('/', (req, res) => {
     try {
-       return res.status(200).send({ token: 'Art394384FG0Lu49' })
+       return res.status(200).send({ token: 'Art394384FG0Lu49' });
     } catch (error) {
        return new Error(error);
     }
