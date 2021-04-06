@@ -23,7 +23,7 @@ app.get(crushList, async (_req, res) => {
 });
 
 app.get(crushId, async (req, res) => {
-  const myCrush = await fs.readFile(crushList, 'utf8');
+  const myCrush = await fs.readFile('./crush.json', 'utf8');
   const id = Number(req.params.id);
   const crushJson = JSON.parse(myCrush);
   const idCrush = await crushJson.find((crush) => crush.id === id);
