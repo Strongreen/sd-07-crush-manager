@@ -26,14 +26,6 @@ app.get('/crush', (req, res) => {
   res.status(200).send(data);
 });
 
-app.get(crushId, (req, res) => {
-  const { id } = req.params;
-  const data = requestdata();
-  const dataFilter = data.find((e) => e.id === parseFloat(id));
-  if (!dataFilter) return res.status(404).send({ message: 'Crush não encontrado' });
-  res.status(200).send(dataFilter);
-});
-
 const validEmail = (emailregex) => {
   const validate = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
   return validate.test(emailregex);
@@ -93,7 +85,21 @@ app.post('/crush', (req, res) => {
     },
   };
   crushs.push(newCrush);
+  fs.promises.writeFile(`${__dirname}/${crushFile}`, JSON.stringify(crushs));
   res.status(201).send(newCrush);
+});
+
+app.get('/crush/search', authMiddleware, (req, res) => {
+  const { q } = req.query;
+  const crushs = requestdata();
+  console.log(crushs);
+  const filterCrush = crushs.filter((e) => e.name.indexOf(q) > -1);
+  console.log(req.query);
+  console.log(q);
+  // console.log(crushs);
+  console.log(filterCrush);
+  res.status(200).send(filterCrush);
+
 });
 
 app.put(crushId, authMiddleware);
@@ -128,6 +134,14 @@ app.delete(crushId, (req, res) => {
   const id = Number(req.params.id);
   crushs.splice(id - 1, 1);
   res.status(200).send({ message: 'Crush deletado com sucesso' });
+});
+
+app.get('/crush/:id', (req, res) => {
+  const { id } = req.params;
+  const data = requestdata();
+  const dataFilter = data.find((e) => e.id === parseFloat(id));
+  if (!dataFilter) return res.status(404).send({ message: 'Crush não encontrado' });
+  res.status(200).send(dataFilter);
 });
 
 app.listen(3000, () => {
