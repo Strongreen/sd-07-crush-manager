@@ -16,6 +16,34 @@ const crushList = '/crush';
 const crushId = '/crush/:id';
 app.listen(PORT, () => { console.log('Online'); });
 
+ const emailValidation = (email) => {
+  const rejexForEmail = /^[^\s@]+@[^\s@]+$/;
+  return rejexForEmail.test(email);
+};
+
+const passwordValidation = (password) => {
+  const rejexForPassword = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i;
+  return rejexForPassword.test(password);
+};
+
+const authorizationEmail = (req, res, next) => {
+  const { email } = req.body;
+  if (!email || email === '') {
+    return res.status(400).json({
+      message: 'O campo "email" é obrigatório',
+  });
+  }
+
+  const validEmail = emailValidation(email);
+  if (!validEmail) {
+    return res.status(400).json({
+      message: 'O "email" deve ter o formato "email@email.com"',
+    });
+  }
+
+  next();
+};
+
 app.get(crushList, async (_req, res) => {
   const myCrush = await fs.readFile('./crush.json', 'utf8');
   const newListCrush = JSON.parse(myCrush);
@@ -35,31 +63,22 @@ app.get(crushId, async (req, res) => {
   });
 });
 
-/* async function test () {
-  const result = await read();
-  console.log(result[0]);
-} */
-
-// test();
-
-/* const emailValidation = (email) => {
-  const rejexForEmail = /^[^\s@]+@[^\s@]+$/;
-  return rejexForEmail.test(email);
-}
-
-const passwordValidation = (password) => {
-  const rejexForPassword = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i;
-  return rejexForPassword.test(password);
-}
-
-const token = (req, res, next) => {
-  const { authorization } = req.headers;
-
-  if( authorization.length !== 16 ) {
-     return res.status(401).json({
-      message: 'Token inválido',
+app.post('/login', authorizationEmail, (req, res) => {
+  const { password } = req.body;
+  if (!password || password === '') {
+    return res.status(400).json({
+      message: 'O campo "password" é obrigatório',
     });
   }
 
-  next();
-} */ 
+  passwordValidation(password);
+  if (!password || password.length < 6) {
+    return res.status(400).json({
+      message: 'O \"password\" deve ter pelo menos 6 caracteres',
+    });
+  }
+
+   return res.status(SUCCESS).json({
+    token: '7mqaVRXJSp886CGr',
+  });
+});
