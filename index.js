@@ -10,75 +10,97 @@ const crushWithId = '/crush/:id';
 const app = express();
 const SUCCESS = 200;
 
-async function obrigatoryField(res, field, date) {
-  if (!date) {
-    await res.status(400).send({ message: `O campo "${field}" é obrigatório` });
-  }
-  await res.status(400).send(
-    { message: `O campo "${field}" é obrigatório e "datedAt" e "rate" não podem ser vazios` },
-  );
+const obrigatoryFieldsMd = function (req, res, next) {
+  const { name, age, date } = req.body;
+  const dateMessage = {
+    message: `O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios`
+  };
+  if (!name) return res.status(400).send({ message: `O campo "name" é obrigatório` });
+  if (!age) return res.status(400).send({ message: `O campo "age" é obrigatório` });
+  if (!date) return res.status(400).send(dateMessage);
+  const { rate, datedAt } = date;
+  if (rate === 0) return res.status(400).send(
+    { message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+  if (!datedAt || !rate) return res.status(400).send(dateMessage);
+  next();
 }
 
-async function verifyToken(res, token) {
-  if (!token) {
-    await res.status(401).send({ message: 'Token não encontrado' });
+const verifyTokenMd = function (req, res, next) {
+  const { authorization } = req.headers;
+  if (!authorization) {
+    return res.status(401).send({ message: 'Token não encontrado' });
   }
-  const checkToken = tokens.find((item) => item === token);
+  const checkToken = tokens.find((item) => item === authorization);
   if (!checkToken) {
-    await res.status(401).send({ message: 'Token inválido' });
+    return res.status(401).send({ message: 'Token inválido' });
   }
+  next();
 }
 
-async function checkFields(res, name, age) {
-  if (!name) {
-    await obrigatoryField(res, 'name');
-  }
+const checkFieldsMd = function (req, res, next) {
+  const { name, age } = req.body;
   if (name.length < 3) {
-    await res.status(400).send({ message: 'O "name" deve ter pelo menos 3 caracteres' });
-  }
-  if (!age) {
-    await obrigatoryField(res, 'age');
+    return res.status(400).send({ message: 'O "name" deve ter pelo menos 3 caracteres' });
   }
   if (age < 18) {
-    await res.status(400).send({ message: 'O crush deve ser maior de idade' });
+    return res.status(400).send({ message: 'O crush deve ser maior de idade' });
   }
+  next();
 }
 
-async function checkRate(res, rate) {
+const checkRateMd = function (req, res, next) {
+  const { date } = req.body;
+  const { rate } = date;
   if (rate < 1 || rate > 5) {
-    await res.status(400).send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+    return res.status(400).send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
-  if (!rate) await obrigatoryField(res, 'date', 1);
+  next();
 }
 
-async function checkDate(res, date) {
-  if (!date || !date.datedAt) {
-    await obrigatoryField(res, 'date', 1);
-  }
-  const { datedAt, rate } = date;
+const checkDateMd = function (req, res, next) {
+  const { date } = req.body;
+  const { datedAt } = date;
   const dateRegex = /^(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/](19|20)\d\d$/;
   if (!dateRegex.test(datedAt)) {
-    await res.status(400).send(
+    return res.status(400).send(
       { message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' },
     );
   }
- await checkRate(res, rate);
+  next();
 }
 
-async function checkCrush(res, crush) {
-  if (!crush) await res.status(404).send({ message: 'Crush não encontrado' });
+const checkCrushMd = function (req, res, next) {
+  const { id } = req.params;
+  const crush = crushes.find((item) => item.id === parseInt(id, 10));
+  if (!crush) return res.status(404).send({ message: 'Crush não encontrado' });
+  next();
 }
 
-async function checkMail(res, email) {
+const checkMailMd = function (req, res, next) {
+  const { email, password } = req.body;
   const regex = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+  if (!email) return res.status(400).send(
+    { message: `O campo "email" é obrigatório` },
+  );
+  if (!password) return res.status(400).send(
+    { message: `O campo "password" é obrigatório` },
+  );
   if (!regex.test(email)) {
-    await res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
+    return res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
+  if (password.length < 6) {
+    return res.status(400).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
+  }
+  next();
 }
 
-async function allCrushes(res) {
-  const readFile = await fs.readFile(crushFile);
-  await res.status(SUCCESS).send(JSON.parse(readFile));
+const allCrushesMd = async function (req, res, next) {
+  const param = req.query.q;
+  if (!param || param === '') {
+    const readFile = await fs.readFile(crushFile);
+    await res.status(SUCCESS).send(JSON.parse(readFile));
+  }
+  next();
 }
 
 app.use(express.json());
@@ -88,36 +110,21 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.get('/crush', rescue(async (_req, res) => allCrushes(res)));
+app.get('/crush', rescue(allCrushesMd));
 
-app.get('/crush/search', rescue(async (req, res) => {
-  const { authorization } = req.headers;
-  await verifyToken(res, authorization);
+app.get('/crush/search', verifyTokenMd, rescue((req, res) => {
   const param = req.query.q;
-  if (!param || param === '') await allCrushes(res);
   const results = crushes.filter((item) => item.name.startsWith(param));
-  await res.status(200).send(results);
+  return res.status(200).send(results);
 }));
 
-app.get(crushWithId, rescue(async (req, res) => {
+app.get(crushWithId, checkCrushMd, rescue((req, res) => {
   const { id } = req.params;
   const crush = crushes.find((item) => item.id === parseInt(id, 10));
-  await checkCrush(res, crush);
   return res.status(SUCCESS).send(crush);
 }));
 
-app.post('/login', rescue(async (req, res) => {
-  const { email, password } = req.body;
-  if (!email) {
-    await obrigatoryField(res, 'email');
-  }
-  await checkMail(res, email);
-  if (!password) {
-    await obrigatoryField(res, 'password');
-  }
-  if (password.length < 6) {
-    await res.status(400).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
-  }
+app.post('/login', checkMailMd, rescue(async (req, res) => {
   const generateToken = () => Math.random().toString(36).substr(2);
   const initialToken = `${generateToken()}${generateToken()}`;
   const token = initialToken.slice(0, 16);
@@ -126,12 +133,9 @@ app.post('/login', rescue(async (req, res) => {
   await res.status(SUCCESS).send({ token });
 }));
 
-app.post('/crush', rescue(async (req, res) => {
-  const { authorization } = req.headers;
-  await verifyToken(res, authorization);
+app.post('/crush', verifyTokenMd, obrigatoryFieldsMd, checkFieldsMd, checkDateMd,
+  checkRateMd, rescue(async (req, res) => {
   const { name, age, date } = req.body;
-  await checkFields(res, name, age);
-  await checkDate(res, date);
   const { datedAt, rate } = date;
   const crush = {
     id: crushes.length + 1,
@@ -147,15 +151,11 @@ app.post('/crush', rescue(async (req, res) => {
   return res.status(201).send(crush);
 }));
 
-app.put(crushWithId, rescue(async (req, res) => {
-  const { authorization } = req.headers;
-  await verifyToken(res, authorization);
+app.put(crushWithId, verifyTokenMd, checkCrushMd, obrigatoryFieldsMd, checkFieldsMd,
+  checkDateMd, checkRateMd, rescue(async (req, res) => {
+  const { name, age, date } = req.body;
   const id = parseInt(req.params.id, 10);
   const crush = crushes.find((item) => item.id === id);
-  await checkCrush(res, crush);
-  const { name, age, date } = req.body;
-  await checkFields(res, name, age);
-  await checkDate(res, date);
   crush.name = name;
   crush.age = age;
   crush.date = date;
@@ -168,12 +168,8 @@ app.put(crushWithId, rescue(async (req, res) => {
   });
 }));
 
-app.delete(crushWithId, rescue(async (req, res) => {
-  const { authorization } = req.headers;
-  await verifyToken(res, authorization);
+app.delete(crushWithId, verifyTokenMd, checkCrushMd, rescue(async (req, res) => {
   const id = parseInt(req.params.id, 10);
-  const crush = crushes.find((item) => item.id === id);
-  await checkCrush(res, crush);
   crushes = crushes.filter((item) => item.id !== id);
   await fs.writeFile(crushFile, JSON.stringify(crushes));
   await res.status(200).send({ message: 'Crush deletado com sucesso' });
