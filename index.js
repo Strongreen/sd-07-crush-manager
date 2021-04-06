@@ -15,7 +15,7 @@ app.get('/', (_request, response) => {
 
 app.get('/crush', async (req, res) => {
   const crushs = JSON.parse(await fs.promises.readFile('./crush.json', 'utf8'));
-  res.status(SUCCESS).send(crushs);
+  return res.status(SUCCESS).send(crushs);
 });
 
 app.get('/crush/:id', async (req, res) => {
@@ -23,7 +23,7 @@ app.get('/crush/:id', async (req, res) => {
   const crushs = JSON.parse(await fs.promises.readFile('./crush.json', 'utf8'));
   const crush = crushs.find(({ id }) => id.toString() === reqId);
   if (crush) {
-    res.status(SUCCESS).send(crush);
+    return res.status(SUCCESS).send(crush);
   }
   return res.status(404).send({
     message: 'Crush não encontrado',
