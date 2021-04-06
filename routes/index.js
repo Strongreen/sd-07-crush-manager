@@ -1,5 +1,8 @@
 const express = require('express');
 const fs = require('fs');
+const randtoken = require('rand-token');
+
+  const myToken = randtoken.generate(16);
 
 const routes = express();
 
@@ -30,6 +33,12 @@ routes.get('/', (req, res) => {
     );
   }
   res.status(200).send(filterCrush);
+});
+
+routes.post('/', (req, res) => {
+  res.status(200).send({
+    token: myToken,
+  });
 });
 
 module.exports = routes;
