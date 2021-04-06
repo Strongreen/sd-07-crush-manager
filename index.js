@@ -24,7 +24,6 @@ const readCrushFile = async () => {
   } 
 };
 
-
 // requisito 1
 app.get('/crush', async (req, res) => {
   const crushes = await readCrushFile();
@@ -43,17 +42,14 @@ app.get('/crush/:id', async (req, res) => {
 // requisito 3
 const validateEmail = (email) => {
   const regexToValidateEmail = /[A-Z0-9]{1,}@[A-Z0-9]{2,}\.[A-Z0-9]{2,}/i;
-  const emptyEmail = !email || email === '';
-  if (emptyEmail) return { message: 'O campo "email" é obrigatório' };
+  if (!email || email === '') return { message: 'O campo "email" é obrigatório' };
   const validEmail = regexToValidateEmail.test(String(email).toLowerCase());  
   if (!validEmail) return { message: 'O "email" deve ter o formato "email@email.com"' };
 };
 
 const validatePassword = (password) => {
-  const emptyPassword = !password || password.length === 0;
-  if (emptyPassword) return { message: 'O campo "password" é obrigatório' };
-  const validPassword = password.length >= 6;  
-  if (!validPassword) return { message: 'O "password" deve ter pelo menos 6 caracteres' };
+  if (!password || password.length === 0) return { message: 'O campo "password" é obrigatório' };
+  if (password.length < 6) return { message: 'O "password" deve ter pelo menos 6 caracteres' };
 };
 
 app.post('/login', (req, res, next) => {
@@ -68,6 +64,75 @@ const token = crypto.randomBytes(8).toString('hex');
 req.body = { token };
 res.status(200).send(req.body);
 next();
+});
+
+// requisito 4
+
+const validateName = (name) => {
+  if (!name || name.length === 0) return { message: 'O campo "name" é obrigatório' };
+  if (name.length < 3) return { message: 'O "name" deve ter pelo menos 3 caracteres' };
+};
+
+const validateAge = (age) => {
+  if (!age) return { message: 'O campo "age" é obrigatório' };
+  if (age < 18) return { message: 'O crush deve ser maior de idade' };
+};
+
+const validadeDateCampus = (date) => {
+  const { datedAt, rate } = date;
+  const regexToValidateDateAt = /^(0[1-9]|1\d|2\d|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}$/;
+  const validDateAt = regexToValidateDateAt.test(datedAt); 
+  if (Number(rate) < 1 || Number(rate) > 5) {
+return { message: 'O campo "rate" deve ser um inteiro de 1 à 5' };
+  } 
+  if (!validDateAt) return { message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' };  
+};
+
+const validateDate = (date) => {
+if (date === undefined || date.datedAt === undefined || date.rate === undefined) {
+    return { message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' };
+  } 
+  return validadeDateCampus(date);
+};
+
+const validateCrushData = (name, age, date) => { 
+  const isNotNameValid = validateName(name);
+  if (isNotNameValid) return isNotNameValid;
+  const isNotAgeValid = validateAge(age);
+  if (isNotAgeValid) return isNotAgeValid;
+  const isNotDateValid = validateDate(date);
+  if (isNotDateValid) return isNotDateValid;
+};
+
+const validateToken = (req, res, next) => {
+  const token = req.headers.authorization;
+  if (!token || token.length === 0) {
+      return res.status(401).send({ message: 'Token não encontrado' });
+  }
+  
+  if (token.length !== 16) return res.status(401).send({ message: 'Token inválido' });
+  next();
+};
+
+const writeCrushFile = async (res, data, crush) => {    
+  try {  
+    await fs.writeFile(path.resolve(__dirname, '.', 'crush.json'), JSON.stringify(data));
+    return res.status(201).send(crush);
+  } catch (error) {
+    return error;
+  }
+};
+
+app.post('/crush', validateToken, async (req, res) => {
+  const { name, age, date } = req.body;
+  const checkedData = validateCrushData(name, age, date);
+  console.log(checkedData);
+  if (checkedData) return res.status(400).send(checkedData);
+  const crushes = await readCrushFile();
+  const id = crushes.length + 1;
+  const newCrush = { id, ...req.body };
+  const newCrushes = [...crushes, newCrush];
+  await writeCrushFile(res, newCrushes, newCrush);  
 });
 
 app.listen(PORT, () => { console.log('Online'); });
