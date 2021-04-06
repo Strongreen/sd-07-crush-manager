@@ -1,3 +1,4 @@
+const frisby = require('frisby');
 const fs = require('fs');
 const path = require('path');
 
@@ -82,7 +83,6 @@ describe('5 - Crie o endpoint PUT /crush/:id', () => {
           .expect('status', 200)
           .then((responseUpdate) => {
             const { json } = responseUpdate;
-            if (json === undefined) console.log(responseUpdate);
             expect(json.id).toBe(resultCrush.id);
             expect(json.name).toBe('Zendaya');
             expect(json.age).toBe(25);
