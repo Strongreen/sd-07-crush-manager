@@ -60,17 +60,14 @@ validatingCrushesMiddleware.validatingRatesOfCrushes,
 validatingCrushesMiddleware.validatingDateAndRatesOfCrushes,
 validatingCrushesMiddleware.validatingDateFormatOfCrushes,
 rescue(async (req, res) => {
-  const size = crush.length;
   const { name, age, date } = req.body;
-  const { datedAt, rate } = date;
+  const crushes = await getCrushes();
+  const size = crushes.length;
   crush[size] = {
-    id: size + 1,
+    id: `${size + 1}`,
     name,
     age,
-    date: {
-      datedAt,
-      rate,
-    },
+    date,
   };
     sendCrushes(crush);
     return res.status(201).send(crush[crush.length - 1]);
@@ -92,4 +89,14 @@ validatingCrushesMiddleware.validatingRatesOfCrushes,
     sendCrushes(crush);
     return res.status(200).send(crush[id - 1]);
   }));
+
+  app.delete('/:id', authMiddleware,
+   rescue(async (req, res) => {
+  const { id } = req.params;
+  const index = id - 1;
+  crush.splice(index, 1);
+  sendCrushes(crush);
+  return res.status(200).send({ message: 'Crush deletado com sucesso' });
+  }));
+
 module.exports = app;
