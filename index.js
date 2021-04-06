@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const crypto = require('crypto');
 const tokenMiddleware = require('./middleware/tokenMiddleware');
-const dateMiddleware = require('./middleware/dateMiddleware');
+const { checkDate1, checkDate2 } = require('./middleware/dateMiddleware');
 const reqBodyMiddleware = require('./middleware/reqBodyMiddleware');
 
 const app = express();
@@ -75,7 +75,8 @@ app.post('/login', (request, res) => {
 
 app.use(tokenMiddleware);
 app.use(reqBodyMiddleware);
-app.use(dateMiddleware);
+app.use(checkDate1);
+app.use(checkDate2);
 
 app.post('/crush', async (request, response) => {
   const { name, age, date } = request.body;
@@ -87,9 +88,29 @@ app.post('/crush', async (request, response) => {
       age,
       date,
     };
-    const newList = { ...data, newCrush };
-    await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newList));
+    const newList = [...data, newCrush];
+    await fs.promises.writeFile(`${__dirname}/crush.json`, JSON.stringify(newList));
     return response.status(CREATED).send(newCrush);
+  } catch (error) { console.error(`Erro: ${error.message}`); }
+});
+
+app.put('/crush/:id', async (request, response) => {
+  const { id } = request.params;
+  const { name, age, date } = request.body;
+  try {
+    const data = await getCrush();
+    const findCrush = data.find((crush) => crush.id === Number(id));
+    const index = data.indexOf(findCrush);
+    const modifiedCrush = {
+      ...findCrush,
+      name,
+      age,
+      date,
+    };
+    const newList = [...data];
+    newList[index] = modifiedCrush;
+    await fs.promises.writeFile(`${__dirname}/crush.json`, JSON.stringify(newList));
+    return response.status(SUCCESS).send(modifiedCrush);
   } catch (error) { console.error(`Erro: ${error.message}`); }
 });
 
