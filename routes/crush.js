@@ -1,29 +1,29 @@
 const express = require('express');
-// const fs = require('fs');
-const data = require('../crush.json');
+const fs = require('fs');
 
 const app = express();
 
-app.get('/', (req, res) => {
-    res.status(200).send(data);
+function getCrushs() {
+    return fs.promises
+      .readFile(`${__dirname}/../crush.json`, 'utf8')
+      .then((content) => content)
+      .then((stringified) => JSON.parse(stringified))
+      .catch((error) => error.message);
+  } 
+
+app.get('/', async (_req, res) => {
+    const crushs = await getCrushs();
+    return res.status(200).send(crushs);
 });
 
-app.get('/:id', (req, res) => {
+app.get('/:id', async (req, res) => {
     const { id } = req.params;
-    const crush = data[id - 1];
-    res.status(200).send(crush);
+    const notFound = { message: 'Crush não encontrado' };
+    const crushs = await getCrushs();
+    const crush = crushs[id - 1];
+    if (crush) return res.status(200).send(crush);
+    return res.status(404).send(notFound);
 });
-
-/* function getCrushs() {
-    fs.promises
-      .readFile(data, 'utf8')
-      .then((content) => {
-        console.log(content);
-      })
-      .catch((error) => {
-        console.error(error.message);
-      });
-  } */
 
 /* 
   function setCrushs(index, newCrush) {
