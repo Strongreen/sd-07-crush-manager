@@ -109,11 +109,11 @@ const create = (req, res, next) => {
 
   const result = validateNewCrush(infoCrush);
 
-  if (result.status === 200) {
-    next();
+  if (result.status === 400) {
+    return res.status(result.status).json({ message: result.message });  
   }
 
-  return res.status(result.status).json({ message: result.message });
+  next();
 };
 
 module.exports = {

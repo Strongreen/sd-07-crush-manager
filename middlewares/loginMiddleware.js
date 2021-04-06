@@ -56,23 +56,20 @@ const validatePassword = (password) => {
   };
 };
 
-const newLogin = (email, password) => {
+const loginMiddleware = (req, res, next) => {
+  const { email, password } = req.body;
   const statusEmail = validateEmail(email);
   const statusPassword = validatePassword(password);
 
   if (statusEmail.status === 400) {
-    return statusEmail;
+    return res.status(statusEmail.status).json({ message: statusEmail.message });  
   }
 
   if (statusPassword.status === 400) {
-    return statusPassword;
+    return res.status(statusPassword.status).json({ message: statusPassword.message });  
   }  
 
-  return {
-    status: 200,
-  };
+  next();
 };
 
-module.exports = {
-  newLogin,
-};
+module.exports = loginMiddleware;

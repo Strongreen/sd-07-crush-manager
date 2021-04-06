@@ -1,10 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const crush = require('./Crush');
-const login = require('./Login');
 // const errorMiddleware = require('./errorMiddleware');
 const authMiddleware = require('./middlewares/authMiddleware');
 const crushMiddleware = require('./middlewares/crushMiddleware');
+const loginMiddleware = require('./middlewares/loginMiddleware');
 
 const app = express();
 app.use(bodyParser.json());
@@ -30,19 +30,8 @@ app.get('/crush/:id', (req, res) => {
   return res.status(200).json(infoCrush[0]);
 });
 
-const middlewareLogin = (req, res, next) => {
-  const { email, password } = req.body;
-
-  const result = login.newLogin(email, password);
-
-  if (result.status !== 400) {
-    next();
-  }
-
-  return res.status(result.status).json({ message: result.message });
-};
-
-app.post('/login', middlewareLogin, (_req, res) => res.json({ token: '1234567812345678' }));
+app.post('/login', loginMiddleware, (_req, res) => 
+res.json({ token: '1234567812345678' }));
 
 app.post('/crush', authMiddleware, crushMiddleware.create, (req, res) => {
   const infoCrush = req.body;
@@ -52,7 +41,14 @@ app.post('/crush', authMiddleware, crushMiddleware.create, (req, res) => {
   return res.status(201).json(result);
 });
 
-// app.use(errorMiddleware);
+// app.put('/crush/:id', authMiddleware, crushMiddleware.create, (req, res) => {
+//   const infoCrush = req.body;
+//   const { id } = req.params;
+
+//   const result = crush.alterCrush(infoCrush, id);  
+
+//   return res.status(201).json(result);
+// });
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {

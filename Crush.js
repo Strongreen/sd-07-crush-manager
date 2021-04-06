@@ -40,8 +40,24 @@ const createCrush = (infoCrush) => {
   return newCrush;
 };
 
+// const alterCrush = (infoCrush, id) => {
+//   const { name, age, date } = infoCrush;
+//   const file = fs.readFileSync(filePath, 'utf-8');
+//   const crushes = JSON.parse(file);  
+
+//   crushes.map((crush) => {
+//     if (crush.id === id) {
+//       return { ...infoCrush };
+//     }
+//     return true;
+//   });
+
+//   console.log(crushes);
+// };
+
 module.exports = {
   getAllCrushes,
   getCrush,
   createCrush,  
+  // alterCrush,
 };
