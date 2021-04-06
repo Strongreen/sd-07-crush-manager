@@ -33,82 +33,95 @@ app.get('/:id', async (req, res) => {
   res.status(200).send(isId);
 }); // requisito 2
 
-// function isValidName(name) {
-//   let responseBool = false;
-//   let response = '';
+function isValidName(name) {
+  let response;
 
-//   if (!name) {
-//     responseBool = true;
-//     response = 'O campo "name" é obrigatório';
-//   } else if (name.length < 3) {
-//     responseBool = true;
-//     response = 'O "name" deve ter pelo menos 3 caracteres';
-//   } else {
-//     responseBool = false;
-//   }
+  if (!name) {
+    response = 'O campo "name" é obrigatório';
+  } else if (name.length < 3) {
+    response = 'O "name" deve ter pelo menos 3 caracteres';
+  }
 
-//   return [responseBool, response];
-// }
+  return response;
+}
 
-// function isValidAge(age) {
-//   let responseBool = false;
-//   let response = '';
+function isValidAge(age) {
+  let response;
 
-//   if (!age) {
-//     responseBool = true;
-//     response = 'O campo "age" é obrigatório';
-//   } else if (age < 18) {
-//     responseBool = true;
-//     response = 'O crush deve ser maior de idade';
-//   } else {
-//     responseBool = false;
-//   }
+  if (!age) {
+    response = 'O campo "age" é obrigatório';
+  } else if (age < 18) {
+    response = 'O crush deve ser maior de idade';
+  }
 
-//   return [responseBool, response];
-// }
+  return response;
+}
 
-// function isValidDate(date) {
-//   let responseBool = false;
-//   let response = '';
-//   const regex = \d{2}/\d{2}/\d{4};
+const patternResponse = 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios';
 
-//   if (!date) {
-//     responseBool = true;
-//     response = 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios';
-//   } else if (!date.rate) {
-//     responseBool = true;
-//     response = 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios';
-//   } else if (!date.datedAt) {
-//     responseBool = true;
-//     response = 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios';
-//   } else if (date.rate >= 1 || date.rate <= 5) {
-//     responseBool = true;
-//     response = 'O campo "rate" deve ser um inteiro de 1 à 5';
-//   } else if (!date.datedAt.match(regex)) {
-//     responseBool = true;
-//     response = 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"';
-//   } else {
-//     responseBool = false;
-//   }
+function isValidDatedAt(datedAt) {
+  const regex = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
 
-//   return [responseBool, response];
-// }
+  if (!datedAt) {
+    return patternResponse;
+  }
+  if (!datedAt.match(regex)) {
+    return 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"';
+  }
+} // referência: Vitor Rodrigues
 
-// app.post('/', (req, res) => {
-//   const isName = isValidName(req.body.name);
-//   const isAge = isValidAge(req.body.name);
-//   const isDate = isValidDate(req.body.date);
+function isValidRate(rate) {
+  if (rate < 1 || rate > 5) {
+    return 'O campo "rate" deve ser um inteiro de 1 à 5';
+  }
+  if (!rate) {
+    return patternResponse;
+  }
+} // referência: Vitor Rodrigues
 
-//   if (isName[0]) {
-//     res.status(400).send({ message: isName[1] });
-//   } else if (isAge[0]) {
-//     res.status(400).send({ message: isAge[1] });
-//   } else if (isDate[0]) {
-//     res.status(400).send({ message: isDate[1] });
-//   } else {
-//     res.status(201).send(req.body);
-//   }
-// });
+function isValidDate(date) {
+  let response;
+  if (!date) {
+    response = patternResponse;
+  } else {
+    response = isValidRate(date.rate) || isValidDatedAt(date.datedAt);
+  }
+
+  return response;
+} // referência: Vitor Rodrigues
+
+function isValidAuthorization(auth) {
+  let response;
+  
+  if (!auth) {
+    response = 'Token não encontrado';
+  } else if (auth.length < 16) {
+    response = 'Token inválido';
+  }
+
+  return response;
+}
+
+app.post('/', (req, res) => {
+  const { name, age, date } = req.body;
+  const isName = isValidName(name);
+  const isAge = isValidAge(age);
+  const isDate = isValidDate(date);
+  const { authorization } = req.headers;
+  const isAuth = isValidAuthorization(authorization);
+
+  if (isName) {
+    res.status(400).send({ message: isName });
+  } else if (isAge) {
+    res.status(400).send({ message: isAge });
+  } else if (isDate) {
+    res.status(400).send({ message: isDate });
+  } else if (isAuth) {
+    res.status(401).send({ message: isAuth });
+  } else {
+    res.status(201).send(req.body);
+  }
+});
 
 app.use((err, _req, res, _next) => {
   res.status(500).send(`Algo deu errado! Mensagem: ${err.message}`);
