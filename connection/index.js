@@ -49,7 +49,8 @@ const dbDelete = (id) => new Promise((resolve, _reject) => {
   dbRead()
     .then((data) => {
       const newData = data.filter((crush) => {
-        if (crush.id !== Number(id)) return crush;
+        if (crush.id !== Number(id)) return true;
+        return false;
       });
       const string = JSON.stringify(newData);
       fs.writeFile(db, string, (_err) => {
