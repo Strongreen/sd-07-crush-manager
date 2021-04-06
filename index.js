@@ -46,23 +46,36 @@ app.get('/crush/:id', async (request, response) => {
   }
 });
 
+const erroEmail = {
+  INVALID: 'O "email" deve ter o formato "email@email.com"',
+  NULL: 'O campo "email" é obrigatório',
+};
+
+const erroPass = {
+  NULL: 'O campo "password" é obrigatório',
+  INVALID: 'A "senha" ter pelo menos 6 caracteres',
+};
+const regex = {
+  EMAIL: /^([a-zA-Z0-9_-]+)@mail\.com$/gm,
+  TOKEN: /^(\d|\w){16}$/gm,
+  DATE: /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/gm,
+  RATE: /\b[1-5]\b/g,
+};
+
 app.post('/login', (request, response) => {
-    if (!request.body.email) {
- return response.status(BAD_REQUEST)
-      .send({ message: 'O campo "email" é obrigatório' }); 
-}
-    if (!/^([a-zA-Z0-9_-]+)@mail\.com$/gm.test(request.body.email)) {
- return response
-      .status(BAD_REQUEST).send({ message: 'O "email" deve ter o formato "email@email.com"' });
-}
-    if (!request.body.password) {
- return response.status(BAD_REQUEST)
-      .send({ message: 'O campo "password" é obrigatório' }); 
-}
-    if (request.body.password.length < 6) {
- return response.status(BAD_REQUEST)
-      .send({ message: 'A "senha" ter pelo menos 6 caracteres' }); 
-}
+  const { email, password } = request.body;
+    if (!email) { return response.status(BAD_REQUEST).json({ message: erroEmail.NULL }); }
+    if (!regex.EMAIL.test(email)) { 
+      return response.status(BAD_REQUEST).json({ message: erroEmail.INVALID });
+    }
+
+    if (!password) { 
+      return response.status(BAD_REQUEST).json({ message: erroPass.NULL });
+    }
+    if (password.length < 6) { 
+      return response.status(BAD_REQUEST).json({ message: erroPass.INVALID });
+    }
+
     const token = crypto.randomBytes(8).toString('hex');
     return response.status(SUCCESS).json({ token });
 });
@@ -71,7 +84,7 @@ const checkToken = (token, response) => {
   if (!token) {
     return response.status(UNAUTHORIZED).send({ message: 'Token não encontrado' });
   }
-  if (!/^(\d|\w){16}$/gm.test(token)) {
+  if (!regex.TOKEN.test(token)) {
     return response.status(UNAUTHORIZED).send({ message: 'Token inválido' });
   }
 };
@@ -100,12 +113,12 @@ const checkDate = (date, response) => {
        message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
     });
   }
-  if (!/^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/gm.test(datedAt)) {
+  if (!regex.DATE.test(datedAt)) {
     return response.status(BAD_REQUEST).send({ 
       message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"', 
     });
   }
-  if (!/\b[1-5]\b/g.test(rate)) {
+  if (!regex.RATE.test(rate)) {
     return response.status(BAD_REQUEST).send({
       message: 'O campo "rate" deve ser um inteiro de 1 à 5',
     });
