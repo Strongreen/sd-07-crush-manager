@@ -18,9 +18,14 @@ const crushList = './crush.json';
 const crushId = '/crush/:id';
 
 app.get(crushList, async (_req, res) => {
+  const empty = [];
   const myCrush = await fs.readFile(crushList, 'utf8');
   const newListCrush = JSON.parse(myCrush);
-  return res.status(SUCCESS).json(newListCrush);
+  if (newListCrush) {
+    return res.status(SUCCESS).json(newListCrush);
+  }
+  
+  return empty;
 });
 
 app.get(crushId, async (req, res) => {
