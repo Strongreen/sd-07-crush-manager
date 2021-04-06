@@ -35,11 +35,15 @@ app.get('/crush', async (_req, res) => {
   }
 });
 
+async function testExistingId(id) {
+  const data = await returnData();
+  return data.filter((currentCrush) => currentCrush.id === Number(id));
+}
+
 app.get('/crush/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const data = await returnData();
-    const getCrushById = data.filter((currentCrush) => currentCrush.id === Number(id));
+    const getCrushById = await testExistingId(id);
     if (getCrushById.length < 1) {
       return res.status(NOT_FIND)
         .json({ message: 'Crush não encontrado' });
@@ -150,7 +154,7 @@ function testDatedAt(datedAt, fieldName) {
 }
 
 function testRate(rate, fieldName) {
-  if (!rate) return handleRequiredField(fieldName);
+  if (rate === undefined) return handleRequiredField(fieldName);
 
   if (rate < 1 || rate > 5) {
     return {
@@ -163,7 +167,7 @@ function testRate(rate, fieldName) {
 }
 
 function testDate(date, fieldName) {
-  if (!date) return handleRequiredField(fieldName);
+  if (date === undefined) return handleRequiredField(fieldName);
 
   const testDatedAtResult = testDatedAt(date.datedAt, 'date');
   if (testDatedAtResult.error) {
@@ -193,7 +197,7 @@ async function createNewCrush(name, age, date) {
   const data = await returnData();
   const lastId = data[data.length - 1].id;
   return {
-    id: lastId + 1,
+    id: Number(lastId + 1),
     name,
     age,
     date,
@@ -219,6 +223,46 @@ app.post('/crush', checkAuthorization, async (req, res) => {
   } catch (err) {
     console.error(err);
   }
+});
+
+async function updateCrush(id, name, age, date) {
+  const data = await returnData();
+
+  const updatedCrushList = data.map((currentCrush) => {
+    if (Number(id) === currentCrush.id) {
+      return {
+        id: Number(id),
+        name,
+        age,
+        date,
+      };
+    }
+    return currentCrush;
+  });
+
+  const convertUpdatedCrushList = JSON.stringify(updatedCrushList, null, 2);
+  await fs.promises.writeFile(crush, convertUpdatedCrushList);
+  return updatedCrushList.find((currentCrush) => Number(id) === currentCrush.id);
+}
+
+app.put('/crush/:id', checkAuthorization, async (req, res) => {
+  const { id } = req.params;
+  const { name, age, date } = req.body;
+
+  const testNameResult = testName(name, 'name');
+  if (testNameResult.error) {
+    return res.status(INVALID_REQUEST).json({ message: testNameResult.message });
+  }
+  const testAgeResult = testAge(age, 'age');
+  if (testAgeResult.error) {
+    return res.status(INVALID_REQUEST).json({ message: testAgeResult.message });
+  }
+  const testDateResult = testDate(date, 'date');
+  if (testDateResult.error) {
+    return res.status(INVALID_REQUEST).json({ message: testDateResult.message });
+  }
+  const result = await updateCrush(id, name, age, date);
+  return res.status(SUCCESS).json(result);
 });
 
 app.listen(PORT, () => { console.log('Online'); });
