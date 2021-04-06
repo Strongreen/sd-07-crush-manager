@@ -1,4 +1,4 @@
-const SUCESS = 2000;
+const SUCESS = 200;
 
 const validateEmail = (mail) => {
   const re = /\S+@\S+\.\S+/;
