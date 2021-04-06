@@ -15,10 +15,10 @@ const authEmail = (email) => {
 const authPassword = (password) => {
   if (!password) {
     return {
-      mmessage: 'O campo "password" é obrigatório',
+      message: 'O campo "password" é obrigatório',
     };
   }
-  if (password < 6) {
+  if (password.length < 6) {
     return {
       message: 'A "senha" deve ter pelo menos 6 caracteres',
     };
