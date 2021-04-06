@@ -22,6 +22,8 @@ app.use('/crush/:id', routesCrush);
 
 app.use('/login', routesLogin);
 
+app.use('/crush', routesCrush);
+
 app.listen(PORT, () => {
   console.log('Online');
 });

@@ -26,4 +26,22 @@ const getCrushId = async (req, res) => {
   }
 };
 
-module.exports = { getCrush, getCrushId };
+const postCrush = async (req, res) => {
+  try {
+    const allCrushs = await fs.readFile(pathFile);
+    const data = JSON.parse(allCrushs);
+    const size = data.length;
+    data[size] = {
+      id: `${size + 1}`,
+      name: req.body.name,
+      age: req.body.age,
+      date: req.body.date,
+    };
+    await fs.writeFile(pathFile, JSON.stringify(data));
+    res.status(201).send(JSON.parse(data[size]));
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+module.exports = { getCrush, getCrushId, postCrush };
