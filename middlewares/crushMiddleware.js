@@ -1,4 +1,8 @@
 const isADate = (date) => {
+  if (date === undefined) {
+    return false;
+  }
+
   if ((date[2] !== '/') || (date[5] !== '/')) {
     return false;
   }

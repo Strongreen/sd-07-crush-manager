@@ -48,7 +48,7 @@ app.put(crushId, authMiddleware, crushMiddleware.create, (req, res) => {
 
   const result = crush.alterCrush(infoCrush, id);  
 
-  return res.status(201).json(result);
+  return res.status(200).json(result);
 });
 
 app.delete(crushId, authMiddleware, (req, res) => {
@@ -56,7 +56,7 @@ app.delete(crushId, authMiddleware, (req, res) => {
 
   const result = crush.deleteCrush(id);
 
-  return res.status(201).json(result);
+  return res.status(200).json(result);
 });
 
 // não remova esse endpoint, e para o avaliador funcionar
