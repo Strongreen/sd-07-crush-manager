@@ -17,6 +17,13 @@ router.get('/', async (req, res) => {
   return res.status(200).send(JSON.parse(response));
 });
 
+router.get('/search', verifyToken, async (req, res) => {
+  const query = req.query.q;
+  const response = JSON.parse(await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8'));
+  const data = response.filter((value) => value.name.toUpperCase().includes(query.toUpperCase()));
+  return res.status(200).send(data);
+});
+
 router.get('/:id', async (req, res) => {
   const id = Number(req.params.id);
   const data = JSON.parse(await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8'));
