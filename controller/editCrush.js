@@ -9,7 +9,7 @@ const editCrush = async (req, res) => {
   try {
     const crushs = await readFile();
     const index = crushs.map((e) => e.id).indexOf(id);
-    const updatedCrush = { id, name, age, date };
+    const updatedCrush = { id: parseInt(id, 10), name, age, date };
     crushs[index] = updatedCrush;
     await writeFile(crushs);
     return res.status(SUCCESS).json(updatedCrush);
