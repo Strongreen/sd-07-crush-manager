@@ -54,7 +54,7 @@ const erroPass = {
   INVALID: 'A "senha" ter pelo menos 6 caracteres',
 };
 const regex = {
-  EMAIL: /^([a-zA-Z0-9_-]+)@mail\.com$/gm,
+  EMAIL: /^([a-zA-Z0-9_-]+)@+\w+.com/,
   TOKEN: /^(\d|\w){16}$/gm,
   DATE: /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/gm,
   RATE: /\b[1-5]\b/g,
