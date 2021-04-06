@@ -22,7 +22,7 @@ router.get('/:id', (req, res) => {
   const id = Number(req.params.id);
   const object = data.find((value) => value.id === id);
   if (!object) {
- res.status(404).send({
+ return res.status(404).send({
     message: 'Crush não encontrado',
   }); 
 }

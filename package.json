@@ -9,7 +9,6 @@
     "debug": "nodemon -w --exec node index.js",
     "start": "node index.js",
     "lint": "eslint --no-inline-config --no-error-on-unmatched-pattern -c .eslintrc.json . --ext .js,.jsx",
-    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
