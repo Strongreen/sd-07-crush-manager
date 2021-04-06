@@ -3,16 +3,15 @@ const { resolve } = require('path');
 const { readFile, writeFile } = require('fs').promises;
 const { token, nameAge, data } = require('./mid');
 
-const SUCCESS = 200;
 const erro = 500;
-const file = `${__dirname}/../crush.json`;
+const file = 'crush.json';
 const getCrushs = async () =>
-  JSON.parse(await readFile(resolve(file), 'utf8'));
+  JSON.parse(await readFile(resolve(__dirname, '..', file), 'utf8'));
 
 routes.get('/', async (_request, response) => {
   try {
     const crushs = await getCrushs();
-    response.status(SUCCESS).json(crushs);
+    response.status(200).json(crushs);
   } catch (error) {
     response.status(erro).json(error);
   }
@@ -28,7 +27,7 @@ routes.get('/:id', async (request, response) => {
       response.status(404).json({ message: 'Crush não encontrado' });
     }
 
-    response.status(SUCCESS).json(crush || { message: 'Crush não encontrado' });
+    response.status(200).json(crush || { message: 'Crush não encontrado' });
   } catch (error) {
     response.status(erro).json(error);
   }
@@ -41,8 +40,8 @@ routes.delete('/:id', async (request, response) => {
     const { id } = request.params;
     const crushs = await getCrushs();
     const newList = crushs.filter((currentCrush) => (currentCrush.id !== Number(id)));
-    await writeFile(resolve(file), JSON.stringify(newList, null, 2));
-    response.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
+    await writeFile(resolve(__dirname, '..', file), JSON.stringify(newList, null, 2));
+    response.status(200).json({ message: 'Crush deletado com sucesso' });
   } catch (error) {
     response.status(erro).json(error);
   }
@@ -61,7 +60,7 @@ routes.post('/', async (request, response) => {
 
     const newList = [...crushs, newCrush];
 
-    await writeFile(resolve(file), JSON.stringify(newList, null, 2));
+    await writeFile(resolve(__dirname, '..', file), JSON.stringify(newList, null, 2));
 
     response.status(201).json(newCrush);
   } catch (error) {
@@ -81,9 +80,9 @@ routes.put('/:id', async (request, response) => {
     const newList = crushs
       .map((currentCrush) => (currentCrush.id === Number(id) ? newCrush : currentCrush));
 
-    await writeFile(resolve(file), JSON.stringify(newList, null, 2));
+    await writeFile(resolve(__dirname, '..', file), JSON.stringify(newList, null, 2));
 
-    response.status(SUCCESS).json(newCrush);
+    response.status(200).json(newCrush);
   } catch (error) {
     response.status(erro).json(error);
   }
