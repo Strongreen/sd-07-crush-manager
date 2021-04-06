@@ -15,6 +15,7 @@ app.get('/', (_request, response) => {
 });
 
 app.post('/login', middlewares.validateEmail, middlewares.validatePassword);
+app.post('/crush', /** middlewares requisito 4 */);
 app.use('/crush', routes.crush);
 app.use('/crush', routes.crushId);
 app.use('/login', routes.login);

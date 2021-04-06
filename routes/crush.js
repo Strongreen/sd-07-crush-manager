@@ -15,4 +15,23 @@ route.get('/', rescue(async (_req, res) => {
   }
 }));
 
+route.post('/', rescue(async (req, res) => {
+  try {
+    const newCrush = req.body;
+
+    const content = await fs.promises.readFile(`${__dirname}/../crush.json`);
+    const crushesArray = JSON.parse(content);
+
+    const newContent = crushesArray.concat([newCrush]);
+
+    await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newContent));
+
+    return res.status(201).json({ newCrush });
+  } catch (e) {
+    throw new Error(e);
+  }
+}));
+
+module.exports = route;
+
 module.exports = route;
