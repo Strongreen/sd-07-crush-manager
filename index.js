@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-// const fs = require('fs').promises;
 const desafio1 = require('./desafio1');
 const desafio2 = require('./desafio2');
+const desafio3 = require('./desafio3');
 
 const app = express();
 app.use(bodyParser.json());
@@ -17,6 +17,7 @@ app.get('/', (_request, response) => {
 
 app.use(desafio1);
 app.use(desafio2);
+app.use(desafio3);
 
 app.listen(PORT, () => {
   console.log('Online');
