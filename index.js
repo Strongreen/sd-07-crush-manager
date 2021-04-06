@@ -9,13 +9,15 @@ const SUCCESS = 200;
 const PORT = '3000';
 const fs = require('fs');
 
+const crushList = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
 app.get('/crush', (req, res) => {
-  const crushList = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+  // const crushList = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
   if (crushList.length > 0) {
     return res.status(200).json(crushList);
   }
@@ -29,7 +31,7 @@ app.get('/crush/:idtofind', (req, res) => {
 
   const { idtofind } = req.params;
 
-  const crushList = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+  // const crushList = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
   const crushIndex = crushList.findIndex(({ id }) => id === idtofind);
   if (crushIndex === -1) {
     res.status(404).send({ message: 'Crush não encontrado' });
@@ -76,18 +78,40 @@ function validateRate(rate, res) {
     res.status(400).send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
 }
-
+function regexValidate(datedAt, res) {
+  const regex = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i;
+  const regexValidation = regex.test(datedAt);
+  if (!regexValidation) {
+    res.status(400).send({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
+  }
+}
 app.post('/crush', (req, res) => {
   const { authorization } = req.headers;
   const { name, age, date } = req.body;
   const { datedAt, rate } = date;
-  const regex = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i;
-  const regexValidation = regex.test(datedAt);
   validateToken(authorization, res); validateName(name, res);
   validateAge(age, res); validateRate(rate, res);
-  if (!regexValidation) {
-    res.status(400).send({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
+  regexValidate(datedAt, res);
+  if (!date || !rate || !datedAt) {
+    res.status(400).send({
+      message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
+    });
   }
+  res.status(201).send(req.body);
+});
+
+app.post('/crush/:idtofind', (req, res) => {
+  const { idtofind } = req.params;
+  const { authorization } = req.headers;
+  // const crushList = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+  const crushIndex = crushList.findIndex(({ id }) => id === idtofind);
+  const { name, age, date } = crushList[crushIndex];
+  const { datedAt, rate } = date;
+  validateName(name, res);
+  validateAge(age, res);
+  validateRate(rate, res);
+  validateToken(authorization, res);
+  regexValidate(datedAt, res);
   if (!date || !rate || !datedAt) {
     res.status(400).send({
       message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
