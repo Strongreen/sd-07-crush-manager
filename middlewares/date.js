@@ -5,7 +5,7 @@ const verifyEmpty = (date) => {
     return RESP;
   }
   const { datedAt, rate } = date;
-  if (!rate || !datedAt || datedAt.length === 0) {
+  if (rate === undefined || !datedAt || datedAt.length === 0) {
     return RESP;
   }
   return 'valido';

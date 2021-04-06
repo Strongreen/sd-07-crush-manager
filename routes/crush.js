@@ -39,7 +39,7 @@ app.use(dateMiddleware);
 // --------------------------------------------------------------------- METODOS POST
 
 app.post('/', (req, res) => {
-  const object = { id: data.length, ...req.body };
+  const object = { id: data.length + 1, ...req.body };
   const newData = [...data, object];
 
   fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData)).then(() =>
