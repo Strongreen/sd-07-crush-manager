@@ -7,36 +7,37 @@ app.use(bodyParser.json());
 
 const SUCCESS = 200;
 const PORT = '3000';
-const fs = require('fs');
+const fs = require('fs').promises;
 
-const crushList = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+async function readFile() {
+  return JSON.parse(await fs.readFile('./crush.json', 'utf8'));
+}
+
+// const crushList = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.get('/crush', (req, res) => {
-  // const crushList = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+app.get('/crush', async (req, res) => {
+  const crushList = readFile();
   if (crushList.length > 0) {
     return res.status(200).json(crushList);
   }
-  if (crushList.lenght === 0) {
+  if (crushList.length === 0) {
     return res.status(200).json([]);
   }
 });
-
-app.get('/crush/:idtofind', (req, res) => {
-  console.log('entrou no :id');
-
+// 2
+app.get('/crush/:idtofind', async (req, res) => {
   const { idtofind } = req.params;
-
-  // const crushList = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
-  const crushIndex = crushList.findIndex(({ id }) => id === idtofind);
+  const crushList = readFile();
+  const crushIndex = crushList.findIndex(({ id }) => id === Number(idtofind));
   if (crushIndex === -1) {
     res.status(404).send({ message: 'Crush não encontrado' });
   }
-  res.send(crushList[crushIndex]);
+  res.status(200).send(crushList[crushIndex]);
 });
 
 app.post('/login', (req, res) => {
@@ -105,10 +106,10 @@ app.post('/crush', (req, res) => {
 });
 
 // 5
-app.post('/crush/:idtofind', (req, res) => {
+app.post('/crush/:idtofind', async (req, res) => {
   const { idtofind } = req.params;
   const { authorization } = req.headers;
-  // const crushList = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+  const crushList = readFile();
   const crushIndex = crushList.findIndex(({ id }) => id === idtofind);
   const { name, age, date } = crushList[crushIndex];
   const { datedAt, rate } = date;
