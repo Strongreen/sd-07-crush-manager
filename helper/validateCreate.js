@@ -25,7 +25,7 @@ function validDate(date) {
 
   if (!date || !date.rate || !date.datedAt) {
     throw new Error(
-      'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
+      'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios'
     );
   }
 
@@ -59,15 +59,4 @@ function validateCreate(crush, body) {
   }
 }
 
-function validateToken(token) {
-  if (token === undefined) {
-    throw new Error('Token não encontrado');
-  }
-  const verifyToken = token.slice(7);
-  if (verifyToken.length < 16) {
-    throw new Error('Token inválido');
-  }
-  return true;
-}
-
-module.exports = { validateCreate, validateToken };
+module.exports = { validateCreate };

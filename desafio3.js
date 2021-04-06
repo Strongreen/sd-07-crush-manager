@@ -15,8 +15,8 @@ app.post('/login', (req, res) => {
     const passwordIsValid = helpers.verifypassword(body);
 
     if (emailIsValid && passwordIsValid) {
-      const token = crypto.randomBytes(8).toString('hex');
-      return res.status(200).json({ token });
+      const authorization = crypto.randomBytes(8).toString('hex');
+      return res.status(200).json({ token: authorization });
     }
   } catch (error) {
     return res.status(400).json({
