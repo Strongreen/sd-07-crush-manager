@@ -9,6 +9,10 @@ const verifyAge = require('../middlewares/verifyAge');
 const verifyDate = require('../middlewares/verifyDate');
 const verifyDateObj = require('../middlewares/verifyDateObj');
 
+const replaceFile = async (data) => {
+  await fs.promises.writeFile('../crush.json', JSON.stringify(data));
+}
+
 router.get('/', async (req, res) => {
   const response = await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8');
   return res.status(200).send(JSON.parse(response));
@@ -36,7 +40,7 @@ router.post('/', verifyToken,
     };
     try {
       data.push(newObj);
-      await fs.promises.writeFile('../crush.json', JSON.stringify(data));
+      replaceFile(data);
       return res.status(201).send(newObj);
     } catch (error) {
       throw new Error(error);
@@ -55,7 +59,7 @@ router.put('/:id', verifyToken,
   };
   try {
     data[id - 1] = newObj;
-    await fs.promises.writeFile('../crush.json', JSON.stringify(data));
+    replaceFile(data);
     return res.status(201).send(newObj);
   } catch (error) {
     throw new Error(error);
@@ -66,7 +70,7 @@ router.delete('/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
   try {
     const newData = data.filter((item) => item.id === id);
-    await fs.promises.writeFile('../crush.json', JSON.stringify(newData));
+    replaceFile(newData);
     return res.status(201).send({
       message: 'Crush deletado com sucesso',
     });
