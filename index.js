@@ -1,8 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const readFileMiddleware = require('./Middlewares/readFileMiddleware');
-
-const indentifyIDMiddleware = require('./Middlewares/indentifyIDMiddleware');
+const readFiles = require('./helpers/readFiles');
+const identifyID = require('./helpers/identifyID');
 
 const app = express();
 app.use(bodyParser.json());
@@ -15,8 +14,8 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.get('/crush', readFileMiddleware);
+app.get('/crush', readFiles);
 
-app.get('/crush/:id', indentifyIDMiddleware);
+app.get('/crush/:id', identifyID);
 
 app.listen(PORT, () => { console.log('Online'); });
