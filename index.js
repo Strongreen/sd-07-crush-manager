@@ -21,7 +21,7 @@ const getCrushList = () => {
   } catch (err) {
     console.error(`Erro ao ler o arquivo: ${err.path}`);
   }
-}
+};
 
 app.get('/crush', (_request, response) => {
   const crushList = getCrushList();
@@ -44,5 +44,3 @@ app.get('/crush/:id', (request, response) => {
     });
   }
 });
-
-
