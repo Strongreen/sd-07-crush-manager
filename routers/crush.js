@@ -53,7 +53,7 @@ router.put('/:id', verifyToken,
   const { id } = req.params;
   const { name, age, date } = req.body;
   const newObj = {
-    id,
+    id: Number(id),
     name,
     age,
     date,
