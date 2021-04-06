@@ -1,3 +1,4 @@
+const fs = require('fs');
 const crushes = require('./crush.json');
 
 const getAllCrushes = () => {
@@ -16,8 +17,28 @@ const getCrush = (id) => {
   return crush;
 };
 
+const createCrush = (infoCrush) => {
+  const { name, age, date } = infoCrush;
+  const size = crushes.length;
+  const newCrush = {
+    id: crushes[size - 1].id + 1,
+    name,
+    age,
+    date,
+  };
+  crushes.push(newCrush);
+
+  try {
+    fs.promises.writeFile('./crush.json', JSON.stringify(crushes));
+  } catch (error) {
+    throw new Error('Erro ao salvar no arquivo!');
+  }
+  
+  return newCrush;
+};
+
 module.exports = {
   getAllCrushes,
   getCrush,
-
+  createCrush,  
 };
