@@ -1,20 +1,26 @@
 const express = require('express');
 const fs = require('fs');
-const dataCrush = require('../crush.json');
 
 const app = express();
 const sucess = 200;
-// const fail = 400;
+// const erro = 400;
 
 app.get('/', (_request, response) => {
   response.status(sucess).send();
 });
 
-app.get('/crush', (req, res) => {
-  fs.readFile(dataCrush, 'utf-8', (err, data) => {
-    if (err) throw err;
-    res.status(sucess).send(data);
-  });
+app.get('/crush', (_req, res) => {
+  const dataCrush = fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8');
+  try {
+    if (dataCrush) {
+       res.status(sucess).send(dataCrush);
+    }
+    if (dataCrush.length === 0) {
+      res.status(sucess).send([]);
+    }
+  } catch (err) {
+    throw new Error(err);
+  }
 });
 
 // app.get('/crush/:id', (req, res) => {
@@ -26,7 +32,7 @@ app.get('/crush/search?q=searchTerm', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  res.status(sucess).send();
+  res.status(sucess).send('user');
 });
 
 app.post('/crush', (req, res) => {

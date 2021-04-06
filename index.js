@@ -14,8 +14,9 @@ const PORT = '3000';
 // });
 
 app.use(express.json());
+app.use('/', route);
 app.use('/crush', route);
 app.use('/crush/:id', route);
-app.use('/', route);
+app.use('/login', route);
 
 app.listen(PORT, () => { console.log('Online'); });
