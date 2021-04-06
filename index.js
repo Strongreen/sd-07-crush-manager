@@ -10,69 +10,69 @@ const crushWithId = '/crush/:id';
 const app = express();
 const SUCCESS = 200;
 
-function obrigatoryField(res, field, date) {
+async function obrigatoryField(res, field, date) {
   if (!date) {
-    return res.status(400).send({ message: `O campo "${field}" é obrigatório` });
+    await res.status(400).send({ message: `O campo "${field}" é obrigatório` });
   }
-  return res.status(400).send(
+  await res.status(400).send(
     { message: `O campo "${field}" é obrigatório e "datedAt" e "rate" não podem ser vazios` },
   );
 }
 
-function verifyToken(res, token) {
+async function verifyToken(res, token) {
   if (!token) {
-    return res.status(401).send({ message: 'Token não encontrado' });
+    await res.status(401).send({ message: 'Token não encontrado' });
   }
   const checkToken = tokens.find((item) => item === token);
   if (!checkToken) {
-    return res.status(401).send({ message: 'Token inválido' });
+    await res.status(401).send({ message: 'Token inválido' });
   }
 }
 
-function checkFields(res, name, age) {
+async function checkFields(res, name, age) {
   if (!name) {
-    return obrigatoryField(res, 'name');
+    await obrigatoryField(res, 'name');
   }
   if (name.length < 3) {
-    return res.status(400).send({ message: 'O "name" deve ter pelo menos 3 caracteres' });
+    await res.status(400).send({ message: 'O "name" deve ter pelo menos 3 caracteres' });
   }
   if (!age) {
-    return obrigatoryField(res, 'age');
+    await obrigatoryField(res, 'age');
   }
   if (age < 18) {
-    return res.status(400).send({ message: 'O crush deve ser maior de idade' });
+    await res.status(400).send({ message: 'O crush deve ser maior de idade' });
   }
 }
 
-function checkRate(res, rate) {
+async function checkRate(res, rate) {
   if (rate < 1 || rate > 5) {
-    return res.status(400).send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+    await res.status(400).send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
-  if (!rate) return obrigatoryField(res, 'date', 1);
+  if (!rate) await obrigatoryField(res, 'date', 1);
 }
 
-function checkDate(res, date) {
+async function checkDate(res, date) {
   if (!date || !date.datedAt) {
-    return obrigatoryField(res, 'date', 1);
+    await obrigatoryField(res, 'date', 1);
   }
   const { datedAt, rate } = date;
   const dateRegex = /^(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/](19|20)\d\d$/;
   if (!dateRegex.test(datedAt)) {
-    return res.status(400).send(
+    await res.status(400).send(
       { message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' },
     );
   }
- return checkRate(res, rate);
+ await checkRate(res, rate);
 }
 
-function checkCrush(res, crush) {
-  if (!crush) return res.status(404).send({ message: 'Crush não encontrado' });
+async function checkCrush(res, crush) {
+  if (!crush) await res.status(404).send({ message: 'Crush não encontrado' });
 }
 
-function checkMail(res, email) {
+async function checkMail(res, email) {
   const regex = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
   if (!regex.test(email)) {
-    return res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
+    await res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
 }
 
@@ -90,19 +90,19 @@ app.get('/', (_request, response) => {
 
 app.get('/crush', rescue(async (_req, res) => allCrushes(res)));
 
-app.get('/crush/search', rescue((req, res) => {
+app.get('/crush/search', rescue(async (req, res) => {
   const { authorization } = req.headers;
-  verifyToken(res, authorization);
+  await verifyToken(res, authorization);
   const param = req.query.q;
   if (!param || param === '') return allCrushes(res);
   const results = crushes.filter((item) => item.name.startsWith(param));
   return res.status(200).send(results);
 }));
 
-app.get(crushWithId, rescue((req, res) => {
+app.get(crushWithId, rescue(async (req, res) => {
   const { id } = req.params;
   const crush = crushes.find((item) => item.id === parseInt(id, 10));
-  checkCrush(res, crush);
+  await checkCrush(res, crush);
   return res.status(SUCCESS).send(crush);
 }));
 
@@ -111,7 +111,7 @@ app.post('/login', rescue(async (req, res) => {
   if (!email) {
     return obrigatoryField(res, 'email');
   }
-  checkMail(res, email);
+  await checkMail(res, email);
   if (!password) {
     return obrigatoryField(res, 'password');
   }
@@ -128,10 +128,10 @@ app.post('/login', rescue(async (req, res) => {
 
 app.post('/crush', rescue(async (req, res) => {
   const { authorization } = req.headers;
-  verifyToken(res, authorization);
+  await verifyToken(res, authorization);
   const { name, age, date } = req.body;
-  checkFields(res, name, age);
-  checkDate(res, date);
+  await checkFields(res, name, age);
+  await checkDate(res, date);
   const { datedAt, rate } = date;
   const crush = {
     id: crushes.length + 1,
@@ -149,13 +149,13 @@ app.post('/crush', rescue(async (req, res) => {
 
 app.put(crushWithId, rescue(async (req, res) => {
   const { authorization } = req.headers;
-  verifyToken(res, authorization);
+  await verifyToken(res, authorization);
   const id = parseInt(req.params.id, 10);
   const crush = crushes.find((item) => item.id === id);
-  checkCrush(res, crush);
+  await checkCrush(res, crush);
   const { name, age, date } = req.body;
-  checkFields(res, name, age);
-  checkDate(res, date);
+  await checkFields(res, name, age);
+  await checkDate(res, date);
   crush.name = name;
   crush.age = age;
   crush.date = date;
@@ -170,10 +170,10 @@ app.put(crushWithId, rescue(async (req, res) => {
 
 app.delete(crushWithId, rescue(async (req, res) => {
   const { authorization } = req.headers;
-  verifyToken(res, authorization);
+  await verifyToken(res, authorization);
   const id = parseInt(req.params.id, 10);
   const crush = crushes.find((item) => item.id === id);
-  checkCrush(res, crush);
+  await checkCrush(res, crush);
   crushes = crushes.filter((item) => item.id !== id);
   await fs.writeFile(crushFile, JSON.stringify(crushes));
   return res.status(200).send({ message: 'Crush deletado com sucesso' });
