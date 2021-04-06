@@ -22,7 +22,7 @@ function validarSenha(password) {
   if (password === '' || password === undefined) {
     throw new Error('O campo "password" é obrigatório');
   } else if (password.toString().length < 6) {
-    throw new Error('O "password" deve ter pelo menos 6 caracteres');
+    throw new Error('A "senha" deve ter pelo menos 6 caracteres');
   }
 }
 
