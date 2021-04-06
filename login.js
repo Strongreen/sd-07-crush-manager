@@ -12,7 +12,7 @@ const validatePassword = (secret) => {
 };
 
 const rand = () => Math.random(0).toString(36).substr(2);
-const token = (length) => (rand() + rand() + rand() + rand().substr(0, length));
+const token = (length) => (rand() + rand() + rand() + rand()).substr(0, length);
 
 const login = async (req, res, next) => {
   const { email, password } = req.body;
@@ -22,9 +22,9 @@ const login = async (req, res, next) => {
   if (!email) {
     res.status(400).json({ message: 'O campo "email" é obrigatório' });
   } else if (!isEmailValid) {
-    res.status(400).json({ message: 'O campo "email" deve ter o formato "email@email.com"' });
+    res.status(400).json({ message: 'O "email" deve ter o formato "email@email.com"' });
   } else if (!password) {
-    res.status(400).json({ message: 'O campo "senha" é obrigatório' });
+    res.status(400).json({ message: 'O campo "password" é obrigatório' });
   } else if (!isPasswordValid) {
     res.status(400).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   } else {
