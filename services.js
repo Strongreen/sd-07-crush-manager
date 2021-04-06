@@ -47,7 +47,7 @@ const validateUser = (req, res, next) => {
 };
 
 const validateName = (req, res, next) => {
-  const name = req.body;
+  const { name } = req.body;
   if (!name) {
     return res.status(400).json({ message: 'O campo "name" é obrigatório' });
   }
@@ -58,26 +58,26 @@ const validateName = (req, res, next) => {
 };
 
 const validateAge = (req, res, next) => {
-  const age = req.body;
+  const { age } = req.body;
   if (!age) {
     return res.status(400).json({ message: 'O campo "age" é obrigatório' });
   }
-  if (age && age.length < 18) {
+  if (age && age < 18) {
     return res.status(400).json({ message: 'O crush deve ser maior de idade' });
   }
   next();
 };
 
 const validateDate = (req, res, next) => {
-  const date = req.body;
+  const { date } = req.body;
+
   if (!date || !date.datedAt || typeof date.rate !== 'number') {
     return res
-    .status(400)
-    .json({ message: 'O campo "date" é obrigatório e o "datedAt" e "rate" não podem ser vazios' });
+      .status(400)
+      .json({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
   }
   if (!isDateValid(date.datedAt)) {
-    return res
-    .status(400).json({ message: 'O campo "datedAt" deve ter pelo o formato "dd/mm/aaaa"' });
+    return res.status(400).json({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
   }
   next();
 };
@@ -87,7 +87,7 @@ const validateRate = (req, res, next) => {
   if (date.rate <= 0 || date.rate > 5) {
     return res
     .status(400)
-    .json({ message: 'O campo "rate" deve ser um inteiro de 1 a 5' });
+    .json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
   next();
 };
