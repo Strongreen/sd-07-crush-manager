@@ -14,7 +14,9 @@ routes.get('/crush', async (req, res) => {
   res.status(200).send(data);
 });
 
-routes.get('/crush/:id', async (req, res) => {
+const crushbarraid = '/crush/:id';
+
+routes.get(crushbarraid, async (req, res) => {
   const { id } = req.params;
   const data = await connection.dbRead();
   const crush = data.filter((crushX) => crushX.id === Number(id));
@@ -30,7 +32,7 @@ routes.post('/crush', checkToken, addCrush, async (req, res) => {
   res.status(201).send(newCrush);
 });
 
-routes.put('/crush/:id', checkToken, addCrush, async (req, res) => {
+routes.put(crushbarraid, checkToken, addCrush, async (req, res) => {
   const { name, age, date } = req.body;
   const { id } = req.params;
   await connection.dbEdit();
@@ -42,14 +44,15 @@ routes.put('/crush/:id', checkToken, addCrush, async (req, res) => {
   });
 });
 
-routes.delete('/crush/:id', checkToken, async (req, res) => {
+routes.delete(crushbarraid, checkToken, async (req, res) => {
   const { id } = req.params;
   const response = await connection.dbDelete(id);
   res.status(200).send(response);
 });
 
 routes.post('/login', checkLogin, (req, res) => {
-  res.status(200).send({ token: '7mqaVRXJSp886CGr' });
+  console.log('oi');
+  return res.status(200).send({ token: '7mqaVRXJSp886CGr' });
   // res.status(200).send({ token: generateToken() });
 });
 
