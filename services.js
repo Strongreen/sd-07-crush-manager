@@ -36,7 +36,7 @@ const getCrushById = async (req, res) => {
 };
 
 const validateUser = (req, res, next) => {
-  const authNumber = req.headers.authorization;
+  const { authNumber } = req.headers.authorization;
   if (!authNumber) {
     return res.status(401).json({ message: NO_TOKEN });
   }
