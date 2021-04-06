@@ -57,7 +57,7 @@ const alterCrush = (infoCrush, id) => {
   fs.writeFileSync(filePath, JSON.stringify(crushes));
 
   return {
-    id, name, age, date,
+    id: Number(id), name, age, date,
   };
 };
 
@@ -74,10 +74,26 @@ const deleteCrush = (id) => {
   };
 };
 
+const searchCrush = (searchTerm) => {
+  const file = fs.readFileSync(filePath, 'utf-8');
+  const crushes = JSON.parse(file);
+
+  const crushFound = crushes.filter((crush) => crush.name.includes(searchTerm) === true);
+
+  if (crushFound.length === 0) {
+    const allCrushes = getAllCrushes();
+
+    return allCrushes;
+  }
+  
+  return crushFound;
+};
+
 module.exports = {
   getAllCrushes,
   getCrush,
   createCrush,  
   alterCrush,
   deleteCrush,
+  searchCrush,
 };

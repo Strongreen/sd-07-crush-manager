@@ -19,6 +19,14 @@ app.get('/crush', (_req, res) => {
   return res.status(200).json(crushes);
 });
 
+app.get('/crush/search', authMiddleware, (req, res) => {
+  const { q } = req.query;
+
+  const result = crush.searchCrush(q);
+
+  return res.status(200).json(result);
+});
+
 app.get(crushId, (req, res) => {
   const { id } = req.params;
   

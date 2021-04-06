@@ -67,6 +67,13 @@ const validateAge = (age) => {
 };
 
 const validateDate = ({ datedAt, rate }) => {
+  if (isEmpty(datedAt) || isEmpty(rate)) {
+    return {
+      status: 400,
+      message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
+    };
+  }
+
   if (!isADate(datedAt)) {
     return {
       status: 400,
@@ -74,13 +81,6 @@ const validateDate = ({ datedAt, rate }) => {
     };
   }
 
-  if (isEmpty(datedAt) || isEmpty(rate)) {
-    return {
-      status: 400,
-      message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
-    };
-  }
-  
   if (!isARateNumber(rate)) {
     return { status: 400, message: 'O campo "rate" deve ser um inteiro de 1 à 5' };
   }   
