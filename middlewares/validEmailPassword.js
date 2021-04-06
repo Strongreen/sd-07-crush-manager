@@ -23,7 +23,7 @@ const validEmailPassword = (req, res, next) => {
       return res.status(400).json({ message: messageError.format_email });
     case infoNotExists(password):
       return res.status(400).json({ message: messageError.password_not_exists });
-    case isLengthLetterThan(password):
+    case isLengthLetterThan(password, 6):
       return res.status(400).json({ message: messageError.password_length });
     default: return next();
   }

@@ -15,10 +15,10 @@ const messageError = {
 
 const fieldNotExists = (value) => (!value);
 const isLengthLetterThan = (value, min) => (value.length < min);
+const isNumberLetterThan = (value, min) => (value < min);
 const subfieldNotExists = (value) => 
   (!value || value.datedAt === undefined || value.rate === undefined);
-const fieldBetweenTwoValues = (value, min, max) => 
-  (parseInt(value.rate, 10) < min || parseInt(value.rate, 10) > max);
+const fieldBetweenTwoValues = (value, min, max) => (value < min || value > max);
 
 const validatesNameAge = (req, res, next) => {
   const { name, age } = req.body;
@@ -30,7 +30,7 @@ const validatesNameAge = (req, res, next) => {
       return res.status(400).json({ message: messageError.name_length });
     case fieldNotExists(age):
       return res.status(400).json({ message: messageError.age_required });
-    case isLengthLetterThan(parseInt(age, 10), 18):
+    case isNumberLetterThan(age, 18):
       return res.status(400).json({ message: messageError.age_less_than_eighteen });
     default: next();
   }
