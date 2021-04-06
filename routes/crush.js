@@ -39,11 +39,24 @@ app.use(dateMiddleware);
 // --------------------------------------------------------------------- METODOS POST
 
 app.post('/', (req, res) => {
-  const object = { id: data.length + 1, ...req.body };
+  const object = { id: data.length, ...req.body };
   const newData = [...data, object];
 
   fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData)).then(() =>
     res.status(201).send(object));
+});
+
+app.post('/:id', (req, res) => {
+  const { id } = req.params;
+
+  const crush = { id: parseInt(id, 10), ...req.body };
+  const filteredData = data.filter(
+    (element) => element.id !== parseInt(id, 10),
+  );
+  const newData = [...filteredData, crush];
+
+  fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData)).then(() =>
+    res.status(200).send(crush));
 });
 
 module.exports = app;

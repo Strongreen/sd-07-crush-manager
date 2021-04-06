@@ -22,11 +22,5 @@
     "age": 24,
     "id": 4,
     "date": { "datedAt": "23/10/2020", "rate": 5 }
-  },
-  {
-    "id": 5,
-    "name": "Zendaya Maree",
-    "age": 24,
-    "date": { "rate": 5, "datedAt": "25/10/2020" }
   }
 ]
