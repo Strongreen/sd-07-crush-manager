@@ -14,6 +14,7 @@ const BAD_REQUEST = 400;
 const CREATED = 201;
 const NOT_FOUND = 404;
 const PORT = '3000';
+const crushId = '/crush/:id';
 
 const getCrush = async () => {
   const content = await fs.promises.readFile('./crush.json', 'utf-8');
@@ -32,7 +33,7 @@ app.get('/crush', async (_request, response) => {
   } catch (error) { console.error(`Erro: ${error.message}`); }
 });
 
-app.get('/crush/:id', async (request, response) => {
+app.get(crushId, async (request, response) => {
   const { id } = (request.params);
   try {
     const data = await getCrush();
@@ -74,6 +75,20 @@ app.post('/login', (request, res) => {
 });
 
 app.use(tokenMiddleware);
+
+app.delete(crushId, async (request, response) => {
+  const { id } = request.params;
+  try {
+    const data = await getCrush();
+    const findCrush = data.find((crush) => crush.id === Number(id));
+    const index = data.indexOf(findCrush);
+    const newList = [...data];
+    newList.splice(index, 1);
+    await fs.promises.writeFile(`${__dirname}/crush.json`, JSON.stringify(newList));
+    return response.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
+  } catch (error) { console.error(`Erro: ${error.message}`); }
+});
+
 app.use(reqBodyMiddleware);
 app.use(checkDate1);
 app.use(checkDate2);
@@ -94,7 +109,7 @@ app.post('/crush', async (request, response) => {
   } catch (error) { console.error(`Erro: ${error.message}`); }
 });
 
-app.put('/crush/:id', async (request, response) => {
+app.put(crushId, async (request, response) => {
   const { id } = request.params;
   const { name, age, date } = request.body;
   try {
