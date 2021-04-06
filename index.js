@@ -62,87 +62,17 @@ const regex = {
   RATE: /\b[1-5]\b/g,
 };
 
-app.post('/login', (request, response) => {
+app.post('/login', (request, res) => {
   const { email, password } = request.body;
-    if (!email) { return response.status(BAD_REQUEST).json({ message: erroEmail.NULL }); }
-    if (!regex.EMAIL.test(email)) { 
-      return response.status(BAD_REQUEST).json({ message: erroEmail.INVALID });
-    }
+  const {EMAIL} = regex;
+    if (!email) return res.status(BAD_REQUEST).json({ message: erroEmail.NULL }); 
+    if (!EMAIL.test(email)) return res.status(BAD_REQUEST).json({ message: erroEmail.INVALID })
 
-    if (!password) { 
-      return response.status(BAD_REQUEST).json({ message: erroPass.NULL });
-    }
-    if (password.length < 6) { 
-      return response.status(BAD_REQUEST).json({ message: erroPass.INVALID });
-    }
+    if (!password) return res.status(BAD_REQUEST).json({ message: erroPass.NULL })
+    if (password.length < 6) return res.status(BAD_REQUEST).json({ message: erroPass.INVALID })
 
     const token = crypto.randomBytes(8).toString('hex');
-    return response.status(SUCCESS).json({ token });
-});
-
-const checkToken = (token, response) => {
-  if (!token) {
-    return response.status(UNAUTHORIZED).send({ message: 'Token não encontrado' });
-  }
-  if (!regex.TOKEN.test(token)) {
-    return response.status(UNAUTHORIZED).send({ message: 'Token inválido' });
-  }
-};
-
-const checkNameAndAge = (name, age, response) => {
-  if (!name) {
-    return response.status(BAD_REQUEST).send({ message: 'O campo "name" é obrigatório' });
-  }
-  if (name.length < 3) {
-    return response.status(BAD_REQUEST).send({ 
-      message: 'O "name" deve ter pelo menos 3 caracteres',
-    });
-  }
-  if (!age) {
-    return response.status(BAD_REQUEST).send({ message: 'O campo "age" é obrigatório' });
-  }
-  if (age < 18) {
-    return response.status(BAD_REQUEST).send({ message: 'O crush deve ser maior de idade' });
-  }
-};
-
-const checkDate = (date, response) => {
-  const { datedAt, rate } = date;
-  if (!datedAt || !rate) {
-    return response.status(BAD_REQUEST).send({
-       message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
-    });
-  }
-  if (!regex.DATE.test(datedAt)) {
-    return response.status(BAD_REQUEST).send({ 
-      message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"', 
-    });
-  }
-  if (!regex.RATE.test(rate)) {
-    return response.status(BAD_REQUEST).send({
-      message: 'O campo "rate" deve ser um inteiro de 1 à 5',
-    });
-  }
-};
-
-app.post('/crush', async (request, response) => {
-  const { authorization: token } = request.header;
-  const { name, age, date } = request.body;
-  try {
-    checkToken(token, response);
-    checkNameAndAge(name, age, response);
-    checkDate(date, response);
-    const data = await getCrush();
-    const size = data.length;
-    data[size] = {
-      id: `${size + 1}`,
-      name,
-      age,
-      date,
-    };
-    await fs.promises.writeFile(`${__dirname}/.././crush.json`, JSON.stringify(data));
-    return response.status(CREATED).send(data[size]);
-  } catch (error) { console.error(`Erro: ${error.message}`); }
+    return res.status(SUCCESS).json({ token });
 });
 
 app.listen(PORT, () => { console.log('Online'); });
