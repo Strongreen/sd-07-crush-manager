@@ -29,5 +29,6 @@ app.post('/crush', auth, validateName, validateAge, dateValidation, dateRateMW);
 app.use('/crush', routes.crush);
 app.use('/crush', routes.crushId);
 app.use('/login', routes.login);
+app.put('/crush', auth /** middlewares aqui */);
 
 app.listen(PORT, () => { console.log(`Online on port ${PORT}`); });

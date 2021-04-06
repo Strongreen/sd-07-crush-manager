@@ -2,9 +2,9 @@ const isDateValid = require('../functions/isDateValid');
 
 const dateValidation = (req, res, next) => {
   const { date } = req.body;
-  
+
   if (!date || !date.datedAt || !date.rate) {
-    return res.status(401).json({
+    return res.status(400).json({
       message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
     });
   }

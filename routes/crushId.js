@@ -7,7 +7,6 @@ const route = express.Router();
 route.get('/:id', rescue(async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(typeof id, id);
 
     const content = await fs.promises.readFile(`${__dirname}/../crush.json`);
     const crushesArray = JSON.parse(content);
@@ -23,5 +22,13 @@ route.get('/:id', rescue(async (req, res) => {
     throw new Error(e);
   }
 }));
+
+// route.put('/:id', rescue(async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//   } catch (e) {
+
+//   }
+// }));
 
 module.exports = route;
