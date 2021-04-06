@@ -10,6 +10,7 @@ const dateFormatMiddleware = require('./dateFormatMiddleware');
 const app = express();
 const SUCCESS = 200;
 const crushId = '/crush/:id';
+const crushFile = 'crush.json';
 
 app.use(bodyParser.json());
 
@@ -18,7 +19,7 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-const requestdata = () => JSON.parse(fs.readFileSync('./crush.json'));
+const requestdata = () => JSON.parse(fs.readFileSync(crushFile));
 
 app.get('/crush', (req, res) => {
   const data = requestdata();
@@ -81,7 +82,7 @@ app.post('/crush', (req, res) => {
   if (date.rate < 1 || date.rate > 5) {
     return res.status(400).send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
-  const crushs = JSON.parse(fs.readFileSync('crush.json'));
+  const crushs = JSON.parse(fs.readFileSync(crushFile));
   const newCrush = {
     name,
     age,
@@ -107,7 +108,7 @@ app.put(crushId, (req, res) => {
   if (date.rate < 1 || date.rate > 5) {
     return res.status(400).send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
-  const crushs = JSON.parse(fs.readFileSync('crush.json'));
+  const crushs = JSON.parse(fs.readFileSync(crushFile));
   const newCrush = {
     name,
     age,
@@ -123,7 +124,7 @@ app.put(crushId, (req, res) => {
 
 app.delete(crushId, authMiddleware);
 app.delete(crushId, (req, res) => {
-  const crushs = JSON.parse(fs.readFileSync('crush.json'));
+  const crushs = JSON.parse(fs.readFileSync(crushFile));
   const id = Number(req.params.id);
   crushs.splice(id - 1, 1);
   res.status(200).send({ message: 'Crush deletado com sucesso' });
