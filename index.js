@@ -75,22 +75,22 @@ app.post('/login', (request, res) => {
 });
 
 app.use(tokenMiddleware);
-app.use(dateMiddleware);
 app.use(reqBodyMiddleware);
+app.use(dateMiddleware);
 
 app.post('/crush', async (request, response) => {
   const { name, age, date } = request.body;
   try {
     const data = await getCrush();
-    const size = data.length;
-    data[size] = {
-      id: `${size + 1}`,
+    const newCrush = {
+      id: `${data.length + 1}`,
       name,
       age,
       date,
-    };
-    await fs.promises.writeFile(`${__dirname}/.././crush.json`, JSON.stringify(data));
-    return response.status(CREATED).send(data[size]);
+    }
+    const newList = {...data, newCrush}
+    await fs.promises.writeFile(`${__dirname}/.././crush.json`, JSON.stringify(newList));
+    return response.status(CREATED).send(newCrush);
   } catch (error) { console.error(`Erro: ${error.message}`); }
 });
 
