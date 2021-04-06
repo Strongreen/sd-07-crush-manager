@@ -14,7 +14,6 @@ app.get('/:id', (req, res) => {
     res.status(200).send(crush);
 });
 
-
 /* function getCrushs() {
     fs.promises
       .readFile(data, 'utf8')
