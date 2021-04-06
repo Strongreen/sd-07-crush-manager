@@ -10,7 +10,7 @@ const nameMiddleware = (req, res, next) => {
             message: 'O "name" deve ter pelo menos 3 caracteres' });
     }
 
-   return next();
+   next();
 };
 
 module.exports = nameMiddleware;

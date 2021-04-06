@@ -4,7 +4,7 @@ const errorMiddleware = (err, req, res, next) => {
             { error: `Something is wrong! Error: ${err.message}` },
         );
     }
-    return next();
+    next();
 };
 
 module.exports = errorMiddleware;

@@ -7,7 +7,7 @@ const createFunction = async (body) => {
 
     const newCrush = [...file, { id, name, age, date }];
 
-    fs.promises.writeFile('./crush.json', JSON.stringify(newCrush));
+    await fs.promises.writeFile('./crush.json', JSON.stringify(newCrush));
 
     return { id, name, age, date };
 };

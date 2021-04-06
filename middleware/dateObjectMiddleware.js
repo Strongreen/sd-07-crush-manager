@@ -9,7 +9,7 @@ const dateObjectMiddleware = (req, res, next) => {
         });
     }
 
-    return next();
+    next();
 };
 
 module.exports = dateObjectMiddleware;

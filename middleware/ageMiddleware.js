@@ -10,7 +10,7 @@ const ageMiddleware = (req, res, next) => {
             message: 'O crush deve ser maior de idade' });
     }
 
-    return next();
+    next();
 };
 
 module.exports = ageMiddleware;

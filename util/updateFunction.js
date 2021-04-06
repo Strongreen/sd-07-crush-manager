@@ -11,7 +11,9 @@ const updateFunction = async (params, body) => {
         const filterCrush = file.filter((f) => f.id !== Number(id));
         const newCrush = [...filterCrush, { id: Number(id), name, age, date }];
 
-        fs.promises.writeFile('./crush.json', JSON.stringify(sortFunction(newCrush)));
+        await fs.promises.writeFile(
+            './crush.json', JSON.stringify(sortFunction(newCrush)),
+        );
 
         return { id: Number(id), name, age, date };
     }
