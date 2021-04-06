@@ -22,6 +22,18 @@ async function getCrushes() {
   }
 }
 
+app.get('/search', authMiddleware, async (req, res) => {
+  const term = req.query.q;
+  const crushes = await getCrushes();
+  const searchTerm = crushes.filter((csh) => csh.name.includes(term));
+  if (!term || term === '') {
+    return res.status(200).json(crushes);
+  } if (searchTerm.length === 0) {
+    return res.status(200).json([]);
+  }
+  return res.status(200).json(searchTerm);
+});
+
 app.get('/', async (_req, res) => {
   const crushes = await getCrushes();
   if (!crushes) return res.status(200).send([]);
@@ -56,15 +68,15 @@ app.use(express.json());
 
 app.post('/', authMiddleware, validatingCrushesMiddleware.validatingAgeOfCrushes,
 validatingCrushesMiddleware.validatingNameOfCrushes,
-validatingCrushesMiddleware.validatingRatesOfCrushes,
 validatingCrushesMiddleware.validatingDateAndRatesOfCrushes,
+validatingCrushesMiddleware.validatingRatesOfCrushes,
 validatingCrushesMiddleware.validatingDateFormatOfCrushes,
 rescue(async (req, res) => {
   const { name, age, date } = req.body;
   const crushes = await getCrushes();
   const size = crushes.length;
   crush[size] = {
-    id: `${size + 1}`,
+    id: size + 1,
     name,
     age,
     date,
@@ -91,12 +103,12 @@ validatingCrushesMiddleware.validatingRatesOfCrushes,
   }));
 
   app.delete('/:id', authMiddleware,
-   rescue(async (req, res) => {
-  const { id } = req.params;
-  const index = id - 1;
-  crush.splice(index, 1);
-  sendCrushes(crush);
-  return res.status(200).send({ message: 'Crush deletado com sucesso' });
-  }));
+  rescue(async (req, res) => {
+ const { id } = req.params;
+ const index = id - 1;
+ crush.splice(index, 1);
+ sendCrushes(crush);
+ return res.status(200).send({ message: 'Crush deletado com sucesso' });
+ }));
 
 module.exports = app;
