@@ -15,11 +15,27 @@ app.get('/', (_request, response) => {
 
 app.listen(PORT, () => { console.log('Online'); });
 
+const getCrushList = () => JSON.parse(fs.readFileSync('./crush.json', 'utf-8'));
+
 app.get('/crush', (_request, response) => {
-  const data = JSON.parse(fs.readFileSync('./crush.json', 'utf-8'));
-  if (data.length !== 0) {
-    response.status(SUCCESS).send(data);
+  const crushList = getCrushList();
+  if (crushList.length !== 0) {
+    response.status(SUCCESS).send(crushList);
   } else {
     response.status(SUCCESS).send([]);
+  }
+});
+
+app.get('/crush/:id', (request, response) => {
+  const crushList = getCrushList();
+  const { id } = request.params;
+  const numberID = parseFloat(id);
+  const result = crushList.find((crush) => crush.id === numberID);
+  if (result) {
+    response.status(SUCCESS).send(result);
+  } else {
+    response.status('404').send({
+      message: 'Crush não encontrado',
+    });
   }
 });
