@@ -7,10 +7,8 @@ const app = express();
 app.use(bodyParser.json());
 
 const SUCCESS = 200;
-const CREATED = 201;
 const BAD_REQUEST = 400;
 const NOT_FOUND = 404;
-const UNAUTHORIZED = 401;
 const PORT = '3000';
 
 const getCrush = async () => {
@@ -64,12 +62,12 @@ const regex = {
 
 app.post('/login', (request, res) => {
   const { email, password } = request.body;
-  const {EMAIL} = regex;
+  const { EMAIL } = regex;
     if (!email) return res.status(BAD_REQUEST).json({ message: erroEmail.NULL }); 
-    if (!EMAIL.test(email)) return res.status(BAD_REQUEST).json({ message: erroEmail.INVALID })
+    if (!EMAIL.test(email)) return res.status(BAD_REQUEST).json({ message: erroEmail.INVALID });
 
-    if (!password) return res.status(BAD_REQUEST).json({ message: erroPass.NULL })
-    if (password.length < 6) return res.status(BAD_REQUEST).json({ message: erroPass.INVALID })
+    if (!password) return res.status(BAD_REQUEST).json({ message: erroPass.NULL });
+    if (password.length < 6) return res.status(BAD_REQUEST).json({ message: erroPass.INVALID });
 
     const token = crypto.randomBytes(8).toString('hex');
     return res.status(SUCCESS).json({ token });
