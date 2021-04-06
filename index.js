@@ -15,7 +15,13 @@ app.get('/', (_request, response) => {
 
 app.listen(PORT, () => { console.log('Online'); });
 
-const getCrushList = () => JSON.parse(fs.readFileSync('./crush.json', 'utf-8'));
+const getCrushList = () => {
+  try {
+    return JSON.parse(fs.readFileSync('./crush.json', 'utf-8'));
+  } catch (err) {
+    console.error(`Erro ao ler o arquivo: ${err.path}`);
+  }
+}
 
 app.get('/crush', (_request, response) => {
   const crushList = getCrushList();
@@ -29,8 +35,7 @@ app.get('/crush', (_request, response) => {
 app.get('/crush/:id', (request, response) => {
   const crushList = getCrushList();
   const { id } = request.params;
-  const numberID = parseFloat(id);
-  const result = crushList.find((crush) => crush.id === numberID);
+  const result = crushList.find((crush) => crush.id === Number(id));
   if (result) {
     response.status(SUCCESS).send(result);
   } else {
@@ -39,3 +44,5 @@ app.get('/crush/:id', (request, response) => {
     });
   }
 });
+
+
