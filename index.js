@@ -17,7 +17,7 @@ const PORT = '3000';
 
 const getCrush = async () => {
   const content = await fs.promises.readFile('./crush.json', 'utf-8');
-  const data = await JSON.parse(content);
+  const data = JSON.parse(content);
   return data;
 };
 
@@ -83,13 +83,13 @@ app.post('/crush', async (request, response) => {
   try {
     const data = await getCrush();
     const newCrush = {
-      id: `${data.length + 1}`,
+      id: Number(data.length + 1),
       name,
       age,
       date,
     };
     const newList = { ...data, newCrush };
-    await fs.promises.writeFile(`${__dirname}/.././crush.json`, JSON.stringify(newList));
+    await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newList));
     return response.status(CREATED).send(newCrush);
   } catch (error) { console.error(`Erro: ${error.message}`); }
 });
