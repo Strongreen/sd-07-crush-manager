@@ -36,28 +36,27 @@ const checkDateFields = (datedAt, rate) => {
 
 const checkDate = (date) => {
   const regexForDate = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i;
-  if (!date) throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
+  if (date === {} || date === undefined) throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
   else checkDateFields(date.datedAt, date.rate);
- 
+
   if (!regexForDate.test(date.datedAt)) throw new Error('O campo "datedAt" deve ter o formato "dd/mm/aaaa"');
-  if (date.rate % 1 !== 0 && (date.rate < 0 || date.rate > 6))
-    throw new Error('O campo "datedAt" deve ter o formato "dd/mm/aaaa"');
+  if (date.rate < 1 || date.rate > 5)
+    throw new Error('O campo "rate" deve ser um inteiro de 1 à 5');
 }
 
 const updateCrushes = async (name, age, date) => {
-  const newCrushId = await getData().lenght;
+  const data = await getData();
 
-  const newCrush ={
-    id: newCrushId,
+  const newCrush = {
+    id: data.length + 1,
     name,
     age,
     date
   };
-
-  const data = await getData();
+ 
   data.push(newCrush);
-
-  return await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));
+  await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));
+  return newCrush;
 }
 
 app.get('/', async (_request, response) => {
@@ -88,7 +87,8 @@ app.post('/', async (request, response) => {
     });
   }
 
-  await updateCrushes(name, age, date);
+  const newCrush = await updateCrushes(name, age, date);
+  response.status(201).send(newCrush);
 });
 
 module.exports = app;
