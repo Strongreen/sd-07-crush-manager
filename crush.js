@@ -22,13 +22,17 @@ function readFilePromise(fileName) {
   });
 } // referência: conteúdo Promises, dia 26.2
 
-app.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  const isId = await readFilePromise(crushJson)
+function findAsyncId(file, id) {
+  return readFilePromise(file)
     .then((content) => JSON.parse(content).find((item) => item.id.toString() === id))
     .catch((err) => {
     console.error(`Erro ao ler arquivo: ${err.message}`);
   });
+}
+
+app.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  const isId = await findAsyncId(crushJson, id);
   if (!isId) return res.status(404).send({ message: 'Crush não encontrado' });
   
   res.status(200).send(isId);
@@ -124,6 +128,27 @@ app.post('/', async (req, res) => {
     .then((content) => createCrush(JSON.parse(content), name, age, date))
     .catch((err) => console.error(`Erro ao ler arquivo: ${err.message}`));
   return res.status(201).json(newCrush);
+});
+
+app.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, age, date } = req.body;
+  const { authorization } = req.headers;
+  const thisCrush = await findAsyncId(crushJson, id);
+  thisCrush.name = name;
+  thisCrush.age = age;
+  thisCrush.date = date;
+  
+  const isName = isValidName(name);
+  const isAge = isValidAge(age);
+  const isDate = isValidDate(date);
+  const isAuth = isValidAuthorization(authorization);
+  if (isAuth) return res.status(401).send({ message: isAuth });
+  if (isName) return res.status(400).send({ message: isName });
+  if (isAge) return res.status(400).json({ message: isAge });
+  if (isDate) return res.status(400).send({ message: isDate });
+  
+  return res.status(201).json(thisCrush);
 });
 
 app.use((err, _req, res, _next) => {
