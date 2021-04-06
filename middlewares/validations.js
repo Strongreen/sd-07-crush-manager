@@ -1,6 +1,6 @@
 const validationMiddleware = (req, res, next) => {
     const { email, password } = req.body;
-    const passwordToString = password.toString();
+  
     const emailTest = (/^[^\s@]+@[^\s@]+\.[^\s@]+$/).test(email);
 
     if (!email) {
@@ -11,7 +11,7 @@ const validationMiddleware = (req, res, next) => {
     } else if (!password) {
         res.status(400).send({ message: 'O campo "password" é obrigatório',
         });
-    } else if (passwordToString.length < 6) {
+    } else if (password.length < 6) {
         res.status(400).send({
             message: 'O "password" deve ter pelo menos 6 caracteres',
         });

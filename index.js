@@ -13,7 +13,7 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.use(middlewares.validationMiddleware);
-app.use('/crush', crush);
+app.use('/', crush);
+app.use(middlewares.errorMiddleware);
 
 app.listen(PORT, () => { console.log('Online'); });

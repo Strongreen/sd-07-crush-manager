@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const randtoken = require('rand-token');
+const middlewares = require('../middlewares/index');
 
   const myToken = randtoken.generate(16);
 
@@ -8,7 +9,7 @@ const routes = express();
 
 const FILE = 'crush.json';
 
-routes.get('/', (req, res) => {
+routes.get('/crush', (req, res) => {
     const file = fs.readFileSync(FILE);
     const dataCrush = file.toString('utf-8');    
     const crushData = JSON.parse(dataCrush);
@@ -17,7 +18,9 @@ routes.get('/', (req, res) => {
        res.status(200).send(crushData);
     } 
     res.status(200).send([]);
-}).get('/:id', async (req, res) => {
+});
+
+routes.get('/crush/:id', async (req, res) => {
   const { id } = req.params;
   const file = fs.readFileSync(FILE);
   const stringData = file.toString('utf-8');
@@ -32,13 +35,18 @@ routes.get('/', (req, res) => {
         },
     );
   }
+  
   res.status(200).send(filterCrush);
 });
 
-routes.post('/', (req, res) => {
+routes.post('/login', middlewares.validationMiddleware);
+
+routes.post('/login', (req, res) => {
   res.status(200).send({
     token: myToken,
   });
 });
+
+routes.use(middlewares.errorMiddleware);
 
 module.exports = routes;
