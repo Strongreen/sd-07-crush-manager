@@ -13,4 +13,4 @@ const dateMiddleware = (req, res, next) => {
   next();
 };
 
-export default dateMiddleware;
+module.exports = dateMiddleware;

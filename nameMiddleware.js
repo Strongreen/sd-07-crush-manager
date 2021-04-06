@@ -9,6 +9,4 @@ const nameMiddleware = (req, res, next) => {
   next();
 };
 
-export default nameMiddleware;
-
-// asdads
+module.exports = nameMiddleware;

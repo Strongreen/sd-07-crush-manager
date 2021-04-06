@@ -8,4 +8,4 @@ const ageMiddleware = (req, res, next) => {
   next();
 };
 
-export default ageMiddleware;
+module.exports = ageMiddleware;
