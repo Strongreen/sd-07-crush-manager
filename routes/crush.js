@@ -41,7 +41,11 @@ const checkDateFormat = (datedAt, rate) => {
   if (!regexForDate.test(datedAt)) {
     throw new Error('O campo "datedAt" deve ter o formato "dd/mm/aaaa"');
   }
-  if (rate < 1 || rate > 5) throw new Error('O campo "rate" deve ser um inteiro de 1 à 5');
+
+  if (rate < 1 || rate > 5) {
+    console.log('estou aqui')
+    throw new Error('O campo "rate" deve ser um inteiro de 1 à 5');
+  }
 };
 
 const checkDate = (date) => {
@@ -53,7 +57,7 @@ const checkDate = (date) => {
   }
 };
 
-const updateCrushes = async (name, age, date) => {
+const addCrush = async (name, age, date) => {
   const data = await getData();
 
   const newCrush = {
@@ -66,6 +70,29 @@ const updateCrushes = async (name, age, date) => {
   data.push(newCrush);
   await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));
   return newCrush;
+};
+
+const updateCrush = async (name, age, date, id) => {
+  const data = await getData();
+  const updatedCrush = {
+    id: Number(id),
+    name,
+    age,
+    date,
+  };
+  
+  const crushId = data.findIndex((crush) => crush.id === Number(id));
+  data[crushId] = updatedCrush;
+
+  await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));
+  return updatedCrush;
+};
+
+const deleteCrush = async (id) => {
+  const data = await getData();  
+  data.filter((crush) => crush.id !== Number(id));
+
+  await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));
 };
 
 app.get('/', async (_request, response) => {
@@ -96,8 +123,33 @@ app.post('/', async (request, response) => {
     });
   }
 
-  const newCrush = await updateCrushes(name, age, date);
+  const newCrush = await addCrush(name, age, date);
   response.status(201).send(newCrush);
+});
+
+app.put('/:id', async (request, response) => {
+  const { id } = request.params;
+  const { name, age, date } = request.body;
+  
+  try {
+    checkName(name);
+    checkAge(age);
+    checkDate(date);
+  } catch (error) {
+    return response.status(400).send({
+      message: error.message,
+    });
+  }
+
+  const updatedCrush = await updateCrush(name, age, date, id);
+  response.status(200).send(updatedCrush);
+});
+
+app.delete('/:id', async (request, response) => {
+  const { id } = request.params;
+
+  await deleteCrush(id);
+  response.status(200).send({ "message": "Crush deletado com sucesso" });
 });
 
 module.exports = app;
