@@ -29,9 +29,27 @@ app.get('/:id', (req, res) => {
   res.status(200).send(crushById);
 });
 
-// -------------------------------------------------------------------- MIDDLEWARES
+// --------------------------------------------------------------------- MIDDLEWARE GERAL
 
 app.use(authMiddleware);
+
+// --------------------------------------------------------------------- METODOS DELETE
+
+app.delete('/:id', (req, res) => {
+  const { id } = req.params;
+
+  const filteredData = data.filter(
+    (element) => element.id !== parseInt(id, 10),
+  );
+
+  fs.writeFile(
+    `${__dirname}/../crush.json`,
+    JSON.stringify(filteredData),
+  ).then(() => res.status(200).send({ message: 'Crush deletado com sucesso' }));
+});
+
+// -------------------------------------------------------------------- MIDDLEWARES ESPECIFICOS
+
 app.use(nameMiddleware);
 app.use(ageMiddleware);
 app.use(dateMiddleware);
