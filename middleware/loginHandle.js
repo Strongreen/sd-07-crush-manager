@@ -19,7 +19,7 @@ const loginMiddleware = (req, res, next) => {
     return res.status(400).json({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
   if (!validPassword) {
-    return res.status(400).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+    return res.status(400).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
 
   return next();
