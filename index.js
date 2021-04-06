@@ -117,7 +117,6 @@ const validateToken = (req, res, next) => {
 const writeCrushFile = async (data) => {    
   try {  
     await fs.writeFile(path.resolve(__dirname, '.', 'crush.json'), JSON.stringify(data));
-    
   } catch (error) {
     return error;
   }
@@ -126,7 +125,6 @@ const writeCrushFile = async (data) => {
 app.post('/crush', validateToken, async (req, res) => {
   const { name, age, date } = req.body;
   const checkedData = validateCrushData(name, age, date);
-  console.log(checkedData);
   if (checkedData) return res.status(400).send(checkedData);
   const crushes = await readCrushFile();
   const id = crushes.length + 1;
@@ -134,6 +132,20 @@ app.post('/crush', validateToken, async (req, res) => {
   const newCrushes = [...crushes, newCrush];
   await writeCrushFile(newCrushes);  
   return res.status(201).send(newCrush);
+});
+
+app.put('/crush/:id', validateToken, async (req, res) => {
+  const { name, age, date } = req.body;
+  
+  const checkedData = validateCrushData(name, age, date);
+  if (checkedData) return res.status(400).send(checkedData);
+
+  const { id } = req.params;
+  const crushes = await readCrushFile();  
+  const crushToEdit = { id: Number(id), ...req.body };
+  crushes[id] = crushToEdit;
+  await writeCrushFile(crushes);
+  return res.status(200).send(crushToEdit);
 });
 
 app.listen(PORT, () => { console.log('Online'); });
