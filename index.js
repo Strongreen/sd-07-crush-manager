@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const readFiles = require('./helpers/readFiles.js');
-const identifyID = require('./helpers/identifyID.js');
+const { readFiles, identifyID } = require('./helpers');
 
 const app = express();
 app.use(bodyParser.json());
