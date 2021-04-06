@@ -42,7 +42,7 @@ const validateEmail = (email) => {
 
 const validatePassword = (password) => {
   if (!password || password.length === 0) return { message: 'O campo "password" é obrigatório' };
-  if (password.length < 6) return { message: 'A "senha" deve ter pelo menos 6 caracteres"' };
+  if (password.length < 6) return { message: 'A "senha" deve ter pelo menos 6 caracteres' };
 };
 
 const validateName = (name) => {
