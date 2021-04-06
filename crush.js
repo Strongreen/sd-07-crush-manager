@@ -5,7 +5,8 @@ const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 
-const crushFile = () => fs.promises.readFile('./crush.json', 'utf8');
+const crushJson = './crush.json';
+const crushFile = () => fs.promises.readFile(crushJson, 'utf8');
 // desse jeito porque vai ser chamado várias outras vezes (Plantão Rufino);
 
 app.get('/', async (_req, res) => {
@@ -23,7 +24,7 @@ function readFilePromise(fileName) {
 
 app.get('/:id', async (req, res) => {
   const { id } = req.params;
-  const isId = await readFilePromise('./crush.json')
+  const isId = await readFilePromise(crushJson)
     .then((content) => JSON.parse(content).find((item) => item.id.toString() === id))
     .catch((err) => {
     console.error(`Erro ao ler arquivo: ${err.message}`);
@@ -102,7 +103,11 @@ function isValidAuthorization(auth) {
   return response;
 }
 
-app.post('/', (req, res) => {
+function createCrush(file, name, age, date) {
+  return { id: file.length + 1, name, age, date };
+}
+
+app.post('/', async (req, res) => {
   const { name, age, date } = req.body;
   const isName = isValidName(name);
   const isAge = isValidAge(age);
@@ -110,17 +115,15 @@ app.post('/', (req, res) => {
   const { authorization } = req.headers;
   const isAuth = isValidAuthorization(authorization);
 
-  if (isName) {
-    res.status(400).send({ message: isName });
-  } else if (isAge) {
-    res.status(400).send({ message: isAge });
-  } else if (isDate) {
-    res.status(400).send({ message: isDate });
-  } else if (isAuth) {
-    res.status(401).send({ message: isAuth });
-  } else {
-    res.status(201).send(req.body);
-  }
+  if (isAuth) return res.status(401).send({ message: isAuth });
+  if (isName) return res.status(400).send({ message: isName });
+  if (isAge) return res.status(400).json({ message: isAge });
+  if (isDate) return res.status(400).send({ message: isDate });
+  
+  const newCrush = await readFilePromise(crushJson)
+    .then((content) => createCrush(JSON.parse(content), name, age, date))
+    .catch((err) => console.error(`Erro ao ler arquivo: ${err.message}`));
+  return res.status(201).json(newCrush);
 });
 
 app.use((err, _req, res, _next) => {
