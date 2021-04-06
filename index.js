@@ -2,12 +2,16 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const crypto = require('crypto');
+const tokenMiddleware = require('./middleware/tokenMiddleware');
+const dateMiddleware = require('./middleware/dateMiddleware');
+const reqBodyMiddleware = require('./middleware/reqBodyMiddleware');
 
 const app = express();
 app.use(bodyParser.json());
 
 const SUCCESS = 200;
 const BAD_REQUEST = 400;
+const CREATED = 201;
 const NOT_FOUND = 404;
 const PORT = '3000';
 
@@ -55,9 +59,6 @@ const erroPass = {
 };
 const regex = {
   EMAIL: /^([a-zA-Z0-9_-]+)@+\w+.com/,
-  TOKEN: /^(\d|\w){16}$/gm,
-  DATE: /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/gm,
-  RATE: /\b[1-5]\b/g,
 };
 
 app.post('/login', (request, res) => {
@@ -71,6 +72,26 @@ app.post('/login', (request, res) => {
 
     const token = crypto.randomBytes(8).toString('hex');
     return res.status(SUCCESS).json({ token });
+});
+
+app.use(tokenMiddleware);
+app.use(dateMiddleware);
+app.use(reqBodyMiddleware);
+
+app.post('/crush', async (request, response) => {
+  const { name, age, date } = request.body;
+  try {
+    const data = await getCrush();
+    const size = data.length;
+    data[size] = {
+      id: `${size + 1}`,
+      name,
+      age,
+      date,
+    };
+    await fs.promises.writeFile(`${__dirname}/.././crush.json`, JSON.stringify(data));
+    return response.status(CREATED).send(data[size]);
+  } catch (error) { console.error(`Erro: ${error.message}`); }
 });
 
 app.listen(PORT, () => { console.log('Online'); });
