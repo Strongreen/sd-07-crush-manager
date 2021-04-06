@@ -20,7 +20,7 @@ const crushId = '/crush/:id';
 app.get(crushList, async (_req, res) => {
   const myCrush = await fs.readFile(crushList, 'utf8');
   const newListCrush = JSON.parse(myCrush);
-  res.status(SUCCESS).json(newListCrush);
+  return res.status(SUCCESS).json(newListCrush);
 });
 
 app.get(crushId, async (req, res) => {
