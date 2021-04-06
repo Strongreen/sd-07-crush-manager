@@ -93,9 +93,7 @@ app.post('/crush', (req, res) => {
       message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
     });
   }
-  res.status(201).send({
-    id: 1, name: 'Keanu Reeves', age: 56, date: { datedAt: '22/10/2019', rate: 5 },
-  });
+  res.status(201).send(req.body);
 });
 
 app.listen(PORT, () => { console.log('Online'); });
