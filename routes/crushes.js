@@ -36,15 +36,18 @@ async function validateAge(age) {
 }
 
 function verifyCorretDate(date) {
+  if (!date) {
+    throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
+  }
   const reForDate = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i;
   if (!reForDate.test(date)) throw new Error('O campo "datedAt" deve ter o formato "dd/mm/aaaa"');
 }
 
-async function validateDate(date) {
-  if (!date || !date.rate || !date.datedAt) {
+function validateDate(date) {
+  if (!date || !date.rate) {
     throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
   }
-  await verifyCorretDate(date.datedAt);
+  verifyCorretDate(date.datedAt);
   if (date.rate < 1 || date.rate > 5) {
     throw new Error('O campo "rate" deve ser um inteiro de 1 à 5');
   }
@@ -57,10 +60,10 @@ app.post('/', async (req, res) => {
   try {
     await validateName(name);
     await validateAge(age);
-    await validateDate(date);
+    validateDate(date);
     const data = JSON.parse(fs.readFileSync(`${__dirname}/../crush.json`, 'utf8'));
     const size = data.length;
-    const newCrush = { name: name, id: size + 1, age: age, date: date };
+    const newCrush = { name, id: size + 1, age, date };
     data.push(newCrush);
     await fs.promises.writeFile(`${__dirname}/crush.json`, JSON.stringify(data));
     res.status(201).send(newCrush);
