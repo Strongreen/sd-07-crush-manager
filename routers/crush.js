@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   const id = Number(req.params.id);
-  const data = await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8');
+  const data = JSON.parse(await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8'));
   const object = data.find((value) => value.id === id);
   if (!object) {
  return res.status(404).send({
@@ -32,7 +32,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', verifyToken,
                       verifyName, verifyAge, verifyDate, verifyDateObj, async (req, res) => {
     const { name, age, date } = req.body;
-    const data = await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8');
+    const data = JSON.parse(await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8'));
     const newObj = {
       id: data.length + 1,
       name,
@@ -59,7 +59,7 @@ router.put('/:id', verifyToken,
     date,
   };
   try {
-    const data = await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8');
+    const data = JSON.parse(await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8'));
     data[id - 1] = newObj;
     replaceFile(data);
     return res.status(201).send(newObj);
@@ -71,7 +71,7 @@ router.put('/:id', verifyToken,
 router.delete('/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
   try {
-    const data = await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8');
+    const data = JSON.parse(await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8'));
     const newData = data.filter((item) => item.id === id);
     replaceFile(newData);
     return res.status(201).send({
