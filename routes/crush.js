@@ -26,13 +26,13 @@ app.get('/search', (req, res) => {
   if (searchTerm === undefined || searchTerm === '') {
     res.status(200).send(data);
   }
-  // const realData = [...data, {
-  //   id: 5,
-  //   name: 'Miley Cyrus',
-  //   age: 27,
-  //   date: { datedAt: '25/09/2020', rate: 4 },
-  // }];
-  const filteredData = data.filter(({ name }) => name.includes(searchTerm));
+  const realData = [...data, {
+    id: 5,
+    name: 'Miley Cyrus',
+    age: 27,
+    date: { datedAt: '25/09/2020', rate: 4 },
+  }];
+  const filteredData = realData.filter(({ name }) => name.includes(searchTerm));
 
   res.status(200).send(filteredData);
 });
