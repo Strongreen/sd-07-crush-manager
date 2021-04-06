@@ -6,12 +6,12 @@ const erroToken = {
 };
 
 module.exports = (request, response, next) => {
-  const { authorization: token } = request.header;
-  if (!token) {
+  const { authorization } = request.header;
+  if (!authorization) {
  return response.status(UNAUTHORIZED)
     .json({ message: erroToken.NULL });
   }
-  if (token.length !== 16) {
+  if (authorization.length !== 16) {
  return response.status(UNAUTHORIZED)
     .json({ message: erroToken.INVALID });
   }
