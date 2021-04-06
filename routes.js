@@ -30,7 +30,7 @@ routes.put('/crush/:id', checkToken, addCrush, async (req, res) => {
   const { name, age, date } = req.body;
   const { id } = req.params;
   const editedCrush = await connection.dbEdit(name, age, date, id);
-  res.status(201).send(editedCrush);
+  res.status(200).send(editedCrush);
 });
 
 routes.post('/login', checkLogin, (req, res) => {
