@@ -8,6 +8,7 @@ const ageMiddleware = require('./ageMiddleware');
 const dateAttributeMiddleware = require('./dateAttributeMiddleware');
 const dateObjectMiddleware = require('./dateObjectMiddleware');
 const dateMiddleware = require('./dateMiddleware');
+const getCrushMiddleware = require('./getCrushMiddleware');
 
 module.exports = { 
     errorMiddleware,
@@ -20,4 +21,5 @@ module.exports = {
     dateAttributeMiddleware,
     dateObjectMiddleware,
     dateMiddleware,
+    getCrushMiddleware,
 };

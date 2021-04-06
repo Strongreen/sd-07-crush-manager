@@ -7,7 +7,7 @@ const tokenMiddleware = (req, res, next) => {
         return res.status(401).send({ message: 'Token inválido' });
     }    
 
-    return next();
+    next();
 };
 
 module.exports = tokenMiddleware;
