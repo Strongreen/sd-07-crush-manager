@@ -7,44 +7,34 @@ const emailEvaluator = (email) => {
   const regexEmail = new RegExp('.+@[A-z]+[.]com');
 
   if (email === undefined || email.length === 0) {
-    return 'O campo "email" é obrigatório';
+    throw new Error('O campo "email" é obrigatório');
+  } else if (!regexEmail.test(email)) {
+    throw new Error('O "email" deve ter o formato "email@email.com"');
   }
-
-  if (!regexEmail.test(email)) {
-    return 'O "email" deve ter o formato "email@email.com"';
-  }
-
-  return false;
 };
 
 const passwordEvaluator = (password) => {
   const regexPassword = new RegExp('.{6}');
 
   if (!password || password.length === 0) {
-    return 'O campo "password" é obrigatório';
+    throw new Error('O campo "password" é obrigatório');
+  } else if (!regexPassword.test(password)) {
+    throw new Error('A "senha" deve ter pelo menos 6 caracteres');
   }
-
-  if (!regexPassword.test(password)) {
-    return 'A "senha" deve ter pelo menos 6 caracteres';
-  }
-
-  return false;
 };
 
 app.post('/', (req, res) => {
   const { email, password } = req.body;
-  const responseEmail = emailEvaluator(email);
-  const responsePassword = passwordEvaluator(password);
-  const token = randomToken(16);
 
-  if (responseEmail !== false) {
-    res.status(400).send({ message: responseEmail });
-  }
-  if (responsePassword !== false) {
-    res.status(400).send({ message: responsePassword });
-  }
+  try {
+    emailEvaluator(email);
+    passwordEvaluator(password);
 
-  res.send({ token });
+    const token = randomToken(16);
+    res.send({ token });
+  } catch (error) {
+    res.status(400).send({ message: error.message });
+  }
 });
 
 module.exports = app;
