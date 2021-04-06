@@ -1,3 +1,4 @@
 const crush = require('./crush');
+const login = require('./login');
 
-module.exports = { crush };
+module.exports = { crush, login };

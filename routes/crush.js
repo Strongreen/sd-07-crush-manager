@@ -14,12 +14,9 @@ app.get('/', (_request, response) => {
 
 app.get('/:id', (request, response) => {
   const { id } = request.params;
+  const crush = crushData[+id];
   
-  const crush = crushData
-    .find(({ id: crushId }) => crushId === parseInt(id, 10));
-
   if (!crush) {
-    console.log(crush);
     const message = { message: 'Crush não encontrado' };
     response.status(ERROR).send(message);
   }
