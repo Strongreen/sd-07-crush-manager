@@ -18,6 +18,18 @@ const isARateNumber = (rate) => {
   return true;
 };
 
+const isEmptyDate = (date) => {
+  if ((date.dateAt === '') || (date.dateAt === undefined)) {  
+    return true;
+  }  
+
+  if ((date.rate === '') || (date.rate === undefined)) {  
+    return true;
+  }  
+
+  return false;
+};
+
 const isEmpty = (text) => {
   if ((text === '') || (text === undefined)) {  
     return true;
@@ -66,22 +78,20 @@ const validateAge = (age) => {
   };
 };
 
-const validateDate = ({ datedAt, rate }) => {
-  if (isEmpty(datedAt) || isEmpty(rate)) {
+const validateDate = (date) => {
+  if (isEmptyDate(date)) {
     return {
       status: 400,
       message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
     };
   }
 
-  if (!isADate(datedAt)) {
-    return {
-      status: 400,
-      message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"',
+  if (!isADate(date.datedAt)) {
+    return { status: 400, message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"',
     };
   }
 
-  if (!isARateNumber(rate)) {
+  if (!isARateNumber(date.rate)) {
     return { status: 400, message: 'O campo "rate" deve ser um inteiro de 1 à 5' };
   }   
   return { status: 200 };  

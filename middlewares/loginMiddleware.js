@@ -47,7 +47,7 @@ const validatePassword = (password) => {
   if (password.length < 6) {
     return {
       status: 400,
-      message: 'A "senha" ter pelo menos 6 caracteres',
+      message: 'A "senha" deve ter pelo menos 6 caracteres',
     };
   }
 
