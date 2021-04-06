@@ -47,7 +47,7 @@ routes.put(crushbarraid, checkToken, addCrush, async (req, res) => {
 routes.delete(crushbarraid, checkToken, async (req, res) => {
   const { id } = req.params;
   const response = await connection.dbDelete(id);
-  res.status(200).send(response);
+  return res.status(200).send(response);
 });
 
 routes.post('/login', checkLogin, (req, res) => {
