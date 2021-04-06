@@ -25,7 +25,6 @@ const checkRate = (rate) => {
 const checkDate = (date) => {
   if (!date) return { message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' };
   const { datedAt, rate } = date;
-
   const checkObrigatorioRetorno = checkObrigatorio(datedAt, rate);
   if (checkObrigatorioRetorno) return checkObrigatorioRetorno;
   if (!datedAt.includes('/')) {
