@@ -1,12 +1,23 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const crypto = require('crypto');
 
 const app = express();
 app.use(bodyParser.json());
 
 const SUCCESS = 200;
 const PORT = '3000';
+
+// function verifyEmail(email) {
+//   const emailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+$/;
+//   return emailRegex.test(email);
+// }
+
+function createToken() {
+  const token = crypto.randomBytes(8).toString('hex');
+    return token;
+}
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
@@ -28,6 +39,24 @@ app.get('/crush/:id', async (req, res) => {
   return res.status(404).send({
     message: 'Crush não encontrado',
   });
+});
+
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+  const emailRegex = /^([a-zA-Z0-9_-]+)@mail\.com$/gm;
+  if (!email) {
+    return res.status(400).send({ message: 'O campo "email" é obrigatório' });
+  }
+  if (!emailRegex.test(email)) {
+    return res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
+  }
+  if (!password) {
+    return res.status(400).send({ message: 'O campo "password" é obrigatório' });
+  }
+  if (password.length < 6) {
+    return res.status(400).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
+  }
+  return res.status(SUCCESS).send({ token: createToken() });
 });
 
 app.listen(PORT, () => {
