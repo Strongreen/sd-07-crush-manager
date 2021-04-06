@@ -2,30 +2,37 @@ const crypto = require('crypto');
 const express = require('express');
 const bodyParser = require('body-parser');
 const rescue = require('express-rescue');
-const fs = require('fs');
+const fs = require('fs').promises;
 
 const app = express();
 app.use(bodyParser.json());
 const SUCCESS = 200;
 const PORT = '3000';
-const crushList = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+// const crushList = JSON.parse(fs.readFile('./crush.json', 'utf8'));
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
+
+async function readFile() {
+  return JSON.parse(await fs.readFile('./crush.json', 'utf8'));
+}
 // 1
 app.get('/crush', async (req, res) => {
+  const crushList = await readFile();
+  console.log(typeof (crushList));
   if (crushList.length > 0) {
     return res.status(200).json(crushList);
   }
-  if (crushList.length === 0) {
+  if (crushList.length <= 0) {
     return res.status(200).json([]);
   }
 });
 // 2
 app.get('/crush/:idtofind', async (req, res) => {
   const { idtofind } = req.params;
+  const crushList = await readFile();
   const crushIndex = crushList.findIndex(({ id }) => id === Number(idtofind));
   if (crushIndex === -1) {
     res.status(404).send({ message: 'Crush não encontrado' });
@@ -79,14 +86,22 @@ function regexValidate(datedAt) {
   const regexValidation = regex.test(datedAt);
   if (!regexValidation) { throw new Error('O campo "datedAt" deve ter o formato "dd/mm/aaaa"'); }
 }
+function validateDate(date) {
+  if (!date || !date.datedAt || !date.rate) {
+    throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
+  }
+  const { datedAt, rate } = date;
+  regexValidate(datedAt);
+  validateRate(rate);
+}
 
 const validationToken = (req, res, next) => {
-  const { authorization } = req.header;
+  const { authorization } = req.headers;
   if (!authorization) {
-    res.status(400).send({ message: 'Token não encontrado' });
+    return res.status(401).send({ message: 'Token não encontrado' });
   }
   if (authorization.length !== 16) {
-    res.status(400).send({ message: 'Token inválido' });
+    return res.status(401).send({ message: 'Token inválido' });
   }
   next();
 };
@@ -96,24 +111,27 @@ const validationToken = (req, res, next) => {
 
 app.post('/crush', validationToken, rescue(async (req, res) => {
   const { name, age, date } = req.body;
+  const crushList = JSON.parse(await fs.readFile('./crush.json', 'utf8'));
+  const copy = [...crushList];
   try {
-    const { datedAt, rate } = date;
-    if (!date || !datedAt || !rate) {
-      throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
-    }
-    validateName(name); validateAge(age); regexValidate(datedAt); validateRate(rate);
-    crushList.push(req.body); crushList[crushList.length - 1].id = crushList.length;
-    await fs.writeFile(`${__dirname}/crush.json`, JSON.stringify(crushList), (err) => {
+    validateName(name);
+    validateDate(date);
+    validateAge(age);
+    copy.push(req.body);
+    copy[copy.length - 1].id = copy.length;
+    await fs.writeFile(`${__dirname}/crush.json`, JSON.stringify(copy), (err) => {
       if (err) throw err;
     });
-    res.status(201).send(req.body);
+    res.status(201).send(copy[copy.length - 1]);
   } catch (error) {
     res.status(400).send({ message: error.message });
   }
 }));
+
 // 5
 app.put('/crush/:idtofind', validationToken, async (req, res) => {
   const { idtofind } = req.params;
+  const crushList = await readFile();
   const crushIndex = crushList.findIndex(({ id }) => id === idtofind);
   const { name, age, date } = crushList[crushIndex];
   try {
