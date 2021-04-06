@@ -9,9 +9,9 @@ const verifyAge = require('../middlewares/verifyAge');
 const verifyDate = require('../middlewares/verifyDate');
 const verifyDateObj = require('../middlewares/verifyDateObj');
 
-const replaceFile = async (data) => {
-  await fs.promises.writeFile('../crush.json', JSON.stringify(data));
-}
+const replaceFile = async (info) => {
+  await fs.promises.writeFile('../crush.json', JSON.stringify(info));
+};
 
 router.get('/', async (req, res) => {
   const response = await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8');
