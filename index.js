@@ -73,7 +73,7 @@ app.post('/login', authorizationEmail, (req, res) => {
   passwordValidation(password);
   if (!password || password.length < 6) {
     return res.status(400).json({
-      message: 'O "password" deve ter pelo menos 6 caracteres',
+      message: 'A "senha" deve ter pelo menos 6 caracteres',
     });
   }
 
