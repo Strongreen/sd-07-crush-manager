@@ -18,6 +18,14 @@ const readCrushFile = async () => {
   const content = await fs.readFile(path.resolve(__dirname, '.', 'crush.json'));
   return JSON.parse(content.toString('utf-8'));
 };
+const writeCrushFile = async (content) => (
+  fs.writeFile(
+    path.resolve(__dirname, '.', 'crush.json'),
+    JSON.stringify(content),
+    (err) => {
+      if (err) throw err;
+    },
+  ));
 function tokenGenerate() {
   const rand1 = Math.random().toString(36).substr(2);
   const rand2 = Math.random().toString(36).substr(2);
@@ -44,10 +52,10 @@ app.get('/crush', async (_req, res) => {
   return res.status(200).send(result);
 });
 app.get('/crush/:id', async (req, res) => {
-  const result = await readCrushFile();
+  const crushList = await readCrushFile();
   const { id } = req.params;
   const crushId = parseInt(id, 10);  
-  const filteredCrush = result.find((crush) => crush.id === crushId);
+  const filteredCrush = crushList.find((crush) => crush.id === crushId);
   if (filteredCrush) return res.status(200).send(filteredCrush);
   return res.status(404).send({ message: 'Crush não encontrado' });  
 });
@@ -68,6 +76,21 @@ app.post('/login', (req, res) => {
   }
   res.status(200).send({ token: tokenGenerate() });
 });
+app.delete('/crush/:id', async (req, res) => {
+  const { token } = req.headers;
+  const { id } = req.params; 
+  const crushId = parseInt(id, 10);
+  const crushsFiltered = [];
+  if (!token) return res.status(401).send({ message: 'Token não encontrado' });
+  if (token.length !== 16) return res.status(401).send({ message: 'Token inválido' });
+  const crushList = await readCrushFile();
+  crushList.map((crush) => {
+   if (crush.id !== crushId) crushsFiltered.push(crush); 
+   return crushsFiltered;
+  });
+  await writeCrushFile(crushsFiltered);
+  return res.status(200).json({ message: 'Crush deletado com sucesso' });
+  });
 app.use((err, _req, res, _next) => 
 res.status(500).send(`Algo deu errado! Mensagem: ${err.message}`));
 
