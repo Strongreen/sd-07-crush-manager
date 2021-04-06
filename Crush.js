@@ -1,16 +1,21 @@
 const fs = require('fs');
-const crushes = require('./crush.json');
+
+const filePath = './crush.json';
 
 const getAllCrushes = () => {
-  if (crushes.length === 0) {
+  const crushFile = fs.readFileSync(filePath, 'utf-8');
+
+  if (crushFile.length === 0) {
     return [];
   }
 
-  return crushes;
+  return JSON.parse(crushFile);
 };
 
 const getCrush = (id) => {
   const idToFind = Number(id);
+  const file = fs.readFileSync(filePath, 'utf-8');
+  const crushes = JSON.parse(file);
   
   const crush = crushes.filter((element) => element.id === idToFind);
 
@@ -19,6 +24,8 @@ const getCrush = (id) => {
 
 const createCrush = (infoCrush) => {
   const { name, age, date } = infoCrush;
+  const file = fs.readFileSync(filePath, 'utf-8');
+  const crushes = JSON.parse(file);  
   const size = crushes.length;
   const newCrush = {
     id: crushes[size - 1].id + 1,
@@ -28,11 +35,7 @@ const createCrush = (infoCrush) => {
   };
   crushes.push(newCrush);
 
-  try {
-    fs.promises.writeFile('./crush.json', JSON.stringify(crushes));
-  } catch (error) {
-    throw new Error('Erro ao salvar no arquivo!');
-  }
+  fs.writeFileSync(filePath, JSON.stringify(crushes));
   
   return newCrush;
 };
