@@ -1,9 +1,3 @@
-const { Router } = require('express');
-
-const router = Router();
-
-const SUCCESS = 200;
-
 const ranToken = (length = 8) => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -15,9 +9,4 @@ const ranToken = (length = 8) => {
   return str;
 };
 
-router.post('/', (_req, res) => {
-  const token = ranToken(16);
-  return res.status(SUCCESS).json({ token });
-}); 
-
-module.exports = router;
+module.export = ranToken;
