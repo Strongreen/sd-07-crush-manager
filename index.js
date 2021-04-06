@@ -9,6 +9,7 @@ const SUCCESS = 200;
 const CREATED = 201;
 const BAD_REQUEST = 400;
 const UNAUTHORIZED = 401;
+const CRUSH_ROUTE_ID = '/crush/:id';
 const PORT = '3000';
 
 const writeFile = async (data) => {
@@ -51,10 +52,30 @@ const editCrush = async (crushEdit, idEdit) => {
       ...crushEdit,
     };
     const crushList = data.filter((crush) => crush.id !== +idEdit);
-    console.log(crushList);
     crushList.push(newCrush);
     await writeFile(crushList);
     return newCrush;
+  } catch (error) {
+    return error;
+  }
+};
+
+const deleteCrush = async (idDelete) => {
+  try {
+    const data = await readFile();
+    const crushList = data.filter((crush) => crush.id !== +idDelete);
+    await writeFile(crushList);
+    return true;
+  } catch (error) {
+    return error;
+  }
+};
+
+const searchCrush = async (term) => {
+  try {
+    const data = await readFile();
+    const crushList = (!term) ? data : data.filter(({ name }) => name.includes(term));
+    return crushList;
   } catch (error) {
     return error;
   }
@@ -136,8 +157,7 @@ const dateVerifyMiddleware = (req, res, next) => {
       .json({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
   }
   if (!rateVerify(rate)) {
-    return res.status(BAD_REQUEST)
-      .json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+    return res.status(BAD_REQUEST).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
   next();
 };
@@ -147,13 +167,23 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
+app.get('/crush/search', authMiddleware, async (req, res) => {
+  const { query: { q: term } } = req;
+  try {
+    const result = await searchCrush(term);
+    res.status(SUCCESS).send(result);
+  } catch (error) {
+    res.status(500).json({ message: `Erro de servidor: ${error}` });
+  }
+});
+
 app.get('/crush', (_req, res) => {
   readFile()
     .then((content) => res.status(SUCCESS).send(content))
     .catch((error) => res.status(501).json({ message: `Erro interno: ${error}` }));
 });
 
-app.get('/crush/:id', async (req, res) => {
+app.get(CRUSH_ROUTE_ID, async (req, res) => {
   const { id: idSearch } = req.params;
   try {
     const data = await readFile();
@@ -167,15 +197,18 @@ app.get('/crush/:id', async (req, res) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  if (!email) res.status(BAD_REQUEST).json({ message: 'O campo "email" é obrigatório' });
-  if (!password) res.status(BAD_REQUEST).json({ message: 'O campo "password" é obrigatório' });
+  if (!email) return res.status(BAD_REQUEST).json({ message: 'O campo "email" é obrigatório' });
+  if (!password) {
+    return res.status(BAD_REQUEST).json({ message: 'O campo "password" é obrigatório' });
+  }
   if (!emailVerify(email)) {
-    res.status(BAD_REQUEST).json({ message: 'O "email" deve ter o formato "email@email.com"' });
+    return res.status(BAD_REQUEST)
+      .json({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
   if (!passwordVerify(password)) {
-    res.status(BAD_REQUEST).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
+    return res.status(BAD_REQUEST).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
-  res.status(SUCCESS).json({ token: tokenGenerator(16) });
+  return res.status(SUCCESS).json({ token: tokenGenerator(16) });
 });
 
 app.post('/crush', authMiddleware, bodyVerifyMiddleware, dateVerifyMiddleware, async (req, res) => {
@@ -189,7 +222,7 @@ app.post('/crush', authMiddleware, bodyVerifyMiddleware, dateVerifyMiddleware, a
 });
 
 app.put(
-  '/crush/:id',
+  CRUSH_ROUTE_ID,
   authMiddleware,
   bodyVerifyMiddleware,
   dateVerifyMiddleware,
@@ -203,5 +236,14 @@ app.put(
     }
   },
 );
+
+app.delete(CRUSH_ROUTE_ID, authMiddleware, async (req, res) => {
+  const { params: { id } } = req;
+  try {
+    if (deleteCrush(id)) res.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
+  } catch (error) {
+    res.status(500).json({ message: `Erro de servidor: ${error}` });
+  }
+});
 
 app.listen(PORT, () => { console.log('Online'); });
