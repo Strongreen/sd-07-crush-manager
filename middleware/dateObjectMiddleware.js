@@ -5,7 +5,7 @@ const dateObjectMiddleware = (req, res, next) => {
     if (datedAt === undefined || rate === undefined) {
         return res.status(400)
         .send({ 
-            message: 'O campo \"date\" é obrigatório e \"datedAt\" e \"rate\" não podem ser vazios',
+            message: 'O campo \'date\' é obrigatório e \'datedAt\' e \'rate\' não podem ser vazios',
         });
     }
 
