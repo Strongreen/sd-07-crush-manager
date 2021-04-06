@@ -1,34 +1,33 @@
 const express = require('express');
-const fs = require('fs').promises;
-// const crushData = require('../crush.json');
-const { tokenMiddleware } = require('../middleware');
+const fs = require('fs');
+const { tokenMiddleware, newEntryMiddleware } = require('../middleware');
 
 const router = express.Router();
 
-const readingCrushFile = async () => {
+const readingCrushFile = () => {
   try {
-    const crushJson = await fs.readFile(`${__dirname}/../crush.json`);
+    const crushJson = fs.readFileSync(`${__dirname}/../crush.json`);
     return JSON.parse(crushJson.toString('utf-8'));
   } catch (error) {
-    throw new Error(error);
+    return error;
   }
 };
 
-const writingCrushFile = async (newCrushData) => {
+const writingCrushFile = (newCrushData) => {
   try {
-    return await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newCrushData));
+    return fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(newCrushData));
   } catch (error) {
-    throw new Error(error);
+    return error;
   }
 };
 
-router.get('/', async (_req, res) => {
-  const crushResult = await readingCrushFile();
+router.get('/', (_req, res) => {
+  const crushResult = readingCrushFile();
   return res.status(200).send(crushResult);
 });
 
-router.get('/:id', async (req, res) => {
-  const crushResult = await readingCrushFile();
+router.get('/:id', (req, res) => {
+  const crushResult = readingCrushFile();
   const { id } = req.params;
   const filteredCrush = crushResult.find((crush) => crush.id === Number(id));
 
@@ -38,25 +37,30 @@ router.get('/:id', async (req, res) => {
 });
 
 router.use(tokenMiddleware);
+router.use(newEntryMiddleware);
 
-router.post('/', async (req, res) => {
+router.post('/', (req, res) => {
+  const crushResult = readingCrushFile();
   const { name, age, date: { datedAt, rate } } = req.body;
-  const crushResult = await readingCrushFile();
   const newCrush = { id: crushResult.length + 1, name, age, date: { datedAt, rate } };
-
   const newCrushArray = [...crushResult, newCrush];
-  await writingCrushFile(newCrushArray);
-  return res.status(201).json(newCrush);
+
+  try {
+    writingCrushFile(newCrushArray);
+    return res.status(201).json(newCrush);
+  } catch (error) {
+    return error;
+  }
 });
 
-router.delete('/:id', async (req, res) => {
-  const crushResult = await readingCrushFile();
+router.delete('/:id', (req, res) => {
+  const crushResult = readingCrushFile();
   const { id } = req.params;
   const crushIndex = crushResult.findIndex((crush) => crush.id === Number(id));
 
   if (crushIndex !== -1) {
     crushResult.splice(crushIndex, 1);
-    await writingCrushFile(crushResult);
+    writingCrushFile(crushResult);
     return res.status(200).send({ message: 'Crush deletado com sucesso' });
   }
 });
