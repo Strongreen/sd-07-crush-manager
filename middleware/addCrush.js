@@ -11,7 +11,7 @@ const checkAge = (age) => {
 };
 
 const checkObrigatorio = (datedAt, rate) => {
-  if (!datedAt || !rate || datedAt.length === 0 || rate.length === 0) {
+  if (!datedAt || (!rate && rate !== 0)) {
     return { message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' };
   }
   return null;
@@ -22,17 +22,27 @@ const checkRate = (rate) => {
     return { message: 'O campo "rate" deve ser um inteiro de 1 à 5' };
   }
 };
+
+const checkCampoDate = (date) => {
+  if (!date) {
+    return {
+      message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
+    };
+  }
+};
+
 const checkDate = (date) => {
-  if (!date) return { message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' };
+  const checkCampoDateReturn = checkCampoDate(date);
+  if (checkCampoDateReturn) return checkCampoDateReturn;
+
   const { datedAt, rate } = date;
+
   const checkObrigatorioRetorno = checkObrigatorio(datedAt, rate);
   if (checkObrigatorioRetorno) return checkObrigatorioRetorno;
+
   if (!datedAt.includes('/')) {
     return { message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' };
   }
-
-  const checkRateRetorno = checkRate(rate);
-  if (checkRateRetorno) return checkRateRetorno;
 
   return null;
 };
