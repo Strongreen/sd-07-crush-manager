@@ -2,18 +2,21 @@ const express = require('express');
 const fs = require('fs');
 const rescue = require('express-rescue');
 
+const { checkedName, checkedAge, checkedDateExists,
+  checkedDate, checkedTokenMiddleware } = require('../middlewares');
+
 const router = express.Router();
-const SUCCESS = 200;
-const NOTFOUND = 404;
-const BADREQUESTERROR = 400;
+const SUCCESS_200 = 200;
+const NOTFOUND_404 = 404;
+const SUCEESS_201 = 201;
 
 router.get('/', (req, res) => {
   try {
       const data = fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8');
       console.log(data);
-      if (data.length === 0) return res.status(SUCCESS).send([]);
+      if (data.length === 0) return res.status(SUCCESS_200).send([]);
 
-      return res.status(SUCCESS).send(JSON.parse(data));
+      return res.status(SUCCESS_200).send(JSON.parse(data));
   } catch (error) {
     console.log('ERRO na leitura do arquivo!', error.message);
   }
@@ -25,36 +28,32 @@ router.get('/:id', (req, res) => {
     const data = fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8');
     const crush = JSON.parse(data).find((item) => item.id.toString() === id);
     if (!crush) {
-      return res.status(NOTFOUND).send({ message: 'Crush não encontrado' });
+      return res.status(NOTFOUND_404).send({ message: 'Crush não encontrado' });
     }
-    return res.status(SUCCESS).send(crush);
+    return res.status(SUCCESS_200).send(crush);
   } catch (error) {
     console.log('ERRO na leitura do arquivo!', error.message);
   }
 });
 
-const checkedName = (req, res, next) => {
-  const { name } = req.body;
-  if (!name) return res.status(BADREQUESTERROR).send({ message: 'O campo "name" é obrigatório' });
-  if (name.length < 3) { 
-    return res.status(BADREQUESTERROR)
-    .send({ message: 'O "name" deve ter pelo menos 3 caracteres' });
-  }
-  next();
-};
+router.use(checkedTokenMiddleware);
 
-router.post('/', checkedName, rescue(async (req, res) => {
+router.post(
+  '/', checkedName, checkedAge, checkedDateExists, checkedDate, rescue(async (req, res) => {
   try {
     const { name, age, date } = req.body;
     const data = fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8');
     const crush = JSON.parse(data);
-    crush.push({ name, age, date });
-    console.log(crush);
+    const id = crush.length + 1;
+    const newCrush = { name, age, id, date };
+    crush.push(newCrush);
+
     await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crush));
-    res.status(200).send({ message: 'Novo crush adicionado com sucesso!' });
+    res.status(SUCEESS_201).send(newCrush);
   } catch (error) {
     console.log(error);
   }
-}));
+}),
+);
 
 module.exports = router;
