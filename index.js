@@ -1,7 +1,7 @@
 const express = require('express');
 const rescue = require('express-rescue');
 const fs = require('fs').promises;
-let crushes = require('./crush.json');
+// let crushes = require('./crush.json');
 const tokens = require('./tokens.json');
 
 const crushFile = './crush.json';
@@ -77,12 +77,14 @@ const checkDateMd = (req, res, next) => {
   next();
 };
 
-const checkCrushMd = (req, res, next) => {
+async function checkCrushMd(req, res, next) {
   const { id } = req.params;
+  let crushes = await fs.readFile(crushFile);
+  crushes = JSON.parse(crushes);
   const crush = crushes.find((item) => item.id === parseInt(id, 10));
-  if (!crush) return res.status(404).send({ message: 'Crush não encontrado' });
+  if (!crush) await res.status(404).send({ message: 'Crush não encontrado' });
   next();
-};
+}
 
 const checkMailMd = (req, res, next) => {
   const { email, password } = req.body;
@@ -120,16 +122,20 @@ app.get('/', (_request, response) => {
 
 app.get('/crush', rescue(allCrushesMd));
 
-app.get('/crush/search', verifyTokenMd, rescue((req, res) => {
+app.get('/crush/search', verifyTokenMd, rescue(async (req, res) => {
   const param = req.query.q;
+  let crushes = await fs.readFile(crushFile);
+  crushes = JSON.parse(crushes);
   const results = crushes.filter((item) => item.name.startsWith(param));
-  return res.status(200).send(results);
+  await res.status(200).send(results);
 }));
 
-app.get(crushWithId, checkCrushMd, rescue((req, res) => {
+app.get(crushWithId, checkCrushMd, rescue(async (req, res) => {
   const { id } = req.params;
+  let crushes = await fs.readFile(crushFile);
+  crushes = JSON.parse(crushes);
   const crush = crushes.find((item) => item.id === parseInt(id, 10));
-  return res.status(SUCCESS).send(crush);
+  await res.status(SUCCESS).send(crush);
 }));
 
 app.post('/login', checkMailMd, rescue(async (req, res) => {
@@ -145,6 +151,8 @@ app.post('/crush', verifyTokenMd, obrigatoryFieldsMd, verifyDateMd, checkFieldsM
   checkDateMd, checkRateMd, rescue(async (req, res) => {
   const { name, age, date } = req.body;
   const { datedAt, rate } = date;
+  let crushes = await fs.readFile(crushFile);
+  crushes = JSON.parse(crushes);
   const crush = {
     id: crushes.length + 1,
     name,
@@ -156,13 +164,15 @@ app.post('/crush', verifyTokenMd, obrigatoryFieldsMd, verifyDateMd, checkFieldsM
   };
   crushes.push(crush);
   await fs.writeFile(crushFile, JSON.stringify(crushes));
-  return res.status(201).send(crush);
+  await res.status(201).send(crush);
 }));
 
 app.put(crushWithId, verifyTokenMd, checkCrushMd, obrigatoryFieldsMd, verifyDateMd,
   checkFieldsMd, checkDateMd, checkRateMd, rescue(async (req, res) => {
   const { name, age, date } = req.body;
   const id = parseInt(req.params.id, 10);
+  let crushes = await fs.readFile(crushFile);
+  crushes = JSON.parse(crushes);
   const crush = crushes.find((item) => item.id === id);
   crush.name = name;
   crush.age = age;
@@ -178,6 +188,8 @@ app.put(crushWithId, verifyTokenMd, checkCrushMd, obrigatoryFieldsMd, verifyDate
 
 app.delete(crushWithId, verifyTokenMd, checkCrushMd, rescue(async (req, res) => {
   const id = parseInt(req.params.id, 10);
+  let crushes = await fs.readFile(crushFile);
+  crushes = JSON.parse(crushes);
   crushes = crushes.filter((item) => item.id !== id);
   await fs.writeFile(crushFile, JSON.stringify(crushes));
   await res.status(200).send({ message: 'Crush deletado com sucesso' });
