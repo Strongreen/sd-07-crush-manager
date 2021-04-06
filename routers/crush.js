@@ -9,7 +9,7 @@ const verifyDate = require('../middlewares/verifyDate');
 const verifyDateObj = require('../middlewares/verifyDateObj');
 
 const replaceFile = async (info) => {
-  await fs.promises.writeFile('../crush.json', JSON.stringify(info));
+  await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(info));
 };
 
 router.get('/', async (req, res) => {
@@ -61,7 +61,7 @@ router.put('/:id', verifyToken,
   try {
     const data = JSON.parse(await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8'));
     data[id - 1] = newObj;
-    replaceFile(data);
+    await replaceFile(data);
     return res.status(201).send(newObj);
   } catch (error) {
     throw new Error(error);
