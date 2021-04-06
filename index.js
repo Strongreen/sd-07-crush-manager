@@ -12,20 +12,14 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
+const crushList = '/crush';
+const crushId = '/crush/:id';
 app.listen(PORT, () => { console.log('Online'); });
 
-const crushList = './crush.json';
-const crushId = '/crush/:id';
-
-app.get(crushList, async (req, res) => {
-  const empty = [];
-  const myCrush = await fs.readFile(crushList, 'utf8');
+app.get(crushList, async (_req, res) => {
+  const myCrush = await fs.readFile('./crush.json', 'utf8');
   const newListCrush = JSON.parse(myCrush);
-  if (newListCrush) {
-    return res.status(SUCCESS).json(newListCrush);
-  }
-  
-  return empty;
+  return res.status(SUCCESS).json(newListCrush);
 });
 
 app.get(crushId, async (req, res) => {
