@@ -40,7 +40,7 @@ function testPassword(password, fieldName) {
   if (String(password).length < 6) {
     return {
       error: true,
-      message: `O "${fieldName}" deve ter pelo menos 6 caracteres`,
+      message: `A "senha" deve ter pelo menos 6 caracteres`,
     };
   }
   return { error: false };

@@ -27,6 +27,24 @@ async function testExistingId(id) {
   return data.filter((currentCrush) => currentCrush.id === Number(id));
 }
 
+function checkAuthorization(req, res, next) {
+  const { authorization } = req.headers;
+  if (!authorization) {
+    return res.status(UNAUTHORIZED).json({ message: 'Token não encontrado' });
+  }
+  if (authorization.length !== 16) {
+    return res.status(UNAUTHORIZED).json({ message: 'Token inválido' });
+  }
+  next();
+}
+
+router.get('/search', checkAuthorization, async (req, res) => {
+  const { q } = req.query;
+  const data = await returnData();
+  const findingCrush = data.filter(({ name }) => name.includes(q));
+  res.status(SUCCESS).json(findingCrush);
+});
+
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   const getCrushById = await testExistingId(id);
@@ -117,17 +135,6 @@ function testDate(date, fieldName) {
   }
 
   return { error: false };
-}
-
-function checkAuthorization(req, res, next) {
-  const { authorization } = req.headers;
-  if (!authorization) {
-    return res.status(UNAUTHORIZED).json({ message: 'Token não encontrado' });
-  }
-  if (authorization.length !== 16) {
-    return res.status(UNAUTHORIZED).json({ message: 'Token inválido' });
-  }
-  next();
 }
 
 async function createNewCrush(name, age, date) {
