@@ -64,6 +64,13 @@ const dateVerify = (date) => {
 
 const rateVerify = (rate) => (rate > 0 && rate < 6);
 
+const fieldDateVerify = (date) => {
+  if (!date) return false;
+  const { datedAt, rate } = date;
+  if (!datedAt || !rate) return false;
+  return true;
+};
+
 const tokenGenerator = (length) => {
   let token = '';
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -100,11 +107,12 @@ const bodyVerifyMiddleware = (req, res, next) => {
 };
 
 const dateVerifyMiddleware = (req, res, next) => {
-  const { body: { date: { datedAt, rate } } } = req;
-  if (datedAt && !rate) {
+  const { body: { date } } = req;
+  if (!fieldDateVerify(date)) {
     return res.status(BAD_REQUEST)
-      .json({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
+    .json({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
   }
+  const { datedAt, rate } = date;
   if (!dateVerify(datedAt)) {
     return res.status(BAD_REQUEST)
       .json({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
