@@ -38,7 +38,7 @@ const postCrush = async (req, res) => {
       date: req.body.date,
     };
     await fs.writeFile(pathFile, JSON.stringify(data));
-    res.status(201).send(JSON.parse(data[size]));
+    res.status(201).send(data[size]);
   } catch (error) {
     throw new Error(error);
   }
