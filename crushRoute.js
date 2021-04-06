@@ -4,13 +4,100 @@ const fs = require('fs');
 
 const app = express();
 
+const dateErrorMessage = 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios';
+
+const fileDataName = './crush.json';
+
+const tokenValidation = (req, res, next) => {
+    const token = req.headers.authorization;
+    const regex = /([a-zA-Z0-9]){16}$/;
+    if (!token) {
+        return res.status(401).send({
+            message: 'Token não encontrado',
+          });
+    }
+    if (!regex.test(token)) {
+        return res.status(401).send({
+            message: 'Token inválido',
+          });
+    }
+    next();
+};
+
+const nameValidation = (req, res, next) => {
+    const { name } = req.body;
+    const regex = /([a-zA-Z]){3}/;
+    if (!name) {
+        return res.status(400).send({
+            message: 'O campo "name" é obrigatório',
+          });
+    }
+    if (!regex.test(name)) {
+        return res.status(400).send({
+            message: 'O "name" deve ter pelo menos 3 caracteres',
+          });
+    }
+    next();
+};
+
+const ageValidation = (req, res, next) => {
+    const { age } = req.body;
+    if (!age) {
+        return res.status(400).send({
+            message: 'O campo "age" é obrigatório',
+          });
+    }
+    if (age < 18) {
+        return res.status(400).send({
+            message: 'O crush deve ser maior de idade',
+          });
+    }
+    next();
+};
+
+const dateValidation = (req, res, next) => {
+    const { date } = req.body;
+    const regex = /(\d{2}\/\d{2}\/\d{4})/;
+    if (!date) {
+        return res.status(400).send({
+            message: dateErrorMessage,
+          });
+    }
+    if (!date.datedAt) {
+        return res.status(400).send({
+            message: dateErrorMessage,
+          });
+    }
+    if (!regex.test(date.datedAt)) {
+        return res.status(400).send({
+            message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"',
+          });
+    }
+    next();
+};
+
+const rateValidation = (req, res, next) => {
+    const { date } = req.body;
+    if (!date.rate) {
+        return res.status(400).send({
+            message: dateErrorMessage,
+          });
+    }
+    if (!(Number.isInteger(date.rate) && date.rate <= 5 && date.rate >= 1)) {
+        return res.status(400).send({
+            message: 'O campo "rate" deve ser um inteiro de 1 à 5',
+          });
+    }
+    next();
+};
+
 app.get('/', (req, res) => {
-  const crushArray = fs.readFileSync('./crush.json', 'utf-8');
+  const crushArray = fs.readFileSync(fileDataName, 'utf-8');
   return res.status(200).send(JSON.parse(crushArray));
 });
 
 app.get('/:id', (req, res) => {
-  const crushArray = JSON.parse(fs.readFileSync('./crush.json', 'utf-8'));
+  const crushArray = JSON.parse(fs.readFileSync(fileDataName, 'utf-8'));
   const { id } = req.params;
   const oneCrush = crushArray.filter((crush) => crush.id === parseInt(id, 10));
   if (oneCrush[0]) {
@@ -19,6 +106,23 @@ app.get('/:id', (req, res) => {
   return res.status(404).send({
     message: 'Crush não encontrado',
   });
+});
+
+app.use(tokenValidation);
+
+app.use(nameValidation);
+
+app.use(ageValidation);
+
+app.use(dateValidation);
+
+app.use(rateValidation);
+
+app.post('/', (req, res) => {
+    const newCrush = req.body;
+    const crushArray = JSON.parse(fs.readFileSync(fileDataName, 'utf-8'));
+    newCrush.id = crushArray.length + 1;
+    res.status(201).send(newCrush);
 });
 
 module.exports = app;
