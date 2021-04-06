@@ -8,14 +8,14 @@ const app = express();
 const SUCCESS = 200;
 const ERROR = 404;
 
-app.get('/', (_request, response) => {
-  response.status(SUCCESS).send(crushData);
+app.get('/', async (_request, response) => {
+  await response.status(SUCCESS).send(crushData);
 });
 
-app.get('/:id', (request, response) => {
+app.get('/:id', async (request, response) => {
   const { id } = request.params;
-  const crush = crushData[+id];
-  
+  const crush = await crushData.find(({ id: crushId }) => +id === +crushId);
+
   if (!crush) {
     const message = { message: 'Crush não encontrado' };
     response.status(ERROR).send(message);
