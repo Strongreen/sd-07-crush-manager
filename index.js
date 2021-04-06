@@ -103,7 +103,7 @@ app.get(crushWithId, rescue(async (req, res) => {
   const { id } = req.params;
   const crush = crushes.find((item) => item.id === parseInt(id, 10));
   await checkCrush(res, crush);
-  await res.status(SUCCESS).send(crush);
+  return res.status(SUCCESS).send(crush);
 }));
 
 app.post('/login', rescue(async (req, res) => {
