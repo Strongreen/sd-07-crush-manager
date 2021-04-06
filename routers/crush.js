@@ -62,7 +62,7 @@ router.put('/:id', verifyToken,
     const data = JSON.parse(await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8'));
     data[id - 1] = newObj;
     await replaceFile(data);
-    return res.status(201).send(newObj);
+    return res.status(200).send(newObj);
   } catch (error) {
     throw new Error(error);
   }
@@ -74,7 +74,7 @@ router.delete('/:id', verifyToken, async (req, res) => {
     const data = JSON.parse(await fs.promises.readFile(`${__dirname}/../crush.json`, 'utf8'));
     const newData = data.filter((item) => item.id === id);
     replaceFile(newData);
-    return res.status(201).send({
+    return res.status(200).send({
       message: 'Crush deletado com sucesso',
     });
   } catch (error) {
