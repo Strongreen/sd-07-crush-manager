@@ -17,7 +17,7 @@ app.listen(PORT, () => { console.log('Online'); });
 const crushList = './crush.json';
 const crushId = '/crush/:id';
 
-app.get(crushList, async (_req, res) => {
+app.get(crushList, async (req, res) => {
   const empty = [];
   const myCrush = await fs.readFile(crushList, 'utf8');
   const newListCrush = JSON.parse(myCrush);
