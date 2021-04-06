@@ -70,11 +70,10 @@ app.post('/login', authorizationEmail, (req, res) => {
       message: 'O campo "password" é obrigatório',
     });
   }
-
   passwordValidation(password);
   if (!password || password.length < 6) {
     return res.status(400).json({
-      message: 'O \"password\" deve ter pelo menos 6 caracteres',
+      message: 'O "password" deve ter pelo menos 6 caracteres',
     });
   }
 
