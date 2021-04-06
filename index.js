@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { readFiles, identifyID } = require('./helper');
+const { readFiles, identifyID, login} = require('./helper');
 
 const app = express();
 app.use(bodyParser.json());
@@ -16,5 +16,7 @@ app.get('/', (_request, response) => {
 app.get('/crush', readFiles);
 
 app.get('/crush/:id', identifyID);
+
+app.get('/login', login);
 
 app.listen(PORT, () => { console.log('Online'); });
