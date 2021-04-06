@@ -43,7 +43,7 @@ const checkDateFormat = (datedAt, rate) => {
   }
 
   if (rate < 1 || rate > 5) {
-    console.log('estou aqui')
+    console.log('estou aqui');
     throw new Error('O campo "rate" deve ser um inteiro de 1 à 5');
   }
 };
@@ -149,7 +149,7 @@ app.delete('/:id', async (request, response) => {
   const { id } = request.params;
 
   await deleteCrush(id);
-  response.status(200).send({ "message": "Crush deletado com sucesso" });
+  response.status(200).send({ message: 'Crush deletado com sucesso' });
 });
 
 module.exports = app;
