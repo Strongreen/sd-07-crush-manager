@@ -3,9 +3,7 @@ const fs = require('fs').promises;
 
 const app = express();
 
-const readCrush = async () => {
-  return JSON.parse(await fs.readFile('./crush.json', 'utf8'));
-};
+const readCrush = async () => JSON.parse(await fs.readFile('./crush.json', 'utf8'));
 
 app.get('/', async (req, res) => {
   const result = await readCrush();
