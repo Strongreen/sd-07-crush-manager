@@ -1,6 +1,8 @@
 const express = require('express');
 const fs = require('fs').promises;
 
+const router = express.Router();
+
 const authMiddleware = require('../middlewares/auth');
 const nameMiddleware = require('../middlewares/name');
 const ageMiddleware = require('../middlewares/age');
@@ -8,12 +10,25 @@ const dateMiddleware = require('../middlewares/date');
 const data = require('../crush.json');
 
 const app = express();
+app.use('/search', router);
 
 // -------------------------------------------------------------------- METODOS GET
+
+router.use(authMiddleware);
 
 app.get('/', async (_req, res) => {
   const response = await fs.readFile(`${__dirname}/../crush.json`, 'utf8');
   res.status(200).send(JSON.parse(response));
+});
+
+app.get('/search', (req, res) => {
+  const searchTerm = req.query.q;
+  if (searchTerm === undefined || searchTerm === '') {
+    res.status(200).send(data);
+  }
+  const filteredData = data.filter(({ name }) => name.includes(searchTerm));
+
+  res.status(200).send(filteredData);
 });
 
 app.get('/:id', (req, res) => {
