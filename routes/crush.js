@@ -6,6 +6,7 @@ const {
   getCrushById,
   createCrush,
   deleteCrush,
+  searchCrush,
 } = require('../controller');
 const {
   validateToken,
@@ -19,6 +20,9 @@ const routes = express.Router();
 
 // Requisito 1
 routes.get('/', getAllCrushs);
+
+// Requisito 7
+routes.get('/search', validateToken, searchCrush);
 
 // Requisito 2
 routes.get('/:id', getCrushById);
