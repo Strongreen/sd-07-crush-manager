@@ -51,7 +51,7 @@ const erroEmail = {
 
 const erroPass = {
   NULL: 'O campo "password" é obrigatório',
-  INVALID: 'A "senha" ter pelo menos 6 caracteres',
+  INVALID: 'A "senha" deve ter pelo menos 6 caracteres',
 };
 const regex = {
   EMAIL: /^([a-zA-Z0-9_-]+)@+\w+.com/,
