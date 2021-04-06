@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const crushRoute = require('./routes/crush');
-const errorMiddleware = require('./middleware/errorHandle');
+const { crushRoute, loginRoute } = require('./routes');
+const { errorMiddleware } = require('./middleware');
 
 const app = express();
 app.use(bodyParser.json());
@@ -15,6 +15,7 @@ app.get('/', (_request, response) => {
 });
 
 app.use('/crush', crushRoute);
+app.use('/login', loginRoute);
 
 app.use(errorMiddleware);
 
