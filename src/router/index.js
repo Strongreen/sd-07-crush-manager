@@ -22,7 +22,7 @@ router.get('/crush/:id', middleware.getCrushMiddleware, rescue(async (req, res) 
     return res.status(200).send(await file.find((f) => f.id === Number(id)));
 }));
 
-router.post('/login', validation.emailValidation, (req, res) => {
+router.post('/login', validation.postLoginValidation, (req, res) => {
     res.status(200).send({ token: util.generateToken() });
 });
 

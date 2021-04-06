@@ -1,10 +1,10 @@
-const emailValidation = require('./emailValidation');
+const postLoginValidation = require('./postLoginValidation');
 const postAttributeValidation = require('./postAttributeValidation');
 const putAttributeValidation = require('./putAttributeValidation');
 const pageNotFoundValidation = require('./pageNotFoundValidation');
 
 module.exports = {
-    emailValidation,
+    postLoginValidation,
     postAttributeValidation,
     putAttributeValidation,
     pageNotFoundValidation,
