@@ -6,7 +6,7 @@ const erroToken = {
 };
 
 module.exports = (request, response, next) => {
-  const { authorization } = request.header;
+  const { authorization } = request.headers;
   if (!authorization) {
  return response.status(UNAUTHORIZED)
     .json({ message: erroToken.NULL });
