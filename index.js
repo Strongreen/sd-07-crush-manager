@@ -16,11 +16,9 @@ app.get('/', (_request, response) => {
 
 app.use(express.json());
 
-app.use('/crush', routesCrush);
-
-app.use('/crush/:id', routesCrush);
-
 app.use('/login', routesLogin);
+app.use('/crush', routesCrush);
+app.use('/crush/:id', routesCrush);
 
 app.listen(PORT, () => {
   console.log('Online');
