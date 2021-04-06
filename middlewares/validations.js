@@ -1,5 +1,3 @@
-const NUM_PASSWORD = 5;
-
 const validationMiddleware = (req, res, next) => {
     const { email, password } = req.body;
     const passwordToString = password.toString();
