@@ -1,8 +1,13 @@
 const ageMiddleware = (req, res, next) => {
-  const { date } = req.body;
-  if (!date || !date.datedAt || !date.rate) {
+  const { age } = req.body;
+  if (!age) {
     return res.status(400).send({
-      message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
+      message: 'O campo "age" é obrigatório',
+    }); 
+  }
+  if (age < 18) {
+    return res.status(400).send({
+      message: 'O crush deve ser maior de idade',
     }); 
   } 
   next();

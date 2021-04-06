@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const authMiddleware = require('./authMiddleware');
 const nameMiddleware = require('./nameMiddleware');
 const ageMiddleware = require('./ageMiddleware');
+const dateMiddleware = require('./dateMiddleware');
 
 const app = express();
 const SUCCESS = 200;
@@ -70,6 +71,7 @@ app.post('/login', (req, res) => {
 app.post('/crush', authMiddleware);
 app.post('/crush', nameMiddleware);
 app.post('/crush', ageMiddleware);
+app.post('/crush', dateMiddleware);
 app.post('/crush', (req, res) => {
   const { name, age, date } = req.body;
   // http://jsfiddle.net/bruscopelliti/EZVdg/
