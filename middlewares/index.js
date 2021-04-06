@@ -10,6 +10,7 @@ const checkFormatDate = require('./checkFormatDate');
 const editedCrush = require('./editedCrush');
 const errorMidware = require('./error');
 const deletedCrushMiddware = require('./deleteCrush');
+const searchCrushMiddware = require('./searchCrush');
 
 module.exports = {
     loginCheckEmail,
@@ -24,4 +25,5 @@ module.exports = {
     editedCrush,
     errorMidware,
     deletedCrushMiddware,
+    searchCrushMiddware,
 };

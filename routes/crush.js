@@ -5,11 +5,11 @@ const middlewares = require('../middlewares');
 const router = express.Router();
 
 router.post('/', middlewares.checkToken,
-middlewares.checkName,
-middlewares.checkAge,
-middlewares.checkDate,
-middlewares.checkFormatDate,
-middlewares.registerCrush);
+    middlewares.checkName,
+    middlewares.checkAge,
+    middlewares.checkDate,
+    middlewares.checkFormatDate,
+    middlewares.registerCrush);
 
 router.get('/', async (_req, res) => {
     try {
@@ -40,11 +40,11 @@ router.get('/:id', async (req, res) => {
 });
 
 router.put('/:id', middlewares.checkToken,
-middlewares.checkName,
-middlewares.checkAge,
-middlewares.checkDate,
-middlewares.checkFormatDate,
-middlewares.editedCrush);
+    middlewares.checkName,
+    middlewares.checkAge,
+    middlewares.checkDate,
+    middlewares.checkFormatDate,
+    middlewares.editedCrush);
 
 router.delete('/:id', middlewares.checkToken, middlewares.deletedCrushMiddware);
 

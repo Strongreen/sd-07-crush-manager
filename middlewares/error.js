@@ -1,6 +1,6 @@
-const erroMidware = (err, req, _res, _next) => {
+const erroMidware = (err, req, res, _next) => {
    if (err.status) {
-       console.log(req.status);
+       res.status(err.status).send(err.status);
    }
 };
 
