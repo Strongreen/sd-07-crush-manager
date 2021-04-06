@@ -46,7 +46,9 @@ app.post('/', (req, res) => {
     res.status(201).send(object));
 });
 
-app.post('/:id', (req, res) => {
+// --------------------------------------------------------------------- METODOS PUT
+
+app.put('/:id', (req, res) => {
   const { id } = req.params;
 
   const crush = { id: parseInt(id, 10), ...req.body };
