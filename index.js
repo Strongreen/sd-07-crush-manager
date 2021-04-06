@@ -128,25 +128,25 @@ app.post('/crush', validationToken, rescue(async (req, res) => {
   }
 }));
 
-// 5
-app.put('/crush/:idtofind', validationToken, async (req, res) => {
-  const { idtofind } = req.params;
-  const crushList = await readFile();
-  const crushIndex = crushList.findIndex(({ id }) => id === idtofind);
-  const { name, age, date } = crushList[crushIndex];
-  try {
-    const { datedAt, rate } = date;
-    if (!date || !datedAt || !rate) {
-      throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
-    }
-    validateName(name); validateAge(age); regexValidate(datedAt); validateRate(rate);
-    await fs.writeFile(`${__dirname}/crush.json`, JSON.stringify(crushList), (err) => {
-      if (err) throw err;
-    });
-    res.status(201).send(req.body);
-  } catch (error) {
-    res.status(400).send({ message: error.message });
-  }
-});
+// // 5
+// app.put('/crush/:idtofind', validationToken, async (req, res) => {
+//   const { idtofind } = req.params;
+//   const crushList = await readFile();
+//   const crushIndex = crushList.findIndex(({ id }) => id === idtofind);
+//   const { name, age, date } = crushList[crushIndex];
+//   try {
+//     const { datedAt, rate } = date;
+//     if (!date || !datedAt || !rate) {
+//       throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
+//     }
+//     validateName(name); validateAge(age); regexValidate(datedAt); validateRate(rate);
+//     await fs.writeFile(`${__dirname}/crush.json`, JSON.stringify(crushList), (err) => {
+//       if (err) throw err;
+//     });
+//     res.status(201).send(req.body);
+//   } catch (error) {
+//     res.status(400).send({ message: error.message });
+//   }
+// });
 
 app.listen(PORT, () => { console.log('Online'); });
