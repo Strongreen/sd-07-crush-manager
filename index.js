@@ -1,8 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const crush = require('./routes/crush');
+const crushId = require('./routes/crushId');
 
 const { crushFunction } = crush;
+const { crushIdFunction } = crushId;  
 
 const app = express();
 app.use(bodyParser.json());
@@ -15,8 +17,8 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-console.log(crushFunction);
-
 app.get('/crush', crushFunction);
+
+// app.get('/crush/:id', crushIdFunction);
 
 app.listen(PORT, () => { console.log('Online'); });
