@@ -1,27 +1,19 @@
 const express = require('express');
 const fs = require('fs').promises;
 
-const router = express.Router();
-
-const authMiddleware = require('../middlewares/auth');
-const nameMiddleware = require('../middlewares/name');
-const ageMiddleware = require('../middlewares/age');
-const dateMiddleware = require('../middlewares/date');
+const MIDDLEWARES = require('../middlewares/index');
 const data = require('../crush.json');
 
 const app = express();
-app.use('/search', router);
 
 // -------------------------------------------------------------------- METODOS GET
-
-router.use(authMiddleware);
 
 app.get('/', async (_req, res) => {
   const response = await fs.readFile(`${__dirname}/../crush.json`, 'utf8');
   res.status(200).send(JSON.parse(response));
 });
 
-app.get('/search', async (req, res) => {
+app.get('/search', MIDDLEWARES.authMiddleware, async (req, res) => {
   const searchTerm = req.query.q;
   if (searchTerm === undefined || searchTerm === '') {
     res.status(200).send(data);
@@ -45,9 +37,9 @@ app.get('/:id', (req, res) => {
   res.status(200).send(crushById);
 });
 
-// --------------------------------------------------------------------- MIDDLEWARE GERAL
+// --------------------------------------------------------------------- MIDDLEWARE GERAL DE AUTENTICAÇÃO
 
-app.use(authMiddleware);
+app.use(MIDDLEWARES.authMiddleware);
 
 // --------------------------------------------------------------------- METODOS DELETE
 
@@ -64,11 +56,11 @@ app.delete('/:id', (req, res) => {
   ).then(() => res.status(200).send({ message: 'Crush deletado com sucesso' }));
 });
 
-// -------------------------------------------------------------------- MIDDLEWARES ESPECIFICOS
+// -------------------------------------------------------------------- MIDDLEWARES ESPECIFICOS DE VERIFICAÇÃO
 
-app.use(nameMiddleware);
-app.use(ageMiddleware);
-app.use(dateMiddleware);
+app.use(MIDDLEWARES.nameMiddleware);
+app.use(MIDDLEWARES.ageMiddleware);
+app.use(MIDDLEWARES.dateMiddleware);
 
 // --------------------------------------------------------------------- METODOS POST
 

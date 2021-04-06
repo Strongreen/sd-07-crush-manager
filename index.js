@@ -7,8 +7,8 @@ const login = require('./routes/login');
 const app = express();
 app.use(bodyParser.json());
 
-app.use('/crush', crush);
 app.use('/login', login);
+app.use('/crush', crush);
 
 const SUCCESS = 200;
 const PORT = '3000';
