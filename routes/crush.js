@@ -44,6 +44,7 @@ async function sendCrushes(newCrush) {
     const content = await fs.promises
     .writeFile(`${__dirname}/../crush.json`, JSON.stringify(newCrush));
     return content;
+    // ver esse return content na ogica do cavalcante
   } catch (error) {
     console.error(error.message);
   }
@@ -55,9 +56,10 @@ app.use(express.json());
 
 app.post('/', authMiddleware, validatingCrushesMiddleware.validatingAgeOfCrushes,
 validatingCrushesMiddleware.validatingNameOfCrushes,
+validatingCrushesMiddleware.validatingRatesOfCrushes,
 validatingCrushesMiddleware.validatingDateAndRatesOfCrushes,
 validatingCrushesMiddleware.validatingDateFormatOfCrushes,
-validatingCrushesMiddleware.validatingRatesOfCrushes, rescue(async (req, res) => {
+rescue(async (req, res) => {
   const size = crush.length;
   const { name, age, date } = req.body;
   const { datedAt, rate } = date;
@@ -74,4 +76,20 @@ validatingCrushesMiddleware.validatingRatesOfCrushes, rescue(async (req, res) =>
     return res.status(201).send(crush[crush.length - 1]);
 }));
 // logica com ajuda da aula do Lucas Cavalcante 26.5
+
+  app.put('/:id', authMiddleware,
+  validatingCrushesMiddleware.validatingNameOfCrushes,
+  validatingCrushesMiddleware.validatingAgeOfCrushes,
+  validatingCrushesMiddleware.validatingDateAndRatesOfCrushes,
+validatingCrushesMiddleware.validatingDateFormatOfCrushes,
+validatingCrushesMiddleware.validatingRatesOfCrushes,
+   rescue(async (req, res) => {
+  const { id } = req.params;
+  const { name, age, date } = req.body;
+  crush[id - 1].name = name;
+  crush[id - 1].age = age;
+  crush[id - 1].date = date;
+    sendCrushes(crush);
+    return res.status(200).send(crush[id - 1]);
+  }));
 module.exports = app;
