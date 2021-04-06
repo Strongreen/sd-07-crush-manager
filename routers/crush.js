@@ -37,7 +37,8 @@ router.post('/', verifyToken,
     try {
       data.push(newObj);
       await fs.promises.writeFile('../crush.json', JSON.stringify(newObj));
-      return res.status(201).send(newObj);
+      const response = newObj;
+      return res.status(201).send(response);
     } catch (error) {
       throw new Error(error);
     }
@@ -65,10 +66,10 @@ router.put('/:id', verifyToken,
 router.delete('/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
   try {
-    newData = data.filter(item => item.id = id);
+    const newData = data.filter((item) => item.id === id);
     await fs.promises.writeFile('../crush.json', JSON.stringify(newData));
     return res.status(201).send({
-      message: "Crush deletado com sucesso"
+      message: 'Crush deletado com sucesso'
     });
   } catch (error) {
     throw new Error(error);
