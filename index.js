@@ -42,6 +42,24 @@ const addCrush = async (crush) => {
   }
 };
 
+const editCrush = async (crushEdit, idEdit) => {
+  try {
+    const data = await readFile();
+    const crushFind = data.find(({ id }) => id === +idEdit);
+    const newCrush = {
+      ...crushFind,
+      ...crushEdit,
+    };
+    const crushList = data.filter((crush) => crush.id !== +idEdit);
+    console.log(crushList);
+    crushList.push(newCrush);
+    await writeFile(crushList);
+    return newCrush;
+  } catch (error) {
+    return error;
+  }
+};
+
 const emailVerify = (email) => {
   const EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
   return EMAIL_REGEX.test(email);
@@ -67,7 +85,7 @@ const rateVerify = (rate) => (rate > 0 && rate < 6);
 const fieldDateVerify = (date) => {
   if (!date) return false;
   const { datedAt, rate } = date;
-  if (!datedAt || !rate) return false;
+  if (!datedAt || rate === undefined) return false;
   return true;
 };
 
@@ -169,5 +187,21 @@ app.post('/crush', authMiddleware, bodyVerifyMiddleware, dateVerifyMiddleware, a
     res.status(500).json({ message: `Erro de servidor: ${error}` });
   }
 });
+
+app.put(
+  '/crush/:id',
+  authMiddleware,
+  bodyVerifyMiddleware,
+  dateVerifyMiddleware,
+  async (req, res) => {
+    const { body, params: { id } } = req;
+    try {
+      const crush = await editCrush(body, id);
+      res.status(SUCCESS).send(crush);
+    } catch (error) {
+      res.status(500).json({ message: `Erro de servidor: ${error}` });
+    }
+  },
+);
 
 app.listen(PORT, () => { console.log('Online'); });
