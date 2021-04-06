@@ -3,6 +3,7 @@ const routes = require('./routes');
 const {
   validateEmail,
   validatePassword,
+  errorMiddleware,
 } = require('./middlewares');
 
 const app = express();
@@ -20,5 +21,6 @@ app.get('/', (_request, response) => {
 app.use('/crush', routes.crush);
 app.use('/crush', routes.crushId);
 app.use('/login', validateEmail, validatePassword, routes.login);
+app.use(errorMiddleware);
 
 app.listen(PORT, () => { console.log(`Online on port ${PORT}`); });

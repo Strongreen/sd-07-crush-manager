@@ -5,6 +5,7 @@ const validateName = require('./validateName');
 const validateAge = require('./validateAge');
 const dateValidation = require('./dateValidation');
 const dateRateMW = require('./dateRateMW');
+const errorMiddleware = require('./errorMiddleware');
 
 module.exports = {
   validateEmail,
@@ -14,4 +15,5 @@ module.exports = {
   validateAge,
   dateValidation,
   dateRateMW,
+  errorMiddleware,
 };
