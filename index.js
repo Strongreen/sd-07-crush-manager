@@ -87,8 +87,8 @@ app.post('/crush', async (request, response) => {
       name,
       age,
       date,
-    }
-    const newList = {...data, newCrush}
+    };
+    const newList = { ...data, newCrush };
     await fs.promises.writeFile(`${__dirname}/.././crush.json`, JSON.stringify(newList));
     return response.status(CREATED).send(newCrush);
   } catch (error) { console.error(`Erro: ${error.message}`); }
