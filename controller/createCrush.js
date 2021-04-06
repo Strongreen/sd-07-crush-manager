@@ -3,7 +3,7 @@ const INTERNAL_SERVER_ERROR = 500;
 
 const { readFile, writeFile } = require('../services/readWriteFile');
 
-module.exports = async (req, res) => {
+const createCrush = async (req, res) => {
   const { name, age, date } = req.body;
   try {
     const crushs = await readFile();
@@ -16,3 +16,4 @@ module.exports = async (req, res) => {
     return res.status(INTERNAL_SERVER_ERROR).json({ message: error.message });
   }
 };
+module.exports = createCrush;

@@ -1,9 +1,12 @@
 const express = require('express');
 // const rescue = require('express-rescue');
 
-const getAllCrushs = require('../controller/getAllCrushs');
-const getCrushById = require('../controller/getCrushById');
-const createCrush = require('../controller/createCrush');
+const {
+  getAllCrushs,
+  getCrushById,
+  createCrush,
+  deleteCrush,
+} = require('../controller');
 const {
   validateToken,
   validateName,
@@ -24,6 +27,9 @@ routes.get('/:id', getCrushById);
 // routes.use(express.json());
 
 routes.use(validateToken);
+
+routes.delete('/:id', deleteCrush);
+
 routes.use(validateName);
 routes.use(validateAge);
 routes.use(validateDateAt);

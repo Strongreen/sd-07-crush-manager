@@ -17,7 +17,6 @@ function passwordIsValid(password) {
 }
 
 function emailIsValid(email) {
-  console.log(email);
   if (!email) {
     throw new Error('O campo "email" é obrigatório');
   }
@@ -36,7 +35,7 @@ function emailIsValid(email) {
   }
 }
 
-module.exports = rescue(async (req, res) => {
+const login = rescue(async (req, res) => {
   const { email, password } = req.body;
   try {
     emailIsValid(email);
@@ -46,3 +45,5 @@ module.exports = rescue(async (req, res) => {
     return res.status(BAD_REQUEST).json({ message: error.message });
   }
 });
+
+module.exports = login;
