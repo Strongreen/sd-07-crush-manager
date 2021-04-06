@@ -13,4 +13,18 @@ app.get('/', async (_req, res) => {
   res.status(200).send(crushes);
 });
 
+app.get('/:id', async (req, res) => {
+  const crushes = await readCrushes();
+  const { id } = req.params;
+  const validateId = crushes.some((crush) => crush.id === Number(id));
+
+  if (!validateId) {
+    res.status(404).send({
+    message: 'Crush não encontrado',
+    });
+  }
+  const crushById = crushes.find((crush) => crush.id === Number(id));
+  res.status(200).send(crushById);
+});
+
 module.exports = app;
