@@ -40,24 +40,44 @@ const createCrush = (infoCrush) => {
   return newCrush;
 };
 
-// const alterCrush = (infoCrush, id) => {
-//   const { name, age, date } = infoCrush;
-//   const file = fs.readFileSync(filePath, 'utf-8');
-//   const crushes = JSON.parse(file);  
+const alterCrush = (infoCrush, id) => {
+  const { name, age, date } = infoCrush;
+  const file = fs.readFileSync(filePath, 'utf-8');
+  const crushes = JSON.parse(file);  
 
-//   crushes.map((crush) => {
-//     if (crush.id === id) {
-//       return { ...infoCrush };
-//     }
-//     return true;
-//   });
+  for (let i = 0; i <= crushes.length; i += 1) {
+    if (crushes[i].id === Number(id)) {
+      crushes[i].name = name;
+      crushes[i].age = age;
+      crushes[i].date = date;
+      break;
+    }
+  }
 
-//   console.log(crushes);
-// };
+  fs.writeFileSync(filePath, JSON.stringify(crushes));
+
+  return {
+    id, name, age, date,
+  };
+};
+
+const deleteCrush = (id) => {
+  const file = fs.readFileSync(filePath, 'utf-8');
+  const crushes = JSON.parse(file);
+  
+  const refreshedCrushes = crushes.filter((crush) => crush.id !== Number(id));
+  
+  fs.writeFileSync(filePath, JSON.stringify(refreshedCrushes));
+
+  return {
+    message: 'Crush deletado com sucesso',
+  };
+};
 
 module.exports = {
   getAllCrushes,
   getCrush,
   createCrush,  
-  // alterCrush,
+  alterCrush,
+  deleteCrush,
 };

@@ -9,7 +9,7 @@ const isEmail = (text) => {
 };
 
 const isEmpty = (text) => {
-  if (text === '') {  
+  if ((text === '') || (text === undefined)) {  
     return true;
   }  
 

@@ -15,7 +15,7 @@ const isARateNumber = (rate) => {
 };
 
 const isEmpty = (text) => {
-  if (text === '') {  
+  if ((text === '') || (text === undefined)) {  
     return true;
   }  
 

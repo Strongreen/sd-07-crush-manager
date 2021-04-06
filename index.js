@@ -6,6 +6,7 @@ const authMiddleware = require('./middlewares/authMiddleware');
 const crushMiddleware = require('./middlewares/crushMiddleware');
 const loginMiddleware = require('./middlewares/loginMiddleware');
 
+const crushId = '/crush/:id';
 const app = express();
 app.use(bodyParser.json());
 
@@ -18,7 +19,7 @@ app.get('/crush', (_req, res) => {
   return res.status(200).json(crushes);
 });
 
-app.get('/crush/:id', (req, res) => {
+app.get(crushId, (req, res) => {
   const { id } = req.params;
   
   const infoCrush = crush.getCrush(id);
@@ -41,14 +42,22 @@ app.post('/crush', authMiddleware, crushMiddleware.create, (req, res) => {
   return res.status(201).json(result);
 });
 
-// app.put('/crush/:id', authMiddleware, crushMiddleware.create, (req, res) => {
-//   const infoCrush = req.body;
-//   const { id } = req.params;
+app.put(crushId, authMiddleware, crushMiddleware.create, (req, res) => {
+  const infoCrush = req.body;
+  const { id } = req.params;
 
-//   const result = crush.alterCrush(infoCrush, id);  
+  const result = crush.alterCrush(infoCrush, id);  
 
-//   return res.status(201).json(result);
-// });
+  return res.status(201).json(result);
+});
+
+app.delete(crushId, authMiddleware, (req, res) => {
+  const { id } = req.params;
+
+  const result = crush.deleteCrush(id);
+
+  return res.status(201).json(result);
+});
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
