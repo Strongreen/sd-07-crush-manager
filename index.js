@@ -19,6 +19,6 @@ app.get('/', (_request, response) => {
 
 app.get('/crush', crushFunction);
 
-// app.get('/crush/:id', crushIdFunction);
+app.get('/crush/:id', crushIdFunction);
 
 app.listen(PORT, () => { console.log('Online'); });
