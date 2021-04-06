@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const routesCrush = require('./Routes/crush');
 const routesLogin = require('./Routes/auth');
 
-
 const app = express();
 app.use(bodyParser.json());
 
