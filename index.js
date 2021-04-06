@@ -46,29 +46,25 @@ app.get('/crush/:id', async (request, response) => {
   }
 });
 
-const checkEmailAndPass = (email, password, response) => {
-  if (!email) {
-    return response.status(BAD_REQUEST).send({ message: 'O campo "email" é obrigatório' });
-  }
-  if (!/^([a-zA-Z0-9_-]+)@mail\.com$/gm.test(email)) {
-    return response.status(BAD_REQUEST).send({ 
-      message: 'O "email" deve ter o formato "email@email.com"' });
-  }
-  if (!password) {
-    return response.status(BAD_REQUEST).send({ message: 'O campo "password" é obrigatório' });
-  }
-  if (password.length < 6) {
-    return response.status(BAD_REQUEST).send({ message: 'A "senha" ter pelo menos 6 caracteres' });
-  }
+app.post('/login', (request, response) => {
+    if (!request.body.email) {
+ return response.status(BAD_REQUEST)
+      .send({ message: 'O campo "email" é obrigatório' }); 
+}
+    if (!/^([a-zA-Z0-9_-]+)@mail\.com$/gm.test(request.body.email)) {
+ return response
+      .status(BAD_REQUEST).send({ message: 'O "email" deve ter o formato "email@email.com"' });
+}
+    if (!request.body.password) {
+ return response.status(BAD_REQUEST)
+      .send({ message: 'O campo "password" é obrigatório' }); 
+}
+    if (request.body.password.length < 6) {
+ return response.status(BAD_REQUEST)
+      .send({ message: 'A "senha" ter pelo menos 6 caracteres' }); 
+}
     const token = crypto.randomBytes(8).toString('hex');
     return response.status(SUCCESS).json({ token });
-};
-
-app.post('/login', (request, response) => {
-  const { email, password } = request.body;
-  try {
-    checkEmailAndPass(email, password, response);
-  } catch (error) { console.error(`Erro: ${error.message}`); }
 });
 
 const checkToken = (token, response) => {
