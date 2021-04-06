@@ -9,11 +9,6 @@ app.use(bodyParser.json());
 const SUCCESS = 200;
 const PORT = '3000';
 
-// function verifyEmail(email) {
-//   const emailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+$/;
-//   return emailRegex.test(email);
-// }
-
 function createToken() {
   const token = crypto.randomBytes(8).toString('hex');
     return token;
@@ -43,20 +38,23 @@ app.get('/crush/:id', async (req, res) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  const emailRegex = /^([a-zA-Z0-9_-]+)@mail\.com$/gm;
+  // Regex do exercicio 1 (26.5) não funcionou
+  const emailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+$/;
   if (!email) {
-    return res.status(400).send({ message: 'O campo "email" é obrigatório' });
+    return res.status(400).json({ message: 'O campo "email" é obrigatório' });
   }
   if (!emailRegex.test(email)) {
-    return res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
+    return res.status(400).json({
+      message: 'O "email" deve ter o formato "email@email.com"',
+    });
   }
   if (!password) {
-    return res.status(400).send({ message: 'O campo "password" é obrigatório' });
+    return res.status(400).json({ message: 'O campo "password" é obrigatório' });
   }
   if (password.length < 6) {
-    return res.status(400).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
+    return res.status(400).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
-  return res.status(SUCCESS).send({ token: createToken() });
+  return res.status(SUCCESS).json({ token: createToken() });
 });
 
 app.listen(PORT, () => {
