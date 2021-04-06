@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const desafio1 = require('./routes/desafio1');
+const desafio1 = require('./desafio1');
 
 const app = express();
 app.use(bodyParser.json());
@@ -13,7 +13,7 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.use('/crush', desafio1);
+app.use(desafio1);
 
 app.listen(PORT, () => {
   console.log('Online');
