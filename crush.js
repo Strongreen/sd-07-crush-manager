@@ -22,12 +22,14 @@ function readFilePromise(fileName) {
   });
 } // referência: conteúdo Promises, dia 26.2
 
-function findAsyncId(file, id) {
-  return readFilePromise(file)
+async function findAsyncId(file, id) {
+  const found = await readFilePromise(file)
     .then((content) => JSON.parse(content).find((item) => item.id.toString() === id))
     .catch((err) => {
     console.error(`Erro ao ler arquivo: ${err.message}`);
   });
+  
+  return found;
 }
 
 app.get('/:id', async (req, res) => {
@@ -136,9 +138,9 @@ app.put('/:id', async (req, res) => {
   const { authorization } = req.headers;
   const thisCrush = await findAsyncId(crushJson, id);
   
-  const isName = isValidName(name);
-  const isAge = isValidAge(age);
-  const isDate = isValidDate(date);
+  const isName = isValidName(thisCrush.name);
+  const isAge = isValidAge(thisCrush.age);
+  const isDate = isValidDate(thisCrush.date);
   const isAuth = isValidAuthorization(authorization);
   if (isAuth) return res.status(401).send({ message: isAuth });
   if (isName) return res.status(400).send({ message: isName });
