@@ -21,7 +21,7 @@ app.get('/crush', async (req, res) => {
 app.get('/crush/:id', async (req, res) => {
   const { id: reqId } = req.params;
   const crushs = JSON.parse(await fs.promises.readFile('./crush.json', 'utf8'));
-  const crush = crushs.find(({ id }) => id.toString() === reqId);
+  const crush = await crushs.find(({ id }) => id.toString() === reqId);
   if (crush) {
     return res.status(SUCCESS).send(crush);
   }
