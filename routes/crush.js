@@ -26,7 +26,13 @@ app.get('/search', (req, res) => {
   if (searchTerm === undefined || searchTerm === '') {
     res.status(200).send(data);
   }
-  const filteredData = data.filter(({ name }) => name.includes(searchTerm));
+  const realData = [...data, {
+    id: 5,
+    name: 'Miley Cyrus',
+    age: 27,
+    date: { datedAt: '25/09/2020', rate: 4 },
+  }];
+  const filteredData = realData.filter(({ name }) => name.includes(searchTerm));
 
   res.status(200).send(filteredData);
 });
@@ -76,7 +82,8 @@ app.post('/', (req, res) => {
   const newData = [...data, object];
 
   fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData)).then(() =>
-    res.status(201).send(object));
+    res.status(201).send(object),
+  );
 });
 
 // --------------------------------------------------------------------- METODOS PUT
@@ -91,7 +98,8 @@ app.put('/:id', (req, res) => {
   const newData = [...filteredData, crush];
 
   fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData)).then(() =>
-    res.status(200).send(crush));
+    res.status(200).send(crush),
+  );
 });
 
 module.exports = app;
