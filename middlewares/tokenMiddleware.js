@@ -3,14 +3,14 @@ const tokenMiddleware = (request, response, next) => {
 
   if (!token) {
     return response.status(401).send({
-        "message": 'Token não encontrado',
+        message: 'Token não encontrado',
     });
-  } else if (token.length < 16) {
+  } if (token.length < 16) {
     return response.status(401).send({
-      "message": 'Token inválido',
+      message: 'Token inválido',
     });
   }
   next();
-}
+};
 
 module.exports = tokenMiddleware;

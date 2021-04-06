@@ -15,4 +15,4 @@ app.get('/', (_request, response) => {
 app.use('/login', login);
 app.use('/crush', crush);
 
-app.listen(PORT, () => { console.log('Online') });
+app.listen(PORT, () => { console.log('Online'); });
