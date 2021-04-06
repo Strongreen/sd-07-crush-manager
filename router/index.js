@@ -31,7 +31,7 @@ router.post('/crush', validation.postAttributeValidation, rescue(async (req, res
 }));
 
 router.put('/crush/:id', validation.putAttributeValidation, rescue(async (req, res) => {
-    res.status(201).send(await util.updateFunction(req.params, req.body));
+    res.status(200).send(await util.updateFunction(req.params, req.body));
 }));
 
 router.delete('/crush/:ids', middleware.tokenMiddleware, rescue(async (req, res) => {
