@@ -4,6 +4,14 @@ const rescue = require('express-rescue');
 
 const route = express.Router();
 
+const {
+  auth,
+  validateName,
+  validateAge,
+  dateValidation,
+  dateRateMW,
+} = require('../middlewares');
+
 route.get('/', rescue(async (_req, res) => {
   try {
     const content = await fs.promises.readFile(`${__dirname}/../crush.json`);
@@ -15,7 +23,14 @@ route.get('/', rescue(async (_req, res) => {
   }
 }));
 
-route.post('/', rescue(async (req, res) => {
+route.post(
+  '/',
+  auth,
+  validateName,
+  validateAge,
+  dateValidation,
+  dateRateMW,
+  rescue(async (req, res) => {
   try {
     const newCrush = req.body;
 
@@ -31,6 +46,7 @@ route.post('/', rescue(async (req, res) => {
   } catch (e) {
     throw new Error(e);
   }
-}));
+}),
+);
 
 module.exports = route;
