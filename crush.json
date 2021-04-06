@@ -25,14 +25,8 @@
   },
   {
     "id": 5,
-    "name": "Keanu Reeves",
-    "age": 56,
-    "date": { "datedAt": "22/10/2019", "rate": 5 }
-  },
-  {
-    "id": 6,
     "name": "Zendaya Maree",
     "age": 24,
-    "date": { "rate": 5, "datedAt": "25/09/2020" }
+    "date": { "rate": 5, "datedAt": "25/10/2020" }
   }
 ]

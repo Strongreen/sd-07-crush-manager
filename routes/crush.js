@@ -43,7 +43,7 @@ app.post('/', (req, res) => {
   const newData = [...data, object];
 
   fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData)).then(() =>
-    res.status(201).send(req.body));
+    res.status(201).send(object));
 });
 
 module.exports = app;
