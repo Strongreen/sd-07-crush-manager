@@ -62,9 +62,7 @@ const dateVerify = (date) => {
   return DATE_REGEX.test(date);
 };
 
-const rateVerify = (rate) => {
-  return (rate > 0 && rate < 6);
-};
+const rateVerify = (rate) => (rate > 0 && rate < 6);
 
 const tokenGenerator = (length) => {
   let token = '';
