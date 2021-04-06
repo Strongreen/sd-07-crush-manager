@@ -24,7 +24,7 @@ const checkedPasswordMidlleware = (req, res, next) => {
   }
   if (password.length < 6) {
     return res.status(INVALIDDATA)
-    .send({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+    .send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
   next();
 };
