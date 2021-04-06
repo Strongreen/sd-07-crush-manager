@@ -12,7 +12,7 @@ function passwordIsValid(password) {
   }
 
   if (password.length < 6) {
-    throw new Error('O "password" deve ter pelo menos 6 caracteres');
+    throw new Error('A "senha" deve ter pelo menos 6 caracteres');
   }
 }
 
