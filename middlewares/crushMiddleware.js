@@ -103,23 +103,22 @@ const validateNewCrush = (infoCrush) => {
   const statusAge = validateAge(age);
   const statusDate = validateDate(date);
 
-  if (statusName.status === 400) {
-    return statusName;
-  }
-
-  if (statusAge.status === 400) {
-    return statusAge;
-  }  
-
-  if (statusDate.status === 400) {
-    return statusDate;
-  }
-
+  if (statusName.status === 400) { return statusName; }
+  if (statusAge.status === 400) { return statusAge; }  
+  if (statusDate.status === 400) { return statusDate; }  
+  
   return { status: 200 };
 };
 
 const create = (req, res, next) => {
   const infoCrush = req.body;
+
+  if (infoCrush.date === undefined) {
+    const result = { status: 400, 
+      message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' };
+
+    return res.status(result.status).json({ message: result.message });      
+  }
 
   const result = validateNewCrush(infoCrush);
 
