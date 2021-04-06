@@ -181,7 +181,6 @@ async function updateCrush(id, name, age, date) {
 
   const convertUpdatedCrushList = JSON.stringify(updatedCrushList, null, 2);
   await fs.promises.writeFile(crush, convertUpdatedCrushList);
-  console.log(id, updatedCrushList);
   return updatedCrushList.find((currentCrush) => Number(id) === currentCrush.id);
 }
 
@@ -203,6 +202,16 @@ router.put('/:id', checkAuthorization, async (req, res) => {
   }
   const result = await updateCrush(id, name, age, date);
   return res.status(SUCCESS).json(result);
+});
+
+router.delete('/:id', checkAuthorization, async (req, res) => {
+  const { id } = req.params;
+  const data = await returnData();
+
+  const updatedCrushList = data.filter((currentCrush) => currentCrush.id === Number(id));
+  const convertUpdatedCrushList = JSON.stringify(updatedCrushList, null, 2);
+  await fs.promises.writeFile(crush, convertUpdatedCrushList);
+  return res.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
 });
 
 module.exports = router;
