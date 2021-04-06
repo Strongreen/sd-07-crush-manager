@@ -19,11 +19,11 @@ const isARateNumber = (rate) => {
 };
 
 const isEmptyDate = (date) => {
-  if ((date.dateAt === undefined) || (date === undefined)) {  
+  if ((date.datedAt === undefined) || (date === undefined)) {
     return true;
   }  
 
-  if ((date.rate === undefined) || (date === undefined)) {  
+  if ((date.rate === undefined) || (date === undefined)) {
     return true;
   }  
 
