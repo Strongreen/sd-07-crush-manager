@@ -4,7 +4,7 @@ function validEmail(email, response) {
   const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.com$/;
   if (!regexEmail.test(email)) {
     return response.status(400).send({ 
-      message: 'O "email" deve ter o formato email@email.com',
+      message: 'O "email" deve ter o formato "email@email.com"',
     });
   }
   if (!email) {
