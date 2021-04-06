@@ -13,7 +13,7 @@ const validationMiddleware = (req, res, next) => {
         });
     } else if (password.length < 6) {
         res.status(400).send({
-            message: 'O "password" deve ter pelo menos 6 caracteres',
+            message: 'A "senha" deve ter pelo menos 6 caracteres',
         });
     } 
     next();
