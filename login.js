@@ -51,7 +51,7 @@ app.post('/', (req, res) => {
     res.status(200).send({ token: crypto.randomBytes(8).toString('hex') });
     // referência: gabarito dia 26.4, exercício 3 do bônus
   }
-});
+}); // requisito 3
 
 app.use((err, _req, res, _next) => {
   res.status(500).send(`Algo deu errado! Mensagem: ${err.message}`);
