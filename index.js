@@ -46,7 +46,7 @@ app.post('/login', (req, res) => {
 
   if (!password) { res.status(400).send({ message: 'O campo "password" é obrigatório' }); }
   if (password.length < 6) {
-    res.status(400).send({ message: 'O "password" ter pelo menos 6 caracteres' });
+    res.status(400).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
   if (!email) { res.status(400).send({ message: 'O campo "email" é obrigatório' }); }
   if (!regexValidation) {
@@ -85,12 +85,16 @@ function regexValidate(datedAt, res) {
     res.status(400).send({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
   }
 }
+
+// 4
 app.post('/crush', (req, res) => {
   const { authorization } = req.headers;
   const { name, age, date } = req.body;
   const { datedAt, rate } = date;
-  validateToken(authorization, res); validateName(name, res);
-  validateAge(age, res); validateRate(rate, res);
+  validateToken(authorization, res);
+  validateName(name, res);
+  validateAge(age, res);
+  validateRate(rate, res);
   regexValidate(datedAt, res);
   if (!date || !rate || !datedAt) {
     res.status(400).send({
@@ -100,6 +104,7 @@ app.post('/crush', (req, res) => {
   res.status(201).send(req.body);
 });
 
+// 5
 app.post('/crush/:idtofind', (req, res) => {
   const { idtofind } = req.params;
   const { authorization } = req.headers;
