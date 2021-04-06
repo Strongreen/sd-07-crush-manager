@@ -78,7 +78,7 @@ async function checkMail(res, email) {
 
 async function allCrushes(res) {
   const readFile = await fs.readFile(crushFile);
-  return res.status(SUCCESS).send(JSON.parse(readFile));
+  await res.status(SUCCESS).send(JSON.parse(readFile));
 }
 
 app.use(express.json());
@@ -94,36 +94,36 @@ app.get('/crush/search', rescue(async (req, res) => {
   const { authorization } = req.headers;
   await verifyToken(res, authorization);
   const param = req.query.q;
-  if (!param || param === '') return allCrushes(res);
+  if (!param || param === '') await allCrushes(res);
   const results = crushes.filter((item) => item.name.startsWith(param));
-  return res.status(200).send(results);
+  await res.status(200).send(results);
 }));
 
 app.get(crushWithId, rescue(async (req, res) => {
   const { id } = req.params;
   const crush = crushes.find((item) => item.id === parseInt(id, 10));
   await checkCrush(res, crush);
-  return res.status(SUCCESS).send(crush);
+  await res.status(SUCCESS).send(crush);
 }));
 
 app.post('/login', rescue(async (req, res) => {
   const { email, password } = req.body;
   if (!email) {
-    return obrigatoryField(res, 'email');
+    await obrigatoryField(res, 'email');
   }
   await checkMail(res, email);
   if (!password) {
-    return obrigatoryField(res, 'password');
+    await obrigatoryField(res, 'password');
   }
   if (password.length < 6) {
-    return res.status(400).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
+    await res.status(400).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
   const generateToken = () => Math.random().toString(36).substr(2);
   const initialToken = `${generateToken()}${generateToken()}`;
   const token = initialToken.slice(0, 16);
   tokens.push(token);
   await fs.writeFile('./tokens.json', JSON.stringify(tokens));
-  return res.status(SUCCESS).send({ token });
+  await res.status(SUCCESS).send({ token });
 }));
 
 app.post('/crush', rescue(async (req, res) => {
@@ -160,7 +160,7 @@ app.put(crushWithId, rescue(async (req, res) => {
   crush.age = age;
   crush.date = date;
   await fs.writeFile(crushFile, JSON.stringify(crushes));
-  return res.status(200).send({
+  await res.status(200).send({
     id: crush.id,
     name,
     age,
@@ -176,7 +176,7 @@ app.delete(crushWithId, rescue(async (req, res) => {
   await checkCrush(res, crush);
   crushes = crushes.filter((item) => item.id !== id);
   await fs.writeFile(crushFile, JSON.stringify(crushes));
-  return res.status(200).send({ message: 'Crush deletado com sucesso' });
+  await res.status(200).send({ message: 'Crush deletado com sucesso' });
 }));
 
 app.use((err, _req, res, _next) => res.status(500).json({ error: `Erro: ${err.message}` }));
