@@ -99,7 +99,6 @@ app.get('/crush/search', authMiddleware, (req, res) => {
   // console.log(crushs);
   console.log(filterCrush);
   res.status(200).send(filterCrush);
-
 });
 
 app.put(crushId, authMiddleware);
