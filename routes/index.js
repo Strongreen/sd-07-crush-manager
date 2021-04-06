@@ -10,17 +10,13 @@ app.get('/', (_request, response) => {
 });
 
 app.get('/crush', (_req, res) => {
-  const dataCrush = fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8');
-  try {
-    if (dataCrush) {
-       res.status(sucess).send(dataCrush);
-    }
-    if (dataCrush.length === 0) {
-      res.status(sucess).send([]);
-    }
-  } catch (err) {
-    throw new Error(err);
+  const dataCrush = JSON.parse(
+    fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8'),
+  );
+  if (dataCrush.length > 0) {
+    return res.status(sucess).send(dataCrush);
   }
+  return res.status(sucess).send([]);
 });
 
 // app.get('/crush/:id', (req, res) => {
