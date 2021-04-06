@@ -5,9 +5,11 @@ const authMiddleware = require('./authMiddleware');
 const nameMiddleware = require('./nameMiddleware');
 const ageMiddleware = require('./ageMiddleware');
 const dateMiddleware = require('./dateMiddleware');
+const dateFormatMiddleware = require('./dateFormatMiddleware');
 
 const app = express();
 const SUCCESS = 200;
+const crushId = '/crush/:id';
 
 app.use(bodyParser.json());
 
@@ -16,14 +18,14 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-const requestdata = () => JSON.parse(fs.readFileSync('crush.json'));
+const requestdata = () => JSON.parse(fs.readFileSync('./crush.json'));
 
 app.get('/crush', (req, res) => {
   const data = requestdata();
   res.status(200).send(data);
 });
 
-app.get('/crush/:id', (req, res) => {
+app.get(crushId, (req, res) => {
   const { id } = req.params;
   const data = requestdata();
   const dataFilter = data.find((e) => e.id === parseFloat(id));
@@ -72,6 +74,7 @@ app.post('/crush', authMiddleware);
 app.post('/crush', nameMiddleware);
 app.post('/crush', ageMiddleware);
 app.post('/crush', dateMiddleware);
+app.post('/crush', dateFormatMiddleware);
 app.post('/crush', (req, res) => {
   const { name, age, date } = req.body;
   // http://jsfiddle.net/bruscopelliti/EZVdg/
@@ -89,8 +92,41 @@ app.post('/crush', (req, res) => {
     },
   };
   crushs.push(newCrush);
-  console.log(crushs);
   res.status(201).send(newCrush);
+});
+
+app.put(crushId, authMiddleware);
+app.put(crushId, nameMiddleware);
+app.put(crushId, ageMiddleware);
+app.put(crushId, dateMiddleware);
+app.put(crushId, dateFormatMiddleware);
+app.put(crushId, (req, res) => {
+  const { name, age, date } = req.body;
+  const id = Number(req.params.id);
+  // http://jsfiddle.net/bruscopelliti/EZVdg/
+  if (date.rate < 1 || date.rate > 5) {
+    return res.status(400).send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+  }
+  const crushs = JSON.parse(fs.readFileSync('crush.json'));
+  const newCrush = {
+    name,
+    age,
+    id,
+    date: {
+      datedAt: date.datedAt,
+      rate: date.rate,
+    },
+  };
+  crushs[id - 1] = newCrush;
+  res.status(200).send(newCrush);
+});
+
+app.delete(crushId, authMiddleware);
+app.delete(crushId, (req, res) => {
+  const crushs = JSON.parse(fs.readFileSync('crush.json'));
+  const id = Number(req.params.id);
+  crushs.splice(id - 1, 1);
+  res.status(200).send({ message: 'Crush deletado com sucesso' });
 });
 
 app.listen(3000, () => {
