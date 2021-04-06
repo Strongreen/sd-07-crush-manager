@@ -12,9 +12,9 @@ const readDoc = async () =>
 routes.get('/', async (_request, response) => {
   try {
     const crushs = await readDoc();
-    response.status(SUCCESS).json(crushs);
+    return response.status(SUCCESS).json(crushs);
   } catch (error) {
-    response.status(ERRO).json(error);
+    return response.status(ERRO).json(error);
   }
 });
 
@@ -23,12 +23,12 @@ routes.get('/search', validateToken, async (request, response) => {
     const { q: query } = request.query;
     const crushs = await readDoc();
     if (!query || query === '') {
-      response.status(201).json(crushs);
+      return response.status(201).json(crushs);
     }
     const filteredCrushs = crushs.filter(({ name }) => name.includes(query));
-    response.status(SUCCESS).json(filteredCrushs);
+    return response.status(SUCCESS).json(filteredCrushs);
   } catch (error) {
-    response.status(ERRO).json(error);
+    return response.status(ERRO).json(error);
   }
 });
 
@@ -39,12 +39,12 @@ routes.get('/:id', async (request, response) => {
     const crush = crushs.find(({ id: crushId }) => crushId === Number(id));
     
     if (!crush) {
-      response.status(404).json({ message: 'Crush não encontrado' });
+      return response.status(404).json({ message: 'Crush não encontrado' });
     }
     
     response.status(SUCCESS).json(crush || { message: 'Crush não encontrado' });
   } catch (error) {
-    response.status(ERRO).json(error);
+    return response.status(ERRO).json(error);
   }
 });
 
@@ -59,9 +59,9 @@ routes.delete('/:id', async (request, response) => {
 
     await writeFile(resolve(__dirname, '..', file), JSON.stringify(newList, null, 2));
 
-    response.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
+    return response.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
   } catch (error) {
-    response.status(ERRO).json(error);
+    return response.status(ERRO).json(error);
   }
 });
 
@@ -80,9 +80,9 @@ routes.post('/', async (request, response) => {
     
     await writeFile(resolve(__dirname, '..', file), JSON.stringify(newList, null, 2));
 
-    response.status(201).json(newCrush);
+    return response.status(201).json(newCrush);
   } catch (error) {
-    response.status(ERRO).json(error);
+    return response.status(ERRO).json(error);
   }
 });
 
@@ -97,9 +97,9 @@ routes.put('/:id', async (request, response) => {
 
     const newList = crushs.map((crushI) => (crushI.id === Number(id) ? newCrush : crushI));
     await writeFile(resolve(__dirname, '..', file), JSON.stringify(newList, null, 2));
-    response.status(SUCCESS).json(newCrush);
+    return response.status(SUCCESS).json(newCrush);
   } catch (error) {
-    response.status(ERRO).json(error);
+    return response.status(ERRO).json(error);
   }
 });
 

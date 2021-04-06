@@ -16,16 +16,18 @@ routes.post('/', (request, response) => {
   const { email, password } = request.body;
   
   if (!email) {
-    response.status(erro).json({ message: 'O campo "email" é obrigatório' });
+    return response.status(erro).json({ message: 'O campo "email" é obrigatório' });
   }
   if (!regexEmail.test(email)) {
-    response.status(erro).json({ message: 'O "email" deve ter o formato "email@email.com"' });
+    return (response.status(erro).json({
+      message: 'O "email" deve ter o formato "email@email.com"',
+    }));
   }
   if (!password) {
-    response.status(erro).json({ message: 'O campo "password" é obrigatório' });
+    return response.status(erro).json({ message: 'O campo "password" é obrigatório' });
   }
   if (password.length < 6) {
-    response.status(erro).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
+    return response.status(erro).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
   const token = tokenGenereitor();
   return response.status(200).json({ token });
