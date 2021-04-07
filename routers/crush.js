@@ -3,7 +3,7 @@ const fs = require('fs');
 const rescue = require('express-rescue');
 
 const { checkedName, checkedAge, checkedDateExists,
-  checkedDate, checkedTokenMiddleware } = require('../middlewares');
+  checkedDateAt, checkedRate, checkedTokenMiddleware } = require('../middlewares');
 
 const router = express.Router();
 const SUCCESS_200 = 200;
@@ -39,7 +39,8 @@ router.get('/:id', (req, res) => {
 router.use(checkedTokenMiddleware);
 
 router.post(
-  '/', checkedName, checkedAge, checkedDateExists, checkedDate, rescue(async (req, res) => {
+  '/', checkedName, checkedAge, checkedDateExists,
+  checkedDateAt, checkedRate, rescue(async (req, res) => {
   try {
     const { name, age, date } = req.body;
     const data = fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8');
@@ -52,6 +53,26 @@ router.post(
     res.status(SUCEESS_201).send(newCrush);
   } catch (error) {
     console.log(error);
+  }
+}),
+);
+
+router.put(
+  '/:id', checkedName, checkedAge,
+  checkedDateExists, checkedDateAt, checkedRate, rescue(async (req, res) => {
+  try {
+    const { name, age, date } = req.body;
+    const { id } = req.params;
+    const data = fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8');
+    const crushs = JSON.parse(data);
+    const index = crushs.findIndex((item) => item.id === parseInt(id, 10));
+    const newCrush = { name, age, id: parseInt(id, 10), date };
+    crushs[index] = newCrush;
+    
+    await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushs));
+    return res.status(SUCCESS_200).send(newCrush);
+  } catch (error) {
+    console.log('Erro na rota /:id ', error);
   }
 }),
 );
