@@ -5,7 +5,6 @@ const authEmail = (email) => {
       message: 'O campo "email" é obrigatório',
     };
   }
-  console.log(validationEmail.test(email));
   if (!validationEmail.test(email)) {
     return {
       message: 'O "email" deve ter o formato "email@email.com"',

@@ -1,16 +1,23 @@
-const express = require('express');
+const { Router } = require('express');
 const fs = require('fs').promises;
+const validCrush = require('../middlewares/validCrush');
 
-const app = express();
+const routeCrush = Router();
 
-const readCrush = async () => JSON.parse(await fs.readFile('./crush.json', 'utf8'));
+async function readCrush() {
+  return JSON.parse(await fs.readFile('./crush.json', 'utf-8'));
+}
 
-app.get('/', async (req, res) => {
+async function writeCrush(data) {
+  await fs.writeFile('./crush.json', JSON.stringify(data, null, 2));
+}
+
+routeCrush.get('/', async (req, res) => {
   const dataCrush = await readCrush();
   return res.status(200).send(dataCrush);
 });
 
-app.get('/:id', async (req, res) => {
+routeCrush.get('/:id', async (req, res) => {
   const { id } = req.params;
   const dataCrush = await readCrush();
   const filterIdData = dataCrush.find((element) => element.id === Number(id));
@@ -22,4 +29,15 @@ app.get('/:id', async (req, res) => {
   return res.status(200).send(filterIdData);
 });
 
-module.exports = app;
+routeCrush.use(validCrush);
+
+routeCrush.post('/', async (req, res) => {
+  const data = req.body;
+  const dataCrush = await readCrush();
+  const newCrush = { id: dataCrush.length + 1, ...data };
+  const newDataCrush = [...dataCrush, newCrush];
+  await writeCrush(newDataCrush);
+  res.status(201).send(newCrush);
+});
+
+module.exports = routeCrush;

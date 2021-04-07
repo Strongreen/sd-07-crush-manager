@@ -1,14 +1,19 @@
-const express = require('express');
-const authMiddleware = require('../middlewares/authozation');
+const { Router } = require('express');
+const authMiddleware = require('../middlewares/authLogin');
 
-const app = express();
+const routeLogin = Router();
 
-app.use(authMiddleware);
+routeLogin.use(authMiddleware);
 
-app.post('/', (req, res) => {
+routeLogin.post('/', (req, res) => {
   res.send({
     token: '7mqaVRXJSp886CGr',
   });
 });
 
-module.exports = app;
+// function genRanHex(size) {
+//   return [...Array(size)].map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+// }
+
+// console.log(genRanHex(16));
+module.exports = routeLogin;

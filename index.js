@@ -14,8 +14,8 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.use('/crush', routeCrush);
 app.use('/login', routeLogin);
+app.use('/crush', routeCrush);
 
 app.listen(PORT, () => {
   console.log('Online');
