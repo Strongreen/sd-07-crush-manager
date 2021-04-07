@@ -16,9 +16,9 @@ function validEmail(email, response) {
 }
 
 function validPass(password, response) {
-  const passwordString = password.toString(); 
-  if (passwordString === undefined || passwordString.length === 0) {
-    console.log('sss');
+  let passwordString = '';
+  if (password) { passwordString = password.toString(); }
+  if (passwordString === '' || passwordString === undefined) {
     return response.status(400).send({
       message: 'O campo "password" é obrigatório',
     });
@@ -26,7 +26,7 @@ function validPass(password, response) {
   
   if (passwordString.length < 6) {
     return response.status(400).send({
-      message: 'A "senha" deve ter pelo menos 6 caracteres',
+      message: 'O "password" deve ter pelo menos 6 caracteres',
     });
   }
 }
