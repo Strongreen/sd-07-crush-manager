@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const rescue = require('express-rescue');
 const fs = require('fs').promises;
 
+const crush = '/crush';
+
 const app = express();
 app.use(bodyParser.json());
 const SUCCESS = 200;
@@ -21,6 +23,26 @@ app.get('/', (_request, response) => {
 async function readFile() {
   return JSON.parse(await fs.readFile('./crush.json', 'utf8'));
 }
+
+const validationToken = (req, res, next) => {
+  const { authorization } = req.headers;
+  if (!authorization) {
+    return res.status(401).send({ message: 'Token não encontrado' });
+  }
+  if (authorization.length !== 16) {
+    return res.status(401).send({ message: 'Token inválido' });
+  }
+  next();
+};
+
+// 7 
+app.get('/crush/search', validationToken, async (req, res) => {
+  const searchTerm = req.query.q;
+  const crushList = await readFile();
+  const filteredCrushList = crushList.filter((item) => item.name.includes(searchTerm));
+  res.status(200).send(filteredCrushList);
+});
+
 // 1
 app.get('/crush', async (req, res) => {
   const crushList = await readFile();
@@ -32,7 +54,7 @@ app.get('/crush', async (req, res) => {
   }
 });
 // 2
-app.get('/crush/:idtofind', async (req, res) => {
+app.get(`${crush}/:idtofind`, async (req, res) => {
   const { idtofind } = req.params;
   const crushList = await readFile();
   const crushIndex = crushList.findIndex(({ id }) => id === Number(idtofind));
@@ -88,17 +110,6 @@ function validateDate(date) {
   regexValidate(datedAt);
   validateRate(rate);
 }
-
-const validationToken = (req, res, next) => {
-  const { authorization } = req.headers;
-  if (!authorization) {
-    return res.status(401).send({ message: 'Token não encontrado' });
-  }
-  if (authorization.length !== 16) {
-    return res.status(401).send({ message: 'Token inválido' });
-  }
-  next();
-};
 
 // 4
 app.post('/crush', validationToken, rescue(async (req, res) => {
@@ -159,14 +170,6 @@ app.delete('/crush/:idtofind', validationToken, async (req, res) => {
     if (err) throw err;
   });
   res.status(200).send({ message: 'Crush deletado com sucesso' });
-});
-
-// 7 
-app.get('/crush/search', validationToken, async (req, res) => {
-  const searchTerm = req.query.q;
-  const crushList = await readFile();
-  const filteredCrushList = crushList.filter (item => item.name.includes(searchTerm))
-  res.status(200).send(filteredCrushList);
 });
 
 app.listen(PORT, () => { console.log('Online'); });
