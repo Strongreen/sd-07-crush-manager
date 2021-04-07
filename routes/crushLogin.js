@@ -26,7 +26,7 @@ function validPass(password, response) {
   
   if (passwordString.length < 6) {
     return response.status(400).send({
-      message: 'O "password" deve ter pelo menos 6 caracteres',
+      message: 'A "senha" deve ter pelo menos 6 caracteres',
     });
   }
 }
