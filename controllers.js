@@ -16,10 +16,10 @@ module.exports = {
       const crushList = JSON.parse(await fs.promises.readFile('./crush.json', 'utf-8'));
 
       if (crushList.length === 0) {
-        response.status(200).json(crushList);
+        return response.status(200).json(crushList);
       }
 
-      response.json(crushList);
+      return response.json(crushList);
     } catch (e) {
       console.log(e);
     }
@@ -33,10 +33,23 @@ module.exports = {
       const message = { message: 'Crush não encontrado' };
 
       if (crush === undefined) {
-        response.status(404).json(message);
+        return response.status(404).json(message);
       }
 
-      response.json(crush);
+      return response.json(crush);
+    } catch (e) {
+      console.log(e);
+    }
+  },
+  async createCrush(request, response) {
+    try {
+      const crush = request.body;
+      const crushList = JSON.parse(await fs.promises.readFile('./crush.json', 'utf-8'));
+      if (crushList.length === 0) crush.id = 1;
+      else crush.id = crushList.length + 1;
+      crushList.push(crush);
+      await fs.promises.writeFile('./crush.json', JSON.stringify(crushList));
+      return response.status(201).json(crush);
     } catch (e) {
       console.log(e);
     }
@@ -46,7 +59,7 @@ module.exports = {
       const withToken = 10 ** 16;
       const token = generateToken(withToken);
       await fs.promises.writeFile('./token.txt', token);
-      response.json({ token });
+      return response.json({ token });
     } catch (e) {
       console.log(e);
     }
