@@ -96,10 +96,10 @@ app.get('/crush/search', validateToken, async (req, res) => {
   const searchTerm = req.query.q;
   const crushes = await readCrushFile();   
 
-  if (!searchTerm) res.status(SUCCESS).json(crushes);
+  if (!searchTerm) res.status(SUCCESS).send(crushes);
 
   const crushFound = crushes.filter((crush) => crush.name.includes(searchTerm));
-  res.status(SUCCESS).json(crushFound);
+  res.status(SUCCESS).send(crushFound);
 });
 
 // requisito 1
