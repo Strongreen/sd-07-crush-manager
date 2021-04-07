@@ -47,12 +47,12 @@ routes.post('/login', (req, res) => {
   });
 });
 
+routes.use(middlewares.validDateFieldMiddleware);
 routes.use(middlewares.testNameFieldMiddleware);
 routes.use(middlewares.tokenCheckMiddleware);
 routes.use(middlewares.tolkenTestFormat);
 routes.use(middlewares.validAgeField);
 routes.use(middlewares.validDataMiddleware);
-routes.use(middlewares.validDateFieldMiddleware);
 
 routes.post('/crush', (req, res) => {
   const { name, age, date } = req.body;
