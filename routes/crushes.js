@@ -44,13 +44,21 @@ function verifyCorretDate(date) {
 }
 
 function validateDate(date) {
-  if (!date || !date.rate) {
+  if (!date || date.rate === undefined) {
     throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
   }
   verifyCorretDate(date.datedAt);
   if (date.rate < 1 || date.rate > 5) {
     throw new Error('O campo "rate" deve ser um inteiro de 1 à 5');
   }
+}
+
+function readCrushDataBase() {
+  return JSON.parse(fs.readFileSync(`${__dirname}/../crush.json`, 'utf8'));
+}
+
+function writeCrushDataBase(crush) {
+  fs.promises.writeFile(`${__dirname}/crush.json`, JSON.stringify(crush));
 }
 
 app.use(middlewaresTokens);
@@ -61,15 +69,35 @@ app.post('/', async (req, res) => {
     await validateName(name);
     await validateAge(age);
     validateDate(date);
-    const data = JSON.parse(fs.readFileSync(`${__dirname}/../crush.json`, 'utf8'));
+    const data = await readCrushDataBase();
     const size = data.length;
     const newCrush = { name, id: size + 1, age, date };
     data.push(newCrush);
-    await fs.promises.writeFile(`${__dirname}/crush.json`, JSON.stringify(data));
+    await writeCrushDataBase(data);
     res.status(201).send(newCrush);
   } catch (error) {
-    res.status(400).send({ message: error.message }); 
+    res.status(400).send({ message: error.message });
   }
+});
+
+app.put('/:id', async (req, res) => {
+  const { name, age, date } = req.body;
+  const { id } = req.params;
+  try {
+    await validateName(name);
+    await validateAge(age);
+    validateDate(date);
+    const data = await readCrushDataBase();
+    data[id - 1] = {
+      name,
+      id: parseInt(id, 10),
+      age,
+      date,
+    };
+    console.log(data, id);
+    await writeCrushDataBase(data);
+    res.status(200).send(data[id - 1]);
+  } catch (error) { res.status(400).send({ message: error.message }); }
 });
 
 module.exports = app;
