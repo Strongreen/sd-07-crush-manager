@@ -89,6 +89,15 @@ app.delete(crushId, async (request, response) => {
   } catch (error) { console.error(`Erro: ${error.message}`); }
 });
 
+app.get('/crush/search', async (request, response) => {
+  const { q } = request.query;
+  try {
+    const data = await getCrush();
+    const filterCrush = data.filter((crush) => crush.name.toUpperCase().includes(q.toUpperCase()));
+    return response.status(SUCCESS).send(filterCrush);
+  } catch (error) { console.error(`Erro: ${error.message}`); }
+});
+
 app.use(reqBodyMiddleware);
 app.use(checkDate1);
 app.use(checkDate2);
