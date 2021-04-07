@@ -94,10 +94,24 @@ const deleteCrush = async (id) => {
   await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));
 };
 
+const checkSearchTerm = async (searchTerm) => {
+  const data = await getData();
+  if (!searchTerm) return data;
+  const crushesFound = data.filter((crush) => crush.name.includes(searchTerm));
+  if (crushesFound) return crushesFound;
+  return [];
+};
+
 app.get('/', async (_request, response) => {
   const data = await getData();
   if (data.length === 0) return response.status(200).send(empty);
   return response.status(200).send(await getData());
+});
+
+app.get('/search', token, async (request, response) => {
+  const { q } = request.query;
+  const findData = await checkSearchTerm(q);
+  response.status(200).send(findData);
 });
 
 app.get('/:id', async (request, response) => {
