@@ -23,6 +23,7 @@ app.get('/', (_request, response) => {
 app.use(desafio1);
 app.use(desafio3);
 
+// desafio 2
 app.get('/crush/search', middlewares.validateToken, async (req, res) => {
   const crush = JSON.parse(await fs.readFile('./crush.json', 'utf8'));
   try {
@@ -35,6 +36,7 @@ app.get('/crush/search', middlewares.validateToken, async (req, res) => {
   }
 });
 
+// desafio 7
 app.get('/crush/:id', async (req, res) => {
   const { id } = req.params;
 
