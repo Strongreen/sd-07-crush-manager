@@ -3,7 +3,7 @@ const fs = require('fs');
 const randtoken = require('rand-token');
 const middlewares = require('../middlewares/index');
 
-  const myToken = randtoken.generate(16);
+const myToken = randtoken.generate(16);
 
 const routes = express();
 
@@ -45,6 +45,28 @@ routes.post('/login', (req, res) => {
   res.status(200).send({
     token: myToken,
   });
+});
+
+routes.use(middlewares.testNameFieldMiddleware);
+routes.use(middlewares.tokenCheckMiddleware);
+routes.use(middlewares.tolkenTestFormat);
+routes.use(middlewares.validAgeField);
+routes.use(middlewares.validDataMiddleware);
+routes.use(middlewares.validDateFieldMiddleware);
+
+routes.post('/crush', (req, res) => {
+  const { name, age, date } = req.body;
+ 
+  const file = fs.readFileSync(FILE);
+  const stringData = file.toString('utf8');
+  const data = JSON.parse(stringData);
+
+  const id = data.length + 1;
+  const latCrush = { id, name, age, date };
+  const lastFile = [...data, latCrush];
+
+fs.writeFileSync(FILE, JSON.stringify(lastFile));
+res.status(201).send({ id, name, age, date });
 });
 
 routes.use(middlewares.errorMiddleware);
