@@ -12,19 +12,35 @@ app.get('/', (_req, res) => {
   res.status(200).send(crushes);
 });
 
+// requisito 7
+app.get('/search', middlewares.token, (req, res) => {
+  const crushes = JSON.parse(fs.readFileSync(dataPath), 'utf-8');
+  const { q } = req.query;
+  
+  if (q) {
+    const filteredCrushes = crushes.filter((crush) => crush.name.includes(q));
+    return res.status(200).send((filteredCrushes) || []);
+  }
+  return res.status(200).send(crushes);
+});
+
 // requisito 2
 app.get('/:reqid', (req, res) => {
   const { reqid } = req.params;
   const crushes = JSON.parse(fs.readFileSync(dataPath), 'utf-8');
   const crushIndex = crushes.findIndex(({ id }) => id === Number(reqid));
-  if (crushIndex === -1) {
-    res.status(404).json({ message: 'Crush não encontrado' });
+  if (!reqid.includes('search')) {
+    if (crushIndex === -1) {
+      return res.status(404).json({ message: 'Crush não encontrado' });
+    }
+    return res.send(crushes[crushIndex]);
   }
-    res.send(crushes[crushIndex]);
+  return null;
 });
 
-// requisito 6
 app.use(middlewares.token);
+
+// requisito 6
 app.delete('/:id', async (req, res) => {
   const { id } = req.params;
   const index = id - 1;
@@ -39,9 +55,10 @@ app.delete('/:id', async (req, res) => {
   }
 });
 
-// requisito 4
 app.use(middlewares.verifyNameAge);
 app.use(middlewares.verifyDate);
+
+// requisito 4
 app.post('/', async (req, res) => {
   const crushes = JSON.parse(fs.readFileSync(dataPath), 'utf-8');
   const size = crushes.length;

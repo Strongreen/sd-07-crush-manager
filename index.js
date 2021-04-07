@@ -13,8 +13,7 @@ app.get('/', (_request, response) => {
 });
 
 app.use(express.json());
-app.use('/crush', routeCrush);
-
 app.use('/login', routeLogin);
+app.use('/crush', routeCrush);
 
 app.listen(PORT, () => { console.log('Online'); });
