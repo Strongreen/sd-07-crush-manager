@@ -94,10 +94,21 @@ app.put('/:id', async (req, res) => {
       age,
       date,
     };
-    console.log(data, id);
     await writeCrushDataBase(data);
     res.status(200).send(data[id - 1]);
   } catch (error) { res.status(400).send({ message: error.message }); }
+});
+
+app.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const data = await readCrushDataBase();
+    data.splice(id - 1, 1);
+    await writeCrushDataBase(data);
+    res.status(200).send({ message: 'Crush deletado com sucesso' });
+  } catch (error) {
+    res.status(400).send({ message: error.message }); 
+  }
 });
 
 module.exports = app;
