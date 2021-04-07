@@ -135,7 +135,7 @@ app.get('/crush/:id', async (request, response) => {
   const { id } = request.params;
   const user = userID.find((idNumber) => idNumber.id === Number(id));
   if (user) return response.status(SUCCESS).send(user);
-  if (id > 4 || id < 1) { return response.status(404).json({ message: 'Crush não encontrado' }); }
+  return response.status(404).json({ message: 'Crush não encontrado' });
 });
 
 // 3 ---------- Crie o endpoint POST /login -----------
