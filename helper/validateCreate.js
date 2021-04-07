@@ -78,4 +78,12 @@ function deleteCrush(crush, id) {
   return updateCrush;
 }
 
-module.exports = { validateCreate, validateEdit, deleteCrush };
+function filterByName(crush, term) {
+  // console.log('termo', term);
+  if (term === undefined || term.length === 0) {
+    return [];
+  }
+  return crush.filter((n) => n.name.includes(term));
+}
+
+module.exports = { validateCreate, validateEdit, deleteCrush, filterByName };
