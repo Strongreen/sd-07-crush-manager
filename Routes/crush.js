@@ -13,9 +13,13 @@ const {
 
 const midauthToken = require('../middlewares/authToken');
 
-const midpostCrush = require('../middlewares/postCrush');
-
-const midupdateCrush = require('../middlewares/updateCrush');
+const {
+  notDoneName,
+  notDoneAge,
+  notDoneRate,
+  notDoneDateDatedatrate,
+  fnRegexDate,
+} = require('../middlewares/crush');
 
 router.get('/search', midauthToken, queryCrush);
 
@@ -23,9 +27,21 @@ router.get('/', getCrush);
 
 router.get('/:id', getCrushId);
 
-router.post('/', [midauthToken, midpostCrush], postCrush);
+router.post('/', [
+  midauthToken,
+  notDoneName,
+  notDoneAge,
+  notDoneRate,
+  notDoneDateDatedatrate,
+  fnRegexDate], postCrush);
 
-router.put('/:id', [midauthToken, midupdateCrush], putCrush);
+router.put('/:id', [
+  midauthToken,
+  notDoneName,
+  notDoneAge,
+  notDoneRate,
+  notDoneDateDatedatrate,
+  fnRegexDate], putCrush);
 
 router.delete('/:id', midauthToken, deleteCrush);
 
