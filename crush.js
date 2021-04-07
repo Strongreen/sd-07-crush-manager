@@ -13,43 +13,22 @@ app.get('/', async (_req, res) => {
   res.status(200).json(JSON.parse(await crushFile()));
 }); // requisito 1
 
-function readFilePromise(fileName) {
-  return new Promise((resolve, reject) => {
-    fs.readFile(fileName, (err, content) => {
-      if (err) return reject(err);
-      resolve(content);
-    });
-  });
-} // referência: conteúdo Promises, dia 26.2
-
-async function findAsyncId(file, id) {
-  const found = await readFilePromise(file)
-    .then((content) => JSON.parse(content).find((item) => item.id.toString() === id))
-    .catch((err) => {
-    console.error(`Erro ao ler arquivo: ${err.message}`);
-  });
-  
-  return found;
+async function findAsyncId(id) {
+  const content = await crushFile();
+  return JSON.parse(content).find((item) => Number(item.id) === Number(id));
 }
 
 app.get('/:id', async (req, res) => {
   const { id } = req.params;
-  const isId = await findAsyncId(crushJson, id);
+  const isId = await findAsyncId(id);
   if (!isId) return res.status(404).send({ message: 'Crush não encontrado' });
   
   res.status(200).send(isId);
 }); // requisito 2
 
 function isValidName(name) {
-  let response;
-
-  if (!name) {
-    response = 'O campo "name" é obrigatório';
-  } else if (name.length < 3) {
-    response = 'O "name" deve ter pelo menos 3 caracteres';
-  }
-
-  return response;
+  if (!name) return 'O campo "name" é obrigatório';
+  if (name.length < 3) return 'O "name" deve ter pelo menos 3 caracteres';
 }
 
 function isValidAge(age) {
@@ -78,12 +57,8 @@ function isValidDatedAt(datedAt) {
 } // referência: Vitor Rodrigues
 
 function isValidRate(rate) {
-  if (rate < 1 || rate > 5) {
-    return 'O campo "rate" deve ser um inteiro de 1 à 5';
-  }
-  if (!rate) {
-    return patternResponse;
-  }
+  if (rate < 1 || rate > 5) return 'O campo "rate" deve ser um inteiro de 1 à 5';
+  if (!rate) return patternResponse;
 } // referência: Vitor Rodrigues
 
 function isValidDate(date) {
@@ -109,48 +84,51 @@ function isValidAuthorization(auth) {
   return response;
 }
 
-function createCrush(file, name, age, date) {
-  return { id: file.length + 1, name, age, date };
-}
-
 app.post('/', async (req, res) => {
-  const { name, age, date } = req.body;
-  const isName = isValidName(name);
-  const isAge = isValidAge(age);
-  const isDate = isValidDate(date);
   const { authorization } = req.headers;
   const isAuth = isValidAuthorization(authorization);
-
   if (isAuth) return res.status(401).send({ message: isAuth });
+
+  const { name, age, date } = req.body;
+  const isName = isValidName(name);
   if (isName) return res.status(400).send({ message: isName });
+  const isAge = isValidAge(age);
   if (isAge) return res.status(400).json({ message: isAge });
+  const isDate = isValidDate(date);
   if (isDate) return res.status(400).send({ message: isDate });
   
-  const newCrush = await readFilePromise(crushJson)
-    .then((content) => createCrush(JSON.parse(content), name, age, date))
-    .catch((err) => console.error(`Erro ao ler arquivo: ${err.message}`));
+  const crushes = await crushFile();
+  const newCrush = { id: JSON.parse(crushes).length + 1, name, age, date };
+  const addCrush = [...crushes, newCrush];
+  await fs.promises.writeFile(crushJson, JSON.stringify(addCrush));
   return res.status(201).json(newCrush);
 });
 
-app.put('/:id', async (req, res) => {
-  const { id } = req.params;
-  const { name, age, date } = req.body;
-  const { authorization } = req.headers;
-  const thisCrush = await findAsyncId(crushJson, id);
-  
-  const isName = isValidName(thisCrush.name);
-  const isAge = isValidAge(thisCrush.age);
-  const isDate = isValidDate(thisCrush.date);
+function completeAuth(objParams) {
+  const { authorization, res, name, age, date } = objParams;
   const isAuth = isValidAuthorization(authorization);
   if (isAuth) return res.status(401).send({ message: isAuth });
+  const isName = isValidName(name);
   if (isName) return res.status(400).send({ message: isName });
+  const isAge = isValidAge(age);
   if (isAge) return res.status(400).json({ message: isAge });
+  const isDate = isValidDate(date);
   if (isDate) return res.status(400).send({ message: isDate });
-  
-  thisCrush.name = name;
-  thisCrush.age = age;
-  thisCrush.date = date;
-  return res.status(201).json(thisCrush);
+}
+
+app.put('/:id', async (req, res) => {
+  const { authorization } = req.headers;
+  const { name, age, date } = req.body;
+  const params = { authorization, res, name, age, date };
+  completeAuth(params);
+  const { id } = req.params;
+  const thisCrush = await findAsyncId(id);
+  if (thisCrush) {
+    thisCrush.name = name;
+    thisCrush.age = age;
+    thisCrush.date = date;
+    return res.status(200).json(thisCrush);
+  }
 });
 
 app.use((err, _req, res, _next) => {
