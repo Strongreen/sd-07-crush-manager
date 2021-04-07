@@ -15,7 +15,7 @@ function verifyPassword(password) {
 const errNoEmail = { message: 'O campo "email" é obrigatório' };
 const errNoPassword = { message: 'O campo "password" é obrigatório' };
 const errInvalidEmail = { message: 'O "email" deve ter o formato "email@email.com"' };
-const errInvalidPassword = { message: 'O "password" deve ter pelo menos 6 caracteres' };
+const errInvalidPassword = { message: 'A "senha" deve ter pelo menos 6 caracteres' };
 
 app.post('/', (req, res) => {
   const { email, password } = req.body;
