@@ -1,6 +1,7 @@
 const express = require('express');
 const routesCrush = require('./Routes/crush');
 const routesLogin = require('./Routes/auth');
+const errorMiddleware = require('./middlewares/errorMiddleware');
 
 const app = express();
 app.use(express.json());
@@ -16,12 +17,7 @@ app.get('/', (_request, response) => {
 app.use('/login', routesLogin);
 app.use('/crush', routesCrush);
 
-app.use((err, _req, res, next) => {
-  next(err);
-  res.status(500).json({
-    message: 'error',
-  });
-});
+app.use(errorMiddleware);
 
 app.listen(PORT, () => {
   console.log('Online');

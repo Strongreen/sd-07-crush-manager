@@ -2,11 +2,13 @@ const express = require('express');
 
 const router = express.Router();
 
+const rescue = require('express-rescue');
+
 const validateEmailPassword = require('../Controllers/validateEmailPassword');
 
 router.use(express.json());
 
-router.post('/', async (req, res) => {
+router.post('/', rescue(async (req, res) => {
   const payload = req.body;
   
   const value = await validateEmailPassword(payload);
@@ -18,6 +20,6 @@ router.post('/', async (req, res) => {
   if (typeof value === 'string') {
     res.status(200).send({ token: value });
   }
-});
+}));
 
 module.exports = router;

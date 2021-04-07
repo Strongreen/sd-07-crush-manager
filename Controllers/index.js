@@ -2,14 +2,16 @@ const fs = require('fs').promises;
 
 const path = require('path');
 
+const rescue = require('express-rescue');
+
 const pathFile = path.resolve(__dirname, '..', 'crush.json');
 
-const getCrush = async (req, res) => {
+const getCrush = rescue(async (req, res) => {
   const dataCrush = await fs.readFile(pathFile);
   res.status(200).send(JSON.parse(dataCrush));
-};
+});
 
-const getCrushId = async (req, res) => {
+const getCrushId = rescue(async (req, res) => {
   try {
     const { id } = req.params;
     const allCrushs = await fs.readFile(pathFile);
@@ -24,9 +26,9 @@ const getCrushId = async (req, res) => {
   } catch (error) {
     throw new Error(error);
   }
-};
+});
 
-const postCrush = async (req, res) => {
+const postCrush = rescue(async (req, res) => {
   try {
     const allCrushs = await fs.readFile(pathFile, 'utf8');
     const data = JSON.parse(allCrushs);
@@ -42,9 +44,9 @@ const postCrush = async (req, res) => {
   } catch (error) {
     throw new Error(error);
   }
-};
+});
 
-const putCrush = async (req, res) => {
+const putCrush = rescue(async (req, res) => {
   const { id } = req.params;
   const { name, age, date } = req.body;
   const { datedAt, rate } = date;
@@ -60,9 +62,9 @@ const putCrush = async (req, res) => {
   } catch (error) {
     throw new Error(error);
   }
-};
+});
 
-const deleteCrush = async (req, res) => {
+const deleteCrush = rescue(async (req, res) => {
   const { id } = req.params;
   try {
     const allCrushs = await fs.readFile(pathFile, 'utf8');
@@ -75,9 +77,9 @@ const deleteCrush = async (req, res) => {
   } catch (error) {
     throw new Error(error);
   }
-};
+});
 
-const queryCrush = async (req, res) => {
+const queryCrush = rescue(async (req, res) => {
   const { q } = req.query;
   try {
     const allCrushs = await fs.readFile(pathFile, 'utf8');
@@ -95,6 +97,6 @@ const queryCrush = async (req, res) => {
   } catch (error) {
     throw new Error(error);
   }
-};
+});
 
 module.exports = { getCrush, getCrushId, postCrush, putCrush, deleteCrush, queryCrush };
