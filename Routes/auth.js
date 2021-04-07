@@ -6,10 +6,10 @@ const validateEmailPassword = require('../Controllers/validateEmailPassword');
 
 router.use(express.json());
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const payload = req.body;
   
-  const value = validateEmailPassword(payload);
+  const value = await validateEmailPassword(payload);
 
   if (typeof value === 'object') {
     res.status(400).send(value);
