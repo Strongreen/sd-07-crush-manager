@@ -62,4 +62,19 @@ const putCrush = async (req, res) => {
   }
 };
 
-module.exports = { getCrush, getCrushId, postCrush, putCrush };
+const deleteCrush = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const allCrushs = await fs.readFile(pathFile, 'utf8');
+    const data = JSON.parse(allCrushs);
+    const newdata = data.filter((crush) => crush.id !== Number(id));
+    await fs.writeFile(pathFile, JSON.stringify(newdata));
+    res.status(200).json({
+      message: 'Crush deletado com sucesso',
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+module.exports = { getCrush, getCrushId, postCrush, putCrush, deleteCrush };
