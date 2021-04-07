@@ -17,7 +17,8 @@ function validEmail(email, response) {
 
 function validPass(password, response) {
   const passwordString = password.toString(); 
-  if (!passwordString) {
+  if (passwordString === undefined || passwordString.length === 0) {
+    console.log('sss');
     return response.status(400).send({
       message: 'O campo "password" é obrigatório',
     });
