@@ -2,9 +2,10 @@ const express = require('express');
 
 const app = express();
 
-const crush = require('./routes/crush');
+const routes = require('./routes');
 
 app.use(express.json());
+app.use(routes);
 
 const SUCCESS = 200;
 const PORT = '3000';
@@ -13,8 +14,6 @@ const PORT = '3000';
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
-
-app.use('/crush', crush);
 
 app.listen(PORT, () => {
   console.log('Online');
