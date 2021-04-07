@@ -24,12 +24,12 @@ function validDate(date) {
   const patternData = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
   console.log('rate of undefined', date === undefined);
   if (
-    date === undefined ||
-    date.rate === undefined ||
-    date.datedAt === undefined
+    date === undefined 
+    || date.rate === undefined 
+    || date.datedAt === undefined
   ) {
     throw new Error(
-      'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios'
+      'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
     );
   }
 
