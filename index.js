@@ -33,6 +33,15 @@ app.get('/crush', async (_request, response) => {
   } catch (error) { console.error(`Erro: ${error.message}`); }
 });
 
+app.get('/crush/search', tokenMiddleware, async (request, response) => {
+  const { q } = request.query;
+  try {
+    const data = await getCrush();
+    const filterCrush = data.filter((crush) => crush.name.toUpperCase().includes(q.toUpperCase()));
+    return response.status(SUCCESS).send(filterCrush);
+  } catch (error) { console.error(`Erro: ${error.message}`); }
+});
+
 app.get(crushId, async (request, response) => {
   const { id } = (request.params);
   try {
@@ -86,15 +95,6 @@ app.delete(crushId, async (request, response) => {
     newList.splice(index, 1);
     await fs.promises.writeFile(`${__dirname}/crush.json`, JSON.stringify(newList));
     return response.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
-  } catch (error) { console.error(`Erro: ${error.message}`); }
-});
-
-app.get('/crush/search', async (request, response) => {
-  const { q } = request.query;
-  try {
-    const data = await getCrush();
-    const filterCrush = data.filter((crush) => crush.name.toUpperCase().includes(q.toUpperCase()));
-    return response.status(SUCCESS).send(filterCrush);
   } catch (error) { console.error(`Erro: ${error.message}`); }
 });
 
