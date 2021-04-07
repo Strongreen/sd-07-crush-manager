@@ -1,7 +1,7 @@
 const routes = require('express').Router();
 const functions = require('../services/functions');
 
-const { readCrushes } = functions;
+const { readCrushes, writeCrushes } = functions;
 
 routes.get('/', async (req, res) => {
   const crushes = await readCrushes();
@@ -11,11 +11,18 @@ routes.get('/', async (req, res) => {
 
 routes.get('/:id', async (req, res) => {
   const crushes = await readCrushes();
-  console.log(crushes);
   const { id } = req.params;
   const foundCrush = crushes.find((crush) => crush.id === parseInt(id, 10));
   if (!foundCrush) res.status(404).send({ message: 'Crush não encontrado' });
   res.status(200).send(foundCrush);
+});
+
+routes.post('/', async (req, res) => {
+  const crush = req.body;
+  const crushes = await readCrushes();
+  crushes.push(crush);
+  writeCrushes(crushes);
+  res.status(200).send(crushes);
 });
 
 module.exports = routes;
