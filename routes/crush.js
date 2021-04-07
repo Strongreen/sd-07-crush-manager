@@ -1,7 +1,5 @@
 const routes = require('express').Router();
-const functions = require('../services/functions');
-
-const { readCrushes, writeCrushes } = functions;
+const { readCrushes, writeCrushes } = require('../services/functions');
 
 routes.get('/', async (req, res) => {
   const crushes = await readCrushes();

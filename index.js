@@ -13,5 +13,6 @@ app.get('/', (_request, response) => {
 });
 
 app.use('/crush', require('./routes/crush'));
+app.use('/login', require('./routes/login'));
 
 app.listen(PORT, () => { console.log('Online'); });
