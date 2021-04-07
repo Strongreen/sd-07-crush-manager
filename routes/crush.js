@@ -94,18 +94,6 @@ const deleteCrush = async (id) => {
   await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));
 };
 
-const checkSearchTerm = async (searchTerm) => {
-  const data = await getData();
-  if (!searchTerm) return data;
-  const findData = data
-  .map((crush) => Object
-  .values(crush))
-  .filter((crush) => crush
-  .includes(searchTerm));
-  if (findData) return findData;
-  return [];
-};
-
 app.get('/', async (_request, response) => {
   const data = await getData();
   if (data.length === 0) return response.status(200).send(empty);
@@ -161,12 +149,6 @@ app.delete('/:id', async (request, response) => {
 
   await deleteCrush(id);
   response.status(200).send({ message: 'Crush deletado com sucesso' });
-});
-
-app.get('/search?:q', async (request, response) => {
-  const searchTerm = request.query.q;
-  const findData = checkSearchTerm(searchTerm);
-  response.status(200).send(findData);
 });
 
 module.exports = app;

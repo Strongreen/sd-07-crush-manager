@@ -1,6 +1,7 @@
 const express = require('express');
 const crush = require('./routes/crush');
 const login = require('./routes/login');
+const search = require('./routes/search');
 
 const app = express();
 app.use(express.json());
@@ -13,6 +14,7 @@ app.get('/', (_request, response) => {
 });
 
 app.use('/login', login);
+app.use('/crush/search', search);
 app.use('/crush', crush);
 
 app.listen(PORT, () => { console.log('Online'); });
