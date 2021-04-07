@@ -1,5 +1,7 @@
 const fs = require('fs');
 
+const file = 'crush.json';
+
 const generateToken = (withToken) => {
   let token = (Math.random() * withToken).toString().replace('.', '');
   if (token.length === 17) {
@@ -13,7 +15,7 @@ const generateToken = (withToken) => {
 module.exports = {
   async getCrushList(request, response) {
     try {
-      const crushList = JSON.parse(await fs.promises.readFile('./crush.json', 'utf-8'));
+      const crushList = JSON.parse(await fs.promises.readFile(`./${file}`, 'utf-8'));
 
       if (crushList.length === 0) {
         return response.status(200).json(crushList);
@@ -27,7 +29,7 @@ module.exports = {
   async getCrushById(request, response) {
     try {
       const { id } = request.params;
-      const crushList = JSON.parse(await fs.promises.readFile('./crush.json', 'utf-8'));
+      const crushList = JSON.parse(await fs.promises.readFile(`./${file}`, 'utf-8'));
       const crush = crushList.find((curr) => curr.id === parseInt(id, 10));
 
       const message = { message: 'Crush não encontrado' };
@@ -44,7 +46,7 @@ module.exports = {
   async createCrush(request, response) {
     try {
       const crush = request.body;
-      const crushList = JSON.parse(await fs.promises.readFile('./crush.json', 'utf-8'));
+      const crushList = JSON.parse(await fs.promises.readFile(`./${file}`, 'utf-8'));
       if (crushList.length === 0) crush.id = 1;
       else crush.id = crushList.length + 1;
       crushList.push(crush);
