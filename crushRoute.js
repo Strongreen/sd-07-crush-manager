@@ -80,12 +80,12 @@ const dateValidation = (req, res, next) => {
 
 const rateValidation = (req, res, next) => {
     const { date } = req.body;
-    if (!date.rate) {
+    if (date.rate === undefined) {
         return res.status(400).send({
             message: dateErrorMessage,
           });
     }
-    if (!(Number.isInteger(date.rate) && date.rate <= 5 && date.rate >= 1)) {
+    if (!(Number.isInteger(date.rate) && (date.rate <= 5) && (date.rate >= 1))) {
         return res.status(400).send({
             message: 'O campo "rate" deve ser um inteiro de 1 à 5',
           });
@@ -98,7 +98,7 @@ app.get('/', (req, res) => {
   return res.status(200).send(JSON.parse(crushArray));
 });
 
-app.get('/search', (req, res) => {
+app.get('/search', tokenValidation, (req, res) => {
   const crushArray = JSON.parse(fs.readFileSync(fileDataName, 'utf-8'));
   const { q } = req.query;
   const oneCrush = crushArray.filter((crush) => crush.name.includes(q));
@@ -136,6 +136,8 @@ app.post('/', (req, res) => {
     const newCrush = req.body;
     const crushArray = JSON.parse(fs.readFileSync(fileDataName, 'utf-8'));
     newCrush.id = crushArray.length + 1;
+    crushArray.push(newCrush);
+    fs.writeFileSync(fileDataName, JSON.stringify(crushArray));
     res.status(201).send(newCrush);
 });
 
@@ -146,7 +148,7 @@ app.put('/:id', (req, res) => {
   if (oneCrush[0]) {
     const crushIndex = crushArray.indexOf(oneCrush[0]);
     crushArray[crushIndex] = {
-      id,
+      id: parseInt(id, 10),
       name: req.body.name,
       age: req.body.age,
       date: req.body.date,
