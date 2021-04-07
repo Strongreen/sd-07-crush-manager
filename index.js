@@ -8,7 +8,10 @@ const app = express();
 app.use(bodyParser.json());
 const SUCCESS = 200;
 const PORT = '3000';
-// const crushList = JSON.parse(fs.readFile('./crush.json', 'utf8'));
+
+function crushNãoEncontrado(res) {
+  res.status(404).send({ message: 'Crush não encontrado' });
+}
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
@@ -34,7 +37,7 @@ app.get('/crush/:idtofind', async (req, res) => {
   const crushList = await readFile();
   const crushIndex = crushList.findIndex(({ id }) => id === Number(idtofind));
   if (crushIndex === -1) {
-    res.status(404).send({ message: 'Crush não encontrado' });
+    crushNãoEncontrado(res);
   }
   res.status(200).send(crushList[crushIndex]);
 });
@@ -59,14 +62,6 @@ app.post('/login', (req, res) => {
   });
 });
 
-// function validateToken(authorization) {
-//   if (!authorization) {
-//     throw new Error('Token não encontrado');
-//   }
-//   if (authorization.length !== 16) {
-//     throw new Error('Token inválido');
-//   }
-// }
 function validateName(name) {
   if (!name) { throw new Error('O campo "name" é obrigatório'); }
   if (name.length < 3) { throw new Error('O "name" deve ter pelo menos 3 caracteres'); }
@@ -124,13 +119,14 @@ app.post('/crush', validationToken, rescue(async (req, res) => {
     res.status(400).send({ message: error.message });
   }
 }));
+
 function createNew(oldOne, req, idtofind) {
   const { name, age, date } = req.body;
   return ({
     name: name || oldOne.name,
-age: age || oldOne.age,
+    age: age || oldOne.age,
     id: Number(idtofind),
-date: {
+    date: {
       datedAt: date.datedAt || oldOne.date.datedAt,
       rate: date.rate || oldOne.date.rate,
     },
@@ -138,10 +134,10 @@ date: {
 }
 // 5
 app.put('/crush/:idtofind', validationToken, async (req, res) => {
-  const { idtofind } = req.params; const { name, age, date } = req.body;
   const crushList = await readFile();
+  const { idtofind } = req.params; const { name, age, date } = req.body;
   const crushIndex = crushList.findIndex(({ id }) => id === Number(idtofind));
-  if (crushIndex === -1) { return res.status(404).send({ message: 'Crush não encontrado' }); }
+  if (crushIndex === -1) { return crushNãoEncontrado(res); }
   const oldOne = (crushList[crushIndex]);
   try {
     validateName(name); validateDate(date); validateAge(age);
@@ -150,6 +146,27 @@ app.put('/crush/:idtofind', validationToken, async (req, res) => {
       if (err) throw err;
     }); res.status(200).send(crushList[crushIndex]);
   } catch (error) { res.status(400).send({ message: error.message }); }
+});
+
+// 6
+app.delete('/crush/:idtofind', validationToken, async (req, res) => {
+  const { idtofind } = req.params;
+  const crushList = await readFile();
+  const crushIndex = crushList.findIndex(({ id }) => id === Number(idtofind));
+  if (crushIndex === -1) { return crushNãoEncontrado(res); }
+  crushList.splice(crushIndex, 1);
+  await fs.writeFile(`${__dirname}/crush.json`, JSON.stringify(crushList), (err) => {
+    if (err) throw err;
+  });
+  res.status(200).send({ message: 'Crush deletado com sucesso' });
+});
+
+// 7 
+app.get('/crush/search', validationToken, async (req, res) => {
+  const searchTerm = req.query.q;
+  const crushList = await readFile();
+  const filteredCrushList = crushList.filter (item => item.name.includes(searchTerm))
+  res.status(200).send(filteredCrushList);
 });
 
 app.listen(PORT, () => { console.log('Online'); });
