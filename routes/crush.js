@@ -40,4 +40,15 @@ routeCrush.post('/', async (req, res) => {
   res.status(201).send(newCrush);
 });
 
+routeCrush.put('/:id', async (req, res) => {
+  const ind = Number(req.params.id);
+  const data = req.body;
+  const dataCrush = await readCrush();
+  const newCrush = { id: ind, ...data };
+  const filterIdData = await dataCrush.filter((element) => element.id !== ind);
+  const newData = [...filterIdData, newCrush];
+  await writeCrush(newData);
+  res.status(200).send(newCrush);
+});
+
 module.exports = routeCrush;
