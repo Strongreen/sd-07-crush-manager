@@ -83,15 +83,20 @@ function isValidAuthorization(auth) {
 }
 
 function completeAuth(objParams) {
-  const { authorization, res, name, age, date } = objParams;
+  const { authorization, name, age, date } = objParams;
   const isAuth = isValidAuthorization(authorization);
-  if (isAuth) return res.status(401).send({ message: isAuth });
+  if (isAuth) return { status: 401, message: isAuth };
+  // res.status(401).send({ message: isAuth });
   const isName = isValidName(name);
-  if (isName) return res.status(400).send({ message: isName });
+  if (isName) return { status: 400, message: isName };
+  // res.status(400).send({ message: isName });
   const isAge = isValidAge(age);
-  if (isAge) return res.status(400).json({ message: isAge });
+  if (isAge) return { status: 400, message: isAge };
+  // res.status(400).json({ message: isAge });
   const isDate = isValidDate(date);
-  if (isDate) return res.status(400).send({ message: isDate });
+  if (isDate) return { status: 400, message: isDate };
+  // res.status(400).send({ message: isDate });
+  return undefined;
 }
 
 app.post('/', async (req, res) => {
@@ -100,8 +105,12 @@ app.post('/', async (req, res) => {
   if (isAuth) return res.status(401).send({ message: isAuth });
 
   const { name, age, date } = req.body;
-  const params = { authorization, res, name, age, date };
-  completeAuth(params);
+  const params = { authorization, name, age, date };
+  
+  const error = completeAuth(params);
+  if (error) {
+    return res.status(error.status).send({ message: error.message });
+  }
   
   const crushes = await crushFile();
   const newCrush = { id: JSON.parse(crushes).length + 1, name, age, date };
@@ -113,8 +122,13 @@ app.post('/', async (req, res) => {
 app.put('/:id', async (req, res) => {
   const { authorization } = req.headers;
   const { name, age, date } = req.body;
-  const params = { authorization, res, name, age, date };
-  completeAuth(params);
+  const params = { authorization, name, age, date };
+
+  const error = completeAuth(params);
+  if (error) {
+    return res.status(error.status).send({ message: error.message });
+  }
+  
   const { id } = req.params;
   const thisCrush = await findAsyncId(id);
   if (thisCrush) {
