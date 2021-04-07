@@ -1,6 +1,6 @@
 const { BAD_REQUEST } = require('../statusCode.json');
 
-const validateDate = (request, response, next) => {
+const validateRate = (request, response, next) => {
   const { date: { rate } } = request.body;
 
   if (rate < 1 || rate > 5) {
@@ -11,4 +11,4 @@ const validateDate = (request, response, next) => {
   next();
 };
 
-module.exports = validateDate;
+module.exports = validateRate;

@@ -11,7 +11,7 @@ router.get('/:id', (request, response) => {
   const { id } = request.params;
   const crushes = JSON.parse(fs.readFileSync(DATAPATH));
   const crush = crushes.find((data) => data.id === parseInt(id, 10));
-  if (crush) response.status(SUCCESS).json(crush);
+  if (crush) return response.status(SUCCESS).json(crush);
   response.status(NOT_FOUND).json({ message: 'Crush não encontrado' });
 });
 

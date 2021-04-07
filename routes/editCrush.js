@@ -2,14 +2,14 @@ const express = require('express');
 const fs = require('fs');
 
 const {
-  validateDate,
   validateRate,
+  validateDate,
   validateNameCrush,
   validateAgeCrush,
   validateToken,
 } = require('../middlewares');
 
-const { CREATED } = require('../statusCode.json');
+const { SUCCESS } = require('../statusCode.json');
 
 const DATAPATH = `${__dirname}/../crush.json`;
 
@@ -19,16 +19,18 @@ router.use(express.json());
 router.use(validateToken);
 router.use(validateNameCrush);
 router.use(validateAgeCrush);
-router.use(validateDate);
 router.use(validateRate);
+router.use(validateDate);
 
-router.post('/', (request, response) => {
+router.put('/:id', (request, response) => {
   const crushes = fs.readFileSync(DATAPATH);
-  const newId = JSON.parse(crushes).length + 1;
-
-  const newCrushes = [...JSON.parse(crushes), { ...request.body, id: newId }];
+  const editId = parseInt(request.params.id, 10);
+  
+  let newCrushes = JSON.parse(crushes)
+    .filter(({ id }) => id !== editId);
+  newCrushes = [...newCrushes, { ...request.body, id: editId }];
   fs.writeFileSync(DATAPATH, JSON.stringify(newCrushes));
-  response.status(CREATED).json({ id: newId, ...request.body });
+  response.status(SUCCESS).json({ id: editId, ...request.body });
 });
 
 module.exports = router;

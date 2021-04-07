@@ -4,7 +4,10 @@ const validateDate = (request, response, next) => {
 const { date } = request.body;
 const regex = /^(0?[1-9]|[12][0-9]|3[01])[/](0?[1-9]|1[012])[/](19|20)?\d\d$/g;
 
-  if (!date || !date.datedAt || !date.rate) {
+  if (!date
+    || !Object.prototype.hasOwnProperty.call(date, 'datedAt')
+    || !Object.prototype.hasOwnProperty.call(date, 'rate')
+    ) {
     return response
       .status(BAD_REQUEST)
       .json({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });

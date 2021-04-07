@@ -1,5 +1,5 @@
 const express = require('express');
-// const errorMiddleware = require('./middlewares/errorMiddleware');
+const errorMiddleware = require('./middlewares/errorMiddleware');
 
 const routes = require('./routes');
 const { SUCCESS } = require('./statusCode.json');
@@ -18,7 +18,8 @@ app.use('/crush', routes.getAllCrushes);
 app.use('/crush', routes.getCrushById);
 app.use('/login', routes.login);
 app.use('/crush', routes.createCrush);
+app.use('/crush', routes.editCrush);
 
-// app.use(errorMiddleware);
+app.use(errorMiddleware);
 
 app.listen(PORT, () => { console.log('Online'); });
