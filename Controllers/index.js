@@ -28,11 +28,11 @@ const getCrushId = async (req, res) => {
 
 const postCrush = async (req, res) => {
   try {
-    const allCrushs = await fs.readFile(pathFile);
+    const allCrushs = await fs.readFile(pathFile, 'utf8');
     const data = JSON.parse(allCrushs);
     const size = data.length;
     data[size] = {
-      id: `${size + 1}`,
+      id: size + 1,
       name: req.body.name,
       age: req.body.age,
       date: req.body.date,
@@ -44,4 +44,22 @@ const postCrush = async (req, res) => {
   }
 };
 
-module.exports = { getCrush, getCrushId, postCrush };
+const putCrush = async (req, res) => {
+  const { id } = req.params;
+  const { name, age, date } = req.body;
+  const { datedAt, rate } = date;
+  try {
+    const allCrushs = await fs.readFile(pathFile, 'utf8');
+    const data = JSON.parse(allCrushs);
+    data[Number(id) - 1].name = name;
+    data[Number(id) - 1].age = age;
+    data[Number(id) - 1].date.datedAt = datedAt;
+    data[Number(id) - 1].date.rate = rate;
+    await fs.writeFile(pathFile, JSON.stringify(data));
+    res.status(200).json(data[Number(id) - 1]);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+module.exports = { getCrush, getCrushId, postCrush, putCrush };

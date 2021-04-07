@@ -16,6 +16,13 @@ app.get('/', (_request, response) => {
 app.use('/login', routesLogin);
 app.use('/crush', routesCrush);
 
+app.use((err, _req, res, next) => {
+  next(err);
+  res.status(500).json({
+    message: 'error',
+  });
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });

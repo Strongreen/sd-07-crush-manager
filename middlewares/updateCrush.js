@@ -1,17 +1,3 @@
-const fs = require('fs').promises;
-
-const readDB = async () =>
-  fs.readFile('./crush.json', 'utf-8', (crushes) => {
-    if (!crushes) throw new Error('error');
-    return JSON.parse(crushes);
-  });
-
-const writeInDB = async (crushes) => {
-  fs.writeFile('./crush.json', JSON.stringify(crushes), (err) => {
-    if (err) throw new Error('error');
-  });
-};
-
 function notDoneName(valueName, objres) {
   if (!valueName) {
     return objres.status(400).json({ message: 'O campo "name" é obrigatório' });
@@ -34,7 +20,12 @@ function notDoneAge(value, objres) {
 }
 
 function notDoneRate(value, objres) {
-  if (value < 1 || value > 5) {
+  if (value < 1) {
+    return objres
+      .status(400)
+      .json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+  }
+  if (value > 5) {
     return objres
       .status(400)
       .json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
@@ -59,23 +50,14 @@ function fnRegexDate(valueDateAdt, objres) {
   }
 }
 
-async function searchCrush(req, res, next) {
+async function updateCrush(req, res, next) {
   const { name, age, date } = req.body;
   const { datedAt, rate } = req.body.date ? date : '';
-  notDoneName(name, res);
-  notDoneAge(age, res);
-  notDoneRate(rate, res);
-  notDoneDateDatedatrate(date, datedAt, rate, res);
-  fnRegexDate(datedAt, res);
-  const oldDBCrush = await readDB();
-  const newDBCrush = [
-    ...oldDBCrush,
-    { ...req.body, id: JSON.parse(oldDBCrush).length + 1 },
-  ];
-  await writeInDB(newDBCrush);
+  await notDoneName(name, res);
+  await notDoneAge(age, res);
+  await notDoneRate(rate, res);
+  await notDoneDateDatedatrate(date, datedAt, rate, res);
+  await fnRegexDate(datedAt, res);
   next();
-  return res
-    .status(201)
-    .json({ ...req.body, id: JSON.parse(oldDBCrush).length + 1 });
 }
-module.exports = searchCrush;
+module.exports = updateCrush;
