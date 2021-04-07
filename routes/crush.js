@@ -31,7 +31,7 @@ const checkAge = (age) => {
 };
 
 const checkDateFields = (datedAt, rate) => {
-  if (!datedAt || !rate) {
+  if (!datedAt || rate === undefined) {
     throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
   }
 };
@@ -43,7 +43,6 @@ const checkDateFormat = (datedAt, rate) => {
   }
 
   if (rate < 1 || rate > 5) {
-    console.log('estou aqui');
     throw new Error('O campo "rate" deve ser um inteiro de 1 à 5');
   }
 };
@@ -93,6 +92,18 @@ const deleteCrush = async (id) => {
   data.filter((crush) => crush.id !== Number(id));
 
   await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));
+};
+
+const checkSearchTerm = async (searchTerm) => {
+  const data = await getData();
+  if (!searchTerm) return data;
+  const findData = data
+  .map((crush) => Object
+  .values(crush))
+  .filter((crush) => crush
+  .includes(searchTerm));
+  if (findData) return findData;
+  return [];
 };
 
 app.get('/', async (_request, response) => {
@@ -150,6 +161,12 @@ app.delete('/:id', async (request, response) => {
 
   await deleteCrush(id);
   response.status(200).send({ message: 'Crush deletado com sucesso' });
+});
+
+app.get('/search?:q', async (request, response) => {
+  const searchTerm = request.query.q;
+  const findData = checkSearchTerm(searchTerm);
+  response.status(200).send(findData);
 });
 
 module.exports = app;
