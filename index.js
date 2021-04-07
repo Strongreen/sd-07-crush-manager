@@ -1,6 +1,5 @@
 const express = require('express');
 const fs = require('fs').promises;
-const data = require('./crush.json');
 
 const app = express();
 app.use(express.json());
@@ -104,14 +103,16 @@ const validationToken = (req, res, next) => {
   next();
 };
 
+const firstFile = () => fs.readFile('./crush.json', 'utf8');
+
 app.get(crushList, async (_req, res) => {
-  const myCrush = await fs.readFile('./crush.json', 'utf8');
+  const myCrush = await firstFile();
   const newListCrush = JSON.parse(myCrush);
   return res.status(SUCCESS).json(newListCrush);
 });
 
 app.get(crushId, async (req, res) => {
-  const myCrush = await fs.readFile('./crush.json', 'utf8');
+  const myCrush = await firstFile();
   const id = Number(req.params.id);
   const crushJson = JSON.parse(myCrush);
   const idCrush = await crushJson.find((crush) => crush.id === id);
@@ -143,8 +144,9 @@ app.post('/login', authorizationEmail, (req, res) => {
 });
 
 app.post('/crush', validationToken, async (req, res) => {
+  const myCrush = await firstFile();
+  const data = JSON.parse(myCrush);
   const size = data.length;
-  
   try {
     validateName(req.body);
     validateAge(req.body);
@@ -152,13 +154,11 @@ app.post('/crush', validationToken, async (req, res) => {
     validateDateToo(req.body);
     const { name, age, date } = req.body;
     const myObj = { name, age, id: size + 1, date };
-  
+
   data[size] = myObj;
     await fs.writeFile(`${__dirname}/crush.json`, JSON.stringify(data));
     res.status(201).json(myObj);
   } catch (error) {
-    res.status(400).json({
-      message: error.message,
-    });
+    res.status(400).json({ message: error.message });
   }
 });
