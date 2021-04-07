@@ -1,6 +1,6 @@
 const express = require('express');
-const data = require('./crush.json');
 const fs = require('fs').promises;
+const data = require('./crush.json');
 
 const app = express();
 app.use(express.json());
@@ -23,32 +23,27 @@ app.listen(PORT, () => { console.log('Online'); });
 };
 
 const dateValidation = (datedAt) => {
-  const regexForDate = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i;
+  const regexForDate = /^(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/](19|20)\d\d$/g; 
   return regexForDate.test(datedAt);
 };
 
 const authorizationEmail = (req, res, next) => {
   const { email } = req.body;
   if (!email || email === '') {
-    return res.status(400).json({
-      message: 'O campo "email" é obrigatório',
-  });
+    return res.status(400).json({ message: 'O campo "email" é obrigatório' });
   }
 
   const validEmail = emailValidation(email);
   if (!validEmail) {
-    return res.status(400).json({
-      message: 'O "email" deve ter o formato "email@email.com"',
-    });
+    return res.status(400).json({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
 
   next();
 };
 
-const validateAll = (crush) => {
-  const { name, age, date } = crush;
+const validateName = (crush) => {
+  const { name } = crush;
 
-  console.log(crush);
   if (!name) {
     throw new Error('O campo "name" é obrigatório');
   }
@@ -56,7 +51,10 @@ const validateAll = (crush) => {
   if (name.length < 3) {
     throw new Error('O "name" deve ter pelo menos 3 caracteres');
   }
+};
 
+const validateAge = (crush) => {
+  const { age } = crush;
   if (!age) {
     throw new Error('O campo "age" é obrigatório');
   }
@@ -64,12 +62,20 @@ const validateAll = (crush) => {
   if (age < 18) {
     throw new Error('O crush deve ser maior de idade');
   }
+};
 
-  if (!date) {
+const validateDate = (crush) => {
+  const { date } = crush;
+
+  if (!date || !date.datedAt || !date.rate) {
     throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
   }
+};
 
+const validateDateToo = (crush) => {
+  const { date } = crush;
   const { datedAt, rate } = date;
+
   const validData = dateValidation(datedAt);
   if (!validData) {
     throw new Error('O campo "datedAt" deve ter o formato "dd/mm/aaaa"');
@@ -140,14 +146,12 @@ app.post('/crush', validationToken, async (req, res) => {
   const size = data.length;
   
   try {
-    validateAll(req.body);
+    validateName(req.body);
+    validateAge(req.body);
+    validateDate(req.body);
+    validateDateToo(req.body);
     const { name, age, date } = req.body;
-    const myObj = {
-    name,
-    age,
-    id: size + 1,
-    date,
-  };
+    const myObj = { name, age, id: size + 1, date };
   
   data[size] = myObj;
     await fs.writeFile(`${__dirname}/crush.json`, JSON.stringify(data));
