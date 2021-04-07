@@ -110,6 +110,21 @@ app.get('/search', tokenValidation, (req, res) => {
   });
 });
 
+app.delete('/:id', tokenValidation, (req, res) => {
+  const crushArray = JSON.parse(fs.readFileSync(fileDataName, 'utf-8'));
+  const { id } = req.params;
+  const oneCrush = crushArray.filter((crush) => crush.id === parseInt(id, 10));
+  if (oneCrush[0]) {
+    const crushIndex = crushArray.indexOf(oneCrush[0]);
+    crushArray.splice(crushIndex, 1);
+    fs.writeFileSync(fileDataName, JSON.stringify(crushArray));
+    return res.status(200).send({ message: 'Crush deletado com sucesso' });
+  } 
+  return res.status(404).send({
+    message: crushNotFoundMessage,
+  });
+});
+
 app.get('/:id', (req, res) => {
   const crushArray = JSON.parse(fs.readFileSync(fileDataName, 'utf-8'));
   const { id } = req.params;
@@ -155,21 +170,6 @@ app.put('/:id', (req, res) => {
     };
     fs.writeFileSync(fileDataName, JSON.stringify(crushArray));
     return res.status(200).send(crushArray[crushIndex]);
-  } 
-  return res.status(404).send({
-    message: crushNotFoundMessage,
-  });
-});
-
-app.delete('/:id', (req, res) => {
-  const crushArray = JSON.parse(fs.readFileSync(fileDataName, 'utf-8'));
-  const { id } = req.params;
-  const oneCrush = crushArray.filter((crush) => crush.id === parseInt(id, 10));
-  if (oneCrush[0]) {
-    const crushIndex = crushArray.indexOf(oneCrush[0]);
-    crushArray.splice(crushIndex, 1);
-    fs.writeFileSync(fileDataName, JSON.stringify(crushArray));
-    return res.status(200).send({ message: 'Crush deletado com sucesso' });
   } 
   return res.status(404).send({
     message: crushNotFoundMessage,
