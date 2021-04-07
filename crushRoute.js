@@ -8,6 +8,8 @@ const dateErrorMessage = 'O campo "date" é obrigatório e "datedAt" e "rate" n�
 
 const fileDataName = './crush.json';
 
+const crushNotFoundMessage = 'Crush não encontrado';
+
 const tokenValidation = (req, res, next) => {
     const token = req.headers.authorization;
     const regex = /([a-zA-Z0-9]){16}$/;
@@ -96,6 +98,18 @@ app.get('/', (req, res) => {
   return res.status(200).send(JSON.parse(crushArray));
 });
 
+app.get('/search', (req, res) => {
+  const crushArray = JSON.parse(fs.readFileSync(fileDataName, 'utf-8'));
+  const { q } = req.query;
+  const oneCrush = crushArray.filter((crush) => crush.name.includes(q));
+  if (oneCrush[0]) {
+    return res.status(200).send(oneCrush);
+  } 
+  return res.status(404).send({
+    message: crushNotFoundMessage,
+  });
+});
+
 app.get('/:id', (req, res) => {
   const crushArray = JSON.parse(fs.readFileSync(fileDataName, 'utf-8'));
   const { id } = req.params;
@@ -104,25 +118,60 @@ app.get('/:id', (req, res) => {
     return res.status(200).send(oneCrush[0]);
   } 
   return res.status(404).send({
-    message: 'Crush não encontrado',
+    message: crushNotFoundMessage,
   });
 });
 
-app.use(tokenValidation);
+app.use('/', tokenValidation);
 
-app.use(nameValidation);
+app.use('/', nameValidation);
 
-app.use(ageValidation);
+app.use('/', ageValidation);
 
-app.use(dateValidation);
+app.use('/', dateValidation);
 
-app.use(rateValidation);
+app.use('/', rateValidation);
 
 app.post('/', (req, res) => {
     const newCrush = req.body;
     const crushArray = JSON.parse(fs.readFileSync(fileDataName, 'utf-8'));
     newCrush.id = crushArray.length + 1;
     res.status(201).send(newCrush);
+});
+
+app.put('/:id', (req, res) => {
+  const crushArray = JSON.parse(fs.readFileSync(fileDataName, 'utf-8'));
+  const { id } = req.params;
+  const oneCrush = crushArray.filter((crush) => crush.id === parseInt(id, 10));
+  if (oneCrush[0]) {
+    const crushIndex = crushArray.indexOf(oneCrush[0]);
+    crushArray[crushIndex] = {
+      id,
+      name: req.body.name,
+      age: req.body.age,
+      date: req.body.date,
+    };
+    fs.writeFileSync(fileDataName, JSON.stringify(crushArray));
+    return res.status(200).send(crushArray[crushIndex]);
+  } 
+  return res.status(404).send({
+    message: crushNotFoundMessage,
+  });
+});
+
+app.delete('/:id', (req, res) => {
+  const crushArray = JSON.parse(fs.readFileSync(fileDataName, 'utf-8'));
+  const { id } = req.params;
+  const oneCrush = crushArray.filter((crush) => crush.id === parseInt(id, 10));
+  if (oneCrush[0]) {
+    const crushIndex = crushArray.indexOf(oneCrush[0]);
+    crushArray.splice(crushIndex, 1);
+    fs.writeFileSync(fileDataName, JSON.stringify(crushArray));
+    return res.status(200).send({ message: 'Crush deletado com sucesso' });
+  } 
+  return res.status(404).send({
+    message: crushNotFoundMessage,
+  });
 });
 
 module.exports = app;
