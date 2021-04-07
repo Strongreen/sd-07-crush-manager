@@ -77,4 +77,23 @@ router.put(
 }),
 );
 
+router.delete('/:id', rescue(async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8');
+    const crushs = JSON.parse(data);
+    const index = crushs.findIndex((item) => item.id === parseInt(id, 10));
+
+    if (index === -1) return res.status(404).json('crush não encontrado');
+
+    crushs.splice(index, 1);
+    console.log(crushs);
+    await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushs));
+
+    return res.status(SUCCESS_200).send({ message: 'Crush deletado com sucesso' });
+  } catch (error) {
+    console.log(error);
+  }
+}));
+
 module.exports = router;
