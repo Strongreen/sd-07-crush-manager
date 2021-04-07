@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const crypto = require('crypto');
 
 const app = express();
 app.use(bodyParser.json());
@@ -23,24 +24,52 @@ const getCrushList = () => {
   }
 };
 
-app.get('/crush', (_request, response) => {
+app.get('/crush', (_req, res) => {
   const crushList = getCrushList();
   if (crushList.length !== 0) {
-    response.status(SUCCESS).send(crushList);
+    res.status(SUCCESS).send(crushList);
   } else {
-    response.status(SUCCESS).send([]);
+    res.status(SUCCESS).send([]);
   }
 });
 
-app.get('/crush/:id', (request, response) => {
+app.get('/crush/:id', (req, res) => {
   const crushList = getCrushList();
-  const { id } = request.params;
+  const { id } = req.params;
   const result = crushList.find((crush) => crush.id === Number(id));
   if (result) {
-    response.status(SUCCESS).send(result);
+    res.status(SUCCESS).send(result);
   } else {
-    response.status('404').send({
+    res.status('404').send({
       message: 'Crush não encontrado',
     });
+  }
+});
+
+const validateEmail = (email) => {
+  const regex = /\S+@\S+\.\S+/;
+  return regex.test(email);
+};
+
+const validatePassword = (password) => {
+  if (password.length >= 6) {
+    return true;
+  } return false;
+};
+
+const generateToken = () => crypto.randomBytes(8).toString('hex');
+
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+  if (!email) {
+    res.status('400').send({ message: 'O campo "email" é obrigatório' });
+  } else if (!validateEmail(email)) {
+    res.status('400').send({ message: 'O "email" deve ter o formato "email@email.com"' });
+  } else if (!password) {
+    res.status('400').send({ message: 'O campo "password" é obrigatório' });
+  } else if (!validatePassword(password)) {
+    res.status('400').send({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+  } else {
+    return res.status(SUCCESS).send({ token: `${generateToken()}` });
   }
 });
