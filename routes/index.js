@@ -1,10 +1,43 @@
 const express = require('express');
 const fs = require('fs');
+const CryptoJS = require('crypto-js');
 const data = require('../crush.json');
 
 const app = express();
 const sucess = 200;
- const notFound = 404;
+const notFound = 404;
+const mandatory = 400;
+
+const validatePass = (pass) => {
+  if (pass !== undefined) {
+    if (pass.length >= 6) {
+      return true;
+    }
+    return {
+      message: 'A "senha" deve ter pelo menos 6 caracteres',
+    };
+  }
+  return { message: 'O campo "password" é obrigatório' };
+};
+
+const validateData = (email, pass) => {
+  if (email !== undefined) {
+    if (email.match(/^[a-z0-9.]+@[a-z0-9]+\.[a-z]/i)) {
+      return validatePass(pass);
+    }
+    return {
+      message: 'O "email" deve ter o formato "email@email.com"',
+    };
+  }
+  return { message: 'O campo "email" é obrigatório' };
+};
+
+const encrypt = (object) => {
+  const newEncript = CryptoJS.AES.encrypt(JSON.stringify(object), 'result')
+    .toString()
+    .slice(0, 16);
+  return newEncript;
+};
 
 app.get('/', (_request, response) => {
   response.status(sucess).send();
@@ -38,7 +71,13 @@ app.get('/crush/search?q=searchTerm', (req, res) => {
 });
 
 app.post('/login', (req, res) => {
-  res.status(sucess).send('user');
+  const { email, password } = req.body;
+  console.log(email);
+  console.log(password);
+  if (validateData(email, password) === true) {
+    return res.status(sucess).send({ token: encrypt(password) });
+  }
+  return res.status(mandatory).send(validateData(email, password));
 });
 
 app.post('/crush', (req, res) => {
