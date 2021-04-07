@@ -15,14 +15,14 @@ function validEmail(email, response) {
 }
 
 function validPass(password, response) {
-  console.log(password);
+  const passwordString = password.toString(); 
   if (!password) {
     return response.status(400).send({
       message: 'O campo "password" é obrigatório',
     });
   }
-
-  if (!password >= 6) {
+  
+  if (passwordString.length < 6) {
     return response.status(400).send({
       message: 'A "senha" deve ter pelo menos 6 caracteres',
     });
@@ -31,7 +31,6 @@ function validPass(password, response) {
 
 function tokenGenerator(response) {
   const token = crypto.randomBytes(8).toString('hex');
-  console.log(token);
   return response.status(200).send({ token });
 }
 
