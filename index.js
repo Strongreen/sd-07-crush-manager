@@ -21,7 +21,6 @@ async function readFile() {
 // 1
 app.get('/crush', async (req, res) => {
   const crushList = await readFile();
-  console.log(typeof (crushList));
   if (crushList.length > 0) {
     return res.status(200).json(crushList);
   }
@@ -87,7 +86,7 @@ function regexValidate(datedAt) {
   if (!regexValidation) { throw new Error('O campo "datedAt" deve ter o formato "dd/mm/aaaa"'); }
 }
 function validateDate(date) {
-  if (!date || !date.datedAt || !date.rate) {
+  if (!date || !date.datedAt || date.rate === undefined) {
     throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
   }
   const { datedAt, rate } = date;
@@ -106,9 +105,7 @@ const validationToken = (req, res, next) => {
   next();
 };
 
-// app.use (validationToken);
 // 4
-
 app.post('/crush', validationToken, rescue(async (req, res) => {
   const { name, age, date } = req.body;
   const crushList = JSON.parse(await fs.readFile('./crush.json', 'utf8'));
@@ -127,26 +124,32 @@ app.post('/crush', validationToken, rescue(async (req, res) => {
     res.status(400).send({ message: error.message });
   }
 }));
-
-// // 5
-// app.put('/crush/:idtofind', validationToken, async (req, res) => {
-//   const { idtofind } = req.params;
-//   const crushList = await readFile();
-//   const crushIndex = crushList.findIndex(({ id }) => id === idtofind);
-//   const { name, age, date } = crushList[crushIndex];
-//   try {
-//     const { datedAt, rate } = date;
-//     if (!date || !datedAt || !rate) {
-//       throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
-//     }
-//     validateName(name); validateAge(age); regexValidate(datedAt); validateRate(rate);
-//     await fs.writeFile(`${__dirname}/crush.json`, JSON.stringify(crushList), (err) => {
-//       if (err) throw err;
-//     });
-//     res.status(201).send(req.body);
-//   } catch (error) {
-//     res.status(400).send({ message: error.message });
-//   }
-// });
+function createNew(oldOne, req, idtofind) {
+  const { name, age, date } = req.body;
+  return ({
+    name: name || oldOne.name,
+age: age || oldOne.age,
+    id: Number(idtofind),
+date: {
+      datedAt: date.datedAt || oldOne.date.datedAt,
+      rate: date.rate || oldOne.date.rate,
+    },
+  });
+}
+// 5
+app.put('/crush/:idtofind', validationToken, async (req, res) => {
+  const { idtofind } = req.params; const { name, age, date } = req.body;
+  const crushList = await readFile();
+  const crushIndex = crushList.findIndex(({ id }) => id === Number(idtofind));
+  if (crushIndex === -1) { return res.status(404).send({ message: 'Crush não encontrado' }); }
+  const oldOne = (crushList[crushIndex]);
+  try {
+    validateName(name); validateDate(date); validateAge(age);
+    crushList[crushIndex] = createNew(oldOne, req, idtofind);
+    await fs.writeFile(`${__dirname}/crush.json`, JSON.stringify(crushList), (err) => {
+      if (err) throw err;
+    }); res.status(200).send(crushList[crushIndex]);
+  } catch (error) { res.status(400).send({ message: error.message }); }
+});
 
 app.listen(PORT, () => { console.log('Online'); });
