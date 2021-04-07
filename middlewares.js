@@ -1,5 +1,3 @@
-const fs = require('fs');
-
 function valideDateAt(request) {
   const { date } = request.body;
   if (!date) {
