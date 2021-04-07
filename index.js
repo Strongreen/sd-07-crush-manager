@@ -153,7 +153,7 @@ app.post('/login', (request, response) => {
     return response.status(400).json({ message: 'O campo "password" é obrigatório' });
   }
   if (!validatePassword(password)) {
-    return response.status(400).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+    return response.status(400).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
   return response.status(SUCCESS).json({ token });
 });
