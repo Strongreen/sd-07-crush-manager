@@ -78,18 +78,13 @@ const deleteCrush = async (req, res) => {
 };
 
 const queryCrush = async (req, res) => {
-  // console.log(req.query)
   const { q } = req.query;
-  // console.log(typeof q)
   try {
     const allCrushs = await fs.readFile(pathFile, 'utf8');
     const data = JSON.parse(allCrushs);
     let searchCrush = [...data];
-    // console.log(searchCrush)
-    // searchCrush = searchCrush.filter((crush) => String(crush.name).startsWith("Ma"))
-    // console.log(searchCrush)
     if (q) {
-      searchCrush = searchCrush.filter((crush) => String(crush.name).startsWith(q))
+      searchCrush = searchCrush.filter((crush) => String(crush.name).startsWith(q));
     }
     res.status(200).json(searchCrush);
     if (!q || q === '') {

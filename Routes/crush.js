@@ -2,7 +2,14 @@ const express = require('express');
 
 const router = express.Router();
 
-const { getCrush, getCrushId, postCrush, putCrush, deleteCrush, queryCrush } = require('../Controllers/index');
+const {
+  getCrush,
+  getCrushId,
+  postCrush,
+  putCrush,
+  deleteCrush,
+  queryCrush,
+} = require('../Controllers/index');
 
 const midauthToken = require('../middlewares/authToken');
 
