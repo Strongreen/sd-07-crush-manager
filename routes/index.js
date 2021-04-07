@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const CryptoJS = require('crypto-js');
-const data = require('../crush.json');
+// const data = require('../crush.json');
 
 const app = express();
 const sucess = 200;
@@ -55,6 +55,9 @@ app.get('/crush', (_req, res) => {
 
 app.get('/crush/:id', (req, res) => {
   const { id } = req.params;
+  const data = JSON.parse(
+    fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8'),
+  );
   const newData = data.filter((acc) => acc.id === parseInt(id, 2));
   try {
     if (newData.length > 0) {
@@ -72,8 +75,6 @@ app.get('/crush/search?q=searchTerm', (req, res) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  console.log(email);
-  console.log(password);
   if (validateData(email, password) === true) {
     return res.status(sucess).send({ token: encrypt(password) });
   }
@@ -81,7 +82,16 @@ app.post('/login', (req, res) => {
 });
 
 app.post('/crush', (req, res) => {
-  res.status(sucess).send();
+  const newCrush = req.body;
+  const crushList = JSON.parse(fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8'));
+  const newdata = [...crushList, newCrush];
+  
+  try {
+    fs.writeFileSync(crushList, JSON.stringify(newdata));
+    res.status(201).send('Crush foi cadastrado com sucesso');
+  } catch (error) {
+    throw new Error(error);
+  }
 });
 
 // app.put('/crush/:id', (req, res) => {
