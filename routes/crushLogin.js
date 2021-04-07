@@ -2,21 +2,22 @@ const crypto = require('crypto');
 
 function validEmail(email, response) {
   const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.com$/;
-  if (!regexEmail.test(email)) {
-    return response.status(400).send({ 
-      message: 'O "email" deve ter o formato "email@email.com"',
-    });
-  }
   if (!email) {
     return response.status(400).send({
      message: 'O campo "email" é obrigatório',
+    });
+  }
+  
+  if (!regexEmail.test(email)) {
+    return response.status(400).send({ 
+      message: 'O "email" deve ter o formato "email@email.com"',
     });
   }
 }
 
 function validPass(password, response) {
   const passwordString = password.toString(); 
-  if (!password) {
+  if (!passwordString) {
     return response.status(400).send({
       message: 'O campo "password" é obrigatório',
     });
