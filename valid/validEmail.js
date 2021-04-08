@@ -1,18 +1,18 @@
-function validEmailFunction(email, response) {
+function validEmailFunction(request, response, next) {
+  const { email } = request.body;
   const regexEmail = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.com$/;
+  if (!email) {
+    return response.status(400).json({
+      message: 'O campo "email" é obrigatório',
+    });
+  }
   
-    if (!email) {
-      response.status(400).send({
-       message: 'O campo "email" é obrigatório',
-      });
-      throw new Error('O campo "email" é obrigatório');
-    }
-    if (!regexEmail.test(email)) {
-      response.status(400).send({ 
-        message: 'O "email" deve ter o formato "email@email.com"',
-      });
-      throw new Error('O "email" deve ter o formato "email@email.com"');
-    }
+  if (!regexEmail.test(email)) {
+    return response.status(400).json({
+      message: 'O "email" deve ter o formato "email@email.com"',
+    });
+  }
+  next();
 }
 
 module.exports = { validEmailFunction };

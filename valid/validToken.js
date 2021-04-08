@@ -1,16 +1,20 @@
-function validTokenFunction(authorization, response) {
+function validTokenFunction(request, response, next) {
+  const { authorization } = request.headers;
   if (!authorization) {
-    response.status(401).send({
+    return response.status(401).json({
       message: 'Token não encontrado',
     });
-    throw new Error('Token não encontrado');
   }
+
+  // JSON.parse() objeto string
+  // JSON.stringfy() string objeto
+
   if (authorization.length !== 16) {
-    response.status(401).send({
+    return response.status(401).json({
       message: 'Token inválido',
     });
-    throw new Error('Token inválido');
   }
+  next();
 }
 
 module.exports = { validTokenFunction };

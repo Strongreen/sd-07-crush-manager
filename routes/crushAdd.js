@@ -1,10 +1,9 @@
-const validToken = require('../valid/validToken');
 const file = require('./crushFile');
 
 const crushData = 'crush.json';
-const { validTokenFunction } = validToken;
 
-async function crushAdd(body, response) {
+async function crushAddFunction(request, response) {
+  const { body } = request;
   try {
     const { name, age, date } = body;
     const showFile = await file.readPromise(crushData);
@@ -20,13 +19,6 @@ async function crushAdd(body, response) {
   } catch (error) {
     throw new Error(error);
   }
-}
-
-function crushAddFunction(request, response) {
-  const { authorization } = request.headers;
-  const { body } = request;
-  validTokenFunction(authorization, response);
-  crushAdd(body, response);
 }
 
 module.exports = { crushAddFunction };

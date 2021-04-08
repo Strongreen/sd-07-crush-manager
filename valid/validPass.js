@@ -1,19 +1,19 @@
-function validPassFunction(password, response) {
+function validPassFunction(request, response, next) {
+  const { password } = request.body;
   let passwordString = '';
   if (password) { passwordString = password.toString(); }
   if (!password) {
-    response.status(400).send({
+    return response.status(400).json({
       message: 'O campo "password" é obrigatório',
     });
-    throw new Error('O campo "password" é obrigatório');
   }
   
   if (passwordString.length < 6) {
-    response.status(400).send({
+    response.status(400).json({
       message: 'A "senha" deve ter pelo menos 6 caracteres',
     });
-    throw new Error('A "senha" deve ter pelo menos 6 caracteres');
   }
+  next();
 }
 
 module.exports = { validPassFunction };
