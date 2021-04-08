@@ -15,10 +15,10 @@ app.post('/', (req, res) => {
   const validEmail = emailValidator.validate(email);
   const validPassword = passwordValidator(password);
 
-  if (!validEmail) {
-    res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
-  } else if (!email) {
+  if (!email) {
     res.status(400).send({ message: 'O campo "email" é obrigatório' });
+  } else if (!validEmail) {
+    res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
   } else if (!password) {
     res.status(400).send({ message: 'O campo "password" é obrigatório' });
   } else if (!validPassword) {
