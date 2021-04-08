@@ -66,7 +66,7 @@ const validateAge = (crush) => {
 const validateDate = (crush) => {
   const { date } = crush;
 
-  if (!date || !date.datedAt || !date.rate) {
+  if (!date || !date.datedAt || date.rate === undefined) {
     throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
   }
 };
@@ -158,6 +158,25 @@ app.post('/crush', validationToken, async (req, res) => {
   data[size] = myObj;
     await fs.writeFile(`${__dirname}/crush.json`, JSON.stringify(data));
     res.status(201).json(myObj);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.put('/crush/:id', validationToken, async (req, res) => {
+  const myCrush = await firstFile();
+  const data = JSON.parse(myCrush);
+  const id = Number(req.params.id);
+
+  try {
+    validateName(req.body);
+    validateAge(req.body);
+    validateDate(req.body);
+    validateDateToo(req.body);
+    const { name, age, date } = req.body;
+    data[id - 1] = { name, id, age, date };
+    await fs.writeFile(`${__dirname}/crush.json`, JSON.stringify(data));
+    res.status(200).json(data[id - 1]);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
