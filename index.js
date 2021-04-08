@@ -1,6 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { readFiles, addCrush, identifyID, editCrush, login } = require('./helper');
+const { 
+  readFiles, 
+  addCrush, 
+  identifyID, 
+  editCrush, 
+  login, 
+  deleteCrush,
+  searchCrush,
+} = require('./helper');
 
 const app = express();
 app.use(bodyParser.json());
@@ -13,14 +21,23 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.get('/crush', readFiles);
+app
+  .route('/login')
+  .post(login);
 
-app.post('/crush', addCrush);
+app
+  .route('/crush')
+  .get(readFiles)
+  .post(addCrush);
 
-app.get('/crush/:id', identifyID);
+app
+  .route('/crush/:id')
+  .get(identifyID)
+  .put(editCrush)
+  .delete(deleteCrush);
 
-app.put('/crush/:id', editCrush);
-
-app.post('/login', login);
+app
+  .route('/crush/search?q=')
+  .get(searchCrush);
 
 app.listen(PORT, () => { console.log('Online'); });

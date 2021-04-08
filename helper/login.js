@@ -10,7 +10,7 @@ function login(req, res) {
   const { email, password } = req.body;
   validEmail(email, res);
   validPassword(password, res);
-  res.status(SUCCESS).send(CreateToken());
+  return res.status(SUCCESS).send(CreateToken());
 }
 
 module.exports = { login };

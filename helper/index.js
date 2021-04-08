@@ -4,6 +4,8 @@ const { login } = require('./login');
 const { addCrush } = require('./addCrush');
 const { writeFiles } = require('./writeFiles');
 const { editCrush } = require('./editCrush');
+const { deleteCrush } = require('./deleteCrush');
+const { searchCrush } = require('./searchCrush');
 
 module.exports = {
     readFiles,
@@ -12,4 +14,6 @@ module.exports = {
     addCrush,
     writeFiles,
     editCrush,
+    deleteCrush,
+    searchCrush,
 };

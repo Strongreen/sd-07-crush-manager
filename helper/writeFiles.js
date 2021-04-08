@@ -7,10 +7,10 @@ function writeFiles(crush, res) {
     const path = `${__dirname}/../crush.json`;
     fs.writeFile(path, JSON.stringify(crush), (err) => {
         if (err) {
-            res.status(BAD).send(err);
+          return res.status(BAD).send(err);
            }
         if (crush) {
-            res.status(SUCCESS).send(crush);
+        return res.status(SUCCESS).send(crush);
         }
     });
 }
