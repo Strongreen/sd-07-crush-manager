@@ -15,17 +15,17 @@ async function makeCrush(body) {
     const { crushes, id } = await getId();
     const indice = id.toString();
     if (id) {
+      console.log(crushes);
       const crush = {
-        ...crushes,
-        [indice]: {  
           name,
           age,
           id: id + 1,
           date: {
             datedAt,
             rate,
-          } } };
-      return crush;
+          } };
+          crushes[indice] = crush;
+      return crushes;
     }
 }
 

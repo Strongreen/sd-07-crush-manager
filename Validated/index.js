@@ -5,6 +5,9 @@ const { validRate } = require('./validRate');
 const { validDate } = require('./validDate');
 const { validToken } = require('./validToken');
 const { getId } = require('./getId');
+const { validEmail } = require('./validEmail');
+const { validPassword } = require('./validPassword');
+const { CreateToken } = require('./CreateToken');
 
 module.exports = {
     validName,
@@ -14,4 +17,7 @@ module.exports = {
     validDate,
     validToken,
     getId,
+    validEmail,
+    validPassword,
+    CreateToken,
 };
