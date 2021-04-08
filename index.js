@@ -131,6 +131,19 @@ app.get('/crush', (_req, res) => {
   return res.status(SUCCESS).send(crushs);
 });
 
+app.get('/crush/search', middlewareLogin, (req, res) => {
+  const crushs = readFile(crushFile);
+  const { q } = req.query;
+
+  if (q === undefined) {
+    return res.status(SUCCESS).send([]);
+  } if (q === '') {
+    return res.status(SUCCESS).send(crushs);
+  }
+  const crushIncludeQ = crushs.filter((c) => c.name.includes(q));  
+  return res.status(SUCCESS).send(crushIncludeQ);
+});
+
 app.get('/crush/:id', (req, res) => {
   const crushs = readFile(crushFile);
   const { id } = req.params;
@@ -141,6 +154,14 @@ app.get('/crush/:id', (req, res) => {
   return res.status(NOTFOUND).send({
     message: 'Crush não encontrado',
   });
+});
+
+app.delete('/crush/:id', middlewareLogin, async (req, res) => {
+  const crushs = readFile(crushFile);
+  const { id } = req.params;
+  const newCrushsWithOutCrushId = crushs.filter((c) => c.id !== parseInt(id, 10));
+  await writeInFile(newCrushsWithOutCrushId);
+  return res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
 });
 
 app.post('/login', (req, res) => {
@@ -177,27 +198,5 @@ app.post(
     return res.status(CREATED).send({ id, name, age, date });
   },
 );
-
-app.delete('/crush/:id', middlewareLogin, async (req, res) => {
-  const crushs = readFile(crushFile);
-  const { id } = req.params;
-  const newCrushsWithOutCrushId = crushs.filter((c) => c.id !== parseInt(id, 10));
-  await writeInFile(newCrushsWithOutCrushId);
-  return res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
-});
-
-app.get('/crush/search', middlewareLogin, (req, res) => {
-  const crushs = readFile(crushFile);
-  const { q } = req.query;
-  q.toLocaleLowerCase();
-
-  if (q === undefined) {
-    return res.status(SUCCESS).send([]);
-  } if (q === '') {
-    return res.status(SUCCESS).send(crushs);
-  }
-  const crushIncludeQ = crushs.filter((c) => c.name.toLowerCase().includes(q));  
-  return res.status(SUCCESS).send(crushIncludeQ);
-});
 
 app.listen(PORT, () => { console.log('Online'); });
