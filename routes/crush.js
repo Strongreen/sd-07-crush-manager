@@ -29,6 +29,15 @@ routeCrush.get('/:id', async (req, res) => {
   return res.status(200).send(filterIdData);
 });
 
+routeCrush.use(validCrush[0]);
+routeCrush.delete('/:id', async (req, res) => {
+  const id = Number(req.params);
+  const dataCrush = await readCrush();
+  const filterIdData = dataCrush.find((element) => element.id !== id);
+  await writeCrush(filterIdData);
+  return res.status(200).send({ message: 'Crush deletado com sucesso' });
+});
+
 routeCrush.use(validCrush);
 
 routeCrush.post('/', async (req, res) => {
@@ -41,11 +50,11 @@ routeCrush.post('/', async (req, res) => {
 });
 
 routeCrush.put('/:id', async (req, res) => {
-  const ind = Number(req.params.id);
+  const id = Number(req.params.id);
   const data = req.body;
   const dataCrush = await readCrush();
-  const newCrush = { id: ind, ...data };
-  const filterIdData = await dataCrush.filter((element) => element.id !== ind);
+  const newCrush = { id, ...data };
+  const filterIdData = await dataCrush.filter((element) => element.id !== id);
   const newData = [...filterIdData, newCrush];
   await writeCrush(newData);
   res.status(200).send(newCrush);
