@@ -1,5 +1,6 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+
+const routes = require('./routes');
 
 const app = express();
 const SUCCESS = 200;
@@ -10,4 +11,7 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.listen(PORT, () => { console.log('Online'); });
+app.use('/crush', routes.crush);
+app.use('/crush', routes.getCrush);
+
+app.listen(PORT, () => { console.log(`Online on port ${PORT}`); });

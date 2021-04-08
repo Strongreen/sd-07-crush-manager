@@ -4,18 +4,12 @@ const rescue = require('express-rescue');
 
 const route = express.Router();
 
-route.get('/:id', rescue(async (req, res) => {
+route.get('/', rescue(async (_req, res) => {
   try {
-    const id = req.params;
     const content = await fs.promises.readFile(`${__dirname}/../crush.json`);
     const crushesArray = JSON.parse(content);
-    const resultCrush = crushesArray.find((crush) => crush.id === id);
-
-    if (!resultCrush) {
-      res.staus(404).send({ message: 'Crush não encontrado' });
-    }
-
-    res.status(200).json(resultCrush);
+    
+    return res.status(200).json(crushesArray);
   } catch (e) {
     throw new Error(e);
   }
