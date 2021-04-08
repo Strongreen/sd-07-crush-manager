@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { readFiles, identifyID, login } = require('./helper');
+const { readFiles, addCrush, identifyID, login } = require('./helper');
 
 const app = express();
 app.use(bodyParser.json());
@@ -13,7 +13,10 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.get('/crush', readFiles);
+app
+  .route('/crush')
+  .get(readFiles)
+  .post(addCrush);
 
 app.get('/crush/:id', identifyID);
 
