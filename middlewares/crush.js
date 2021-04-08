@@ -17,7 +17,7 @@ function notDoneAge(req, res, next) {
     return res.status(400).json({ message: 'O campo "age" é obrigatório' });
   }
 
-  if (age < 18) {
+  if (typeof age === 'number' && age < 18) {
     return res
       .status(400)
       .json({ message: 'O crush deve ser maior de idade' });

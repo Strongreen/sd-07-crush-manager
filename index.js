@@ -14,6 +14,13 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
+app.use((_req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', '*');
+  res.header('Access-Control-Allow-Credentials', '*');
+  res.header('Access-Control-Expose-Headers', 'x-access-token'); // esta linha habilita o token no header
+  next();
+});
 app.use('/login', routesLogin);
 app.use('/crush', routesCrush);
 

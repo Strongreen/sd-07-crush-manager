@@ -8,7 +8,7 @@ const pathFile = path.resolve(__dirname, '..', 'crush.json');
 
 const getCrush = rescue(async (req, res) => {
   const dataCrush = await fs.readFile(pathFile);
-  res.status(200).send(JSON.parse(dataCrush));
+  return res.status(200).send(JSON.parse(dataCrush));
 });
 
 const getCrushId = rescue(async (req, res) => {
@@ -40,7 +40,7 @@ const postCrush = rescue(async (req, res) => {
       date: req.body.date,
     };
     await fs.writeFile(pathFile, JSON.stringify(data));
-    res.status(201).send(data[size]);
+    return res.status(201).send(data[size]);
   } catch (error) {
     throw new Error(error);
   }
@@ -53,12 +53,14 @@ const putCrush = rescue(async (req, res) => {
   try {
     const allCrushs = await fs.readFile(pathFile, 'utf8');
     const data = JSON.parse(allCrushs);
+    // console.log(data);
     data[Number(id) - 1].name = name;
     data[Number(id) - 1].age = age;
     data[Number(id) - 1].date.datedAt = datedAt;
     data[Number(id) - 1].date.rate = rate;
+    // console.log(data);
     await fs.writeFile(pathFile, JSON.stringify(data));
-    res.status(200).json(data[Number(id) - 1]);
+    return res.status(200).json(data[Number(id) - 1]);
   } catch (error) {
     throw new Error(error);
   }
@@ -71,7 +73,7 @@ const deleteCrush = rescue(async (req, res) => {
     const data = JSON.parse(allCrushs);
     const newdata = data.filter((crush) => crush.id !== Number(id));
     await fs.writeFile(pathFile, JSON.stringify(newdata));
-    res.status(200).json({
+    return res.status(200).json({
       message: 'Crush deletado com sucesso',
     });
   } catch (error) {
@@ -87,13 +89,12 @@ const queryCrush = rescue(async (req, res) => {
     let searchCrush = [...data];
     if (q) {
       searchCrush = searchCrush.filter((crush) => String(crush.name).startsWith(q));
+      return res.status(200).json(searchCrush);
     }
-    res.status(200).json(searchCrush);
     if (!q || q === '') {
-      res.status(200).json(data);
-    } else {
-      res.status(200).json([]);
+      return res.status(200).json(data);
     }
+    return res.status(200).json([]);
   } catch (error) {
     throw new Error(error);
   }
