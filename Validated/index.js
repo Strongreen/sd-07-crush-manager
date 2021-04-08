@@ -29,5 +29,5 @@ module.exports = {
     filterCrushes,
     newCrush,
     editedCrush,
-    searchCrushes
+    searchCrushes,
 };

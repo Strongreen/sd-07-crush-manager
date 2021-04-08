@@ -6,7 +6,7 @@ async function searchCrushes(search, res) {
   const { crushes } = await getId();
   const regexSeach = /[a-zA-Z]+/;
   if (crushes) {
-    const filterCrush = crushes.find((crush) => crush.nome);
+    const filterCrush = crushes.find((crush) => crush.nome === regexSeach);
     validFoundCrush(filterCrush, res);
     return filterCrush;
   }
