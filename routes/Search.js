@@ -7,7 +7,7 @@ const SUCCESS = 200;
 const NAO_ENCONTRADO = 404;
 
 const readData = async () => {
-  const data = JSON.parse(await fs.readFile(__dirname + '/../crush.json'));
+  const data = JSON.parse(await fs.readFile(`${__dirname}/../crush.json`));
   return data;
 };
 
@@ -29,8 +29,10 @@ Search.get('/search', Auth, async (request, response, next) => {
   try {
     const { q } = request.query;
     const data = await readData();
-    const crush = data.filter(c => {
-      if (c.name.includes(q)) return c;
+    const crush = data.filter((c) => {
+      let obj;
+      if (c.name.includes(q)) obj = c;
+      return obj;
     });
     if (!crush) throw new Error('Crush não Encontrado');
     return response.status(SUCCESS).send(crush);
@@ -47,7 +49,7 @@ Search.get('/:id', async (request, response, next) => {
   try {
     const { id } = request.params;
     const data = await readData();
-    const crush = data.find(obj => obj.id == id);
+    const crush = data.find((obj) => parseInt(obj.id, 10) === parseInt(id, 10));
     if (!crush) throw new Error('Crush não encontrado');
     return response.status(SUCCESS).send(crush);
   } catch (error) {

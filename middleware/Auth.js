@@ -1,19 +1,22 @@
 const SEM_AUTORIZACAO = 401;
 
-const Auth = (request, response, next) => {
-  const { authorization } = request.headers;
-
-  if (!authorization)
-    return response.status(SEM_AUTORIZACAO).send({
-      message: 'Token não encontrado',
+const Auth = (request, _response, next) => {
+  try {
+    if (!request.headers.authorization) {
+      throw new Error('Token não encontrado');
+    }
+    const { authorization } = request.headers;
+    if (authorization.length !== 16) {
+      throw new Error('Token inválido');
+    }
+    return next();
+  } catch (error) {
+    console.log(error);
+    next({
+      status: SEM_AUTORIZACAO,
+      message: error.message,
     });
-
-  if (authorization.length !== 16)
-    return response.status(SEM_AUTORIZACAO).send({
-      message: 'Token inválido',
-    });
-
-  return next();
+  }
 };
 
 module.exports = Auth;

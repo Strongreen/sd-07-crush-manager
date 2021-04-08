@@ -9,20 +9,21 @@ const CRIADO = 201;
 const NAO_EXISTE = 400;
 
 const readData = async () => {
-  const data = JSON.parse(await fs.readFile(__dirname + '/../crush.json'));
+  const data = JSON.parse(await fs.readFile(`${__dirname}/../crush.json`));
   return data;
 };
 
-const writeData = async data => {
-  await fs.writeFile(__dirname + '/../crush.json', JSON.stringify(data));
+const writeData = async (data) => {
+  await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));
 };
 
-const addCrush = async crush => {
+const addCrush = async (crush) => {
   try {
     const data = await readData();
     const id = data[data.length - 1].id + 1;
-    crush.id = id;
-    data.push(crush);
+    const newCrush = crush;
+    newCrush.id = id;
+    data.push(newCrush);
     await writeData(data);
   } catch (error) {
     console.log(error.message);
@@ -32,14 +33,13 @@ const addCrush = async crush => {
 const updateCrush = async (id, crush) => {
   try {
     const data = await readData();
-    const obj = data.find(c => c.id == id);
+    // const obj = data.find(c => c.id == id);
     // data[id - 1] = { ...obj, ...crush };
     const newData = data.map((obj, index) => {
-      if (index + 1 == id) {
+      if (index + 1 === parseInt(id, 10)) {
         return { ...obj, ...crush };
-      } else {
-        return obj;
       }
+      return obj;
     });
     // console.log(newData);
     await writeData(newData);
@@ -48,10 +48,10 @@ const updateCrush = async (id, crush) => {
   }
 };
 
-const deleteCrush = async id => {
+const deleteCrush = async (id) => {
   try {
     const data = await readData();
-    const filterData = data.filter(crush => crush.id != id);
+    const filterData = data.filter((crush) => parseInt(crush.id, 10) !== parseInt(id, 10));
     await writeData(filterData);
   } catch (error) {
     console.log(error);
@@ -80,7 +80,7 @@ Crush.put('/:id', ValidateFields, async (request, response, next) => {
     const { id } = request.params;
     await updateCrush(id, body);
     const data = await readData();
-    const crush = data.find(c => c.id == id);
+    const crush = data.find((c) => parseInt(c.id, 10) === parseInt(id, 10));
     return response.status(SUCCESS).send(crush);
   } catch (error) {
     console.log(error);
@@ -95,7 +95,9 @@ Crush.delete('/:id', async (request, response, next) => {
   try {
     const { id } = request.params;
     const data = await readData();
-    if (!data.some(crush => crush.id == id)) throw new Error('ID não existe');
+    if (!data.some((crush) => parseInt(crush.id, 10) === parseInt(id, 10))) {
+      throw new Error('ID não existe');
+    }
     await deleteCrush(id);
     return response
       .status(SUCCESS)

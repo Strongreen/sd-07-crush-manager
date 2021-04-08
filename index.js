@@ -10,9 +10,9 @@ const SUCCESS = 200;
 const PORT = '3000';
 
 // não remova esse endpoint, e para o avaliador funcionar
-app.get('/', (_request, response) => {
-  return response.status(SUCCESS).send('PROJETO CRUSH MANAGER - TRYBE');
-});
+app.get('/', (_request, response) => response
+  .status(SUCCESS)
+  .send('PROJETO CRUSH MANAGER - TRYBE'));
 
 app.use('/crush', Search);
 
