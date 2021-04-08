@@ -26,33 +26,7 @@ router.get('/', (_req, res) => {
   return res.status(200).json(crushResult);
 });
 
-router.get('/:id', (req, res) => {
-  const crushResult = readingCrushFile();
-  const { id } = req.params;
-  const filteredCrush = crushResult.find((crush) => crush.id === Number(id));
-
-  if (!filteredCrush) return res.status(404).send({ message: 'Crush não encontrado' });
-
-  return res.status(200).json(filteredCrush);
-});
-
-router.use(tokenMiddleware);
-
-router.delete('/:id', (req, res) => {
-  const crushResult = readingCrushFile();
-  const { id } = req.params;
-  const crushIndex = crushResult.findIndex((crush) => crush.id === Number(id));
-
-  if (crushIndex !== -1) {
-    crushResult.splice(crushIndex, 1);
-    writingCrushFile(crushResult);
-    return res.status(200).json({ message: 'Crush deletado com sucesso' });
-  }
-});
-
-router.use(newEntryMiddleware);
-
-router.post('/', (req, res) => {
+router.post('/', tokenMiddleware, newEntryMiddleware, (req, res) => {
   const crushResult = readingCrushFile();
   const { name, age, date: { datedAt, rate } } = req.body;
   const newCrush = { id: crushResult.length + 1, name, age, date: { datedAt, rate } };
@@ -66,7 +40,28 @@ router.post('/', (req, res) => {
   }
 });
 
-router.put('/:id', (req, res) => {
+router.get('/search', tokenMiddleware, (req, res) => {
+  const { q } = req.query;
+  const crushResult = readingCrushFile();
+
+  if (!q) return res.status(200).json(crushResult);
+
+  const searchedTerm = crushResult.filter((crush) => crush.name.includes(q));
+
+  return res.status(200).json(searchedTerm);
+});
+
+router.get('/:id', (req, res) => {
+  const crushResult = readingCrushFile();
+  const { id } = req.params;
+  const filteredCrush = crushResult.find((crush) => crush.id === Number(id));
+
+  if (filteredCrush) return res.status(200).json(filteredCrush);
+
+  return res.status(404).send({ message: 'Crush não encontrado' });
+});
+
+router.put('/:id', tokenMiddleware, newEntryMiddleware, (req, res) => {
   const crushResult = readingCrushFile();
   const { id } = req.params;
   const { name, age, date: { datedAt, rate } } = req.body;
@@ -79,6 +74,18 @@ router.put('/:id', (req, res) => {
     return res.status(200).json(updatedCrush);
   } catch (error) {
     return error;
+  }
+});
+
+router.delete('/:id', tokenMiddleware, (req, res) => {
+  const crushResult = readingCrushFile();
+  const { id } = req.params;
+  const crushIndex = crushResult.findIndex((crush) => crush.id === Number(id));
+
+  if (crushIndex !== -1) {
+    crushResult.splice(crushIndex, 1);
+    writingCrushFile(crushResult);
+    return res.status(200).json({ message: 'Crush deletado com sucesso' });
   }
 });
 
