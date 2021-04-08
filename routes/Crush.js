@@ -1,15 +1,12 @@
 const express = require('express');
 const fs = require('fs').promises;
+const { ValidateFields } = require('../middleware');
 
 const Crush = express.Router();
 
 const SUCCESS = 200;
+const CRIADO = 201;
 const NAO_EXISTE = 400;
-
-const validateDate = date => {
-  const regexDate = /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/;
-  return regexDate.test(date);
-};
 
 const readData = async () => {
   const data = JSON.parse(await fs.readFile(__dirname + '/../crush.json'));
@@ -32,49 +29,83 @@ const addCrush = async crush => {
   }
 };
 
-Crush.post('/', async (request, response, next) => {
+const updateCrush = async (id, crush) => {
+  try {
+    const data = await readData();
+    const obj = data.find(c => c.id == id);
+    // data[id - 1] = { ...obj, ...crush };
+    const newData = data.map((obj, index) => {
+      if (index + 1 == id) {
+        return { ...obj, ...crush };
+      } else {
+        return obj;
+      }
+    });
+    // console.log(newData);
+    await writeData(newData);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const deleteCrush = async id => {
+  try {
+    const data = await readData();
+    const filterData = data.filter(crush => crush.id != id);
+    await writeData(filterData);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+Crush.post('/', ValidateFields, async (request, response, next) => {
   try {
     const { body } = request;
-    const { name, age, date } = body;
-
-    const nameMinLength = 3;
-    const ageMinLength = 18;
-
-    if (!name) throw new Error('O campo "name" é obrigatório');
-
-    if (name.length < nameMinLength)
-      throw new Error('O "name" deve ter pelo menos 3 caracteres');
-
-    if (!age) throw new Error('O campo "age" é obrigatório');
-
-    if (parseInt(age) < ageMinLength)
-      throw new Error('O crush deve ser maior de idade');
-
-    if (!date || date.rate === undefined || !date.datedAt)
-      throw new Error(
-        'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
-      );
-
-    const { datedAt, rate } = date;
-
-    if (!validateDate(datedAt))
-      throw new Error('O campo "datedAt" deve ter o formato "dd/mm/aaaa"');
-
-    if (parseInt(rate) < 1 || parseInt(rate) > 5)
-      throw new Error('O campo "rate" deve ser um inteiro de 1 à 5');
-
     await addCrush(body);
     const data = await readData();
     const newCrush = data[data.length - 1];
-    return response.status(SUCCESS).send(newCrush);
-
+    return response.status(CRIADO).send(newCrush);
   } catch (error) {
     console.log(error);
-    next({
+    return next({
       status: NAO_EXISTE,
       message: error.message,
     });
-    throw new Error(error);
+  }
+});
+
+Crush.put('/:id', ValidateFields, async (request, response, next) => {
+  try {
+    const { body } = request;
+    const { id } = request.params;
+    await updateCrush(id, body);
+    const data = await readData();
+    const crush = data.find(c => c.id == id);
+    return response.status(SUCCESS).send(crush);
+  } catch (error) {
+    console.log(error);
+    return next({
+      status: NAO_EXISTE,
+      message: error.message,
+    });
+  }
+});
+
+Crush.delete('/:id', async (request, response, next) => {
+  try {
+    const { id } = request.params;
+    const data = await readData();
+    if (!data.some(crush => crush.id == id)) throw new Error('ID não existe');
+    await deleteCrush(id);
+    return response
+      .status(SUCCESS)
+      .send({ message: 'Crush deletado com sucesso' });
+  } catch (error) {
+    console.log(error);
+    return next({
+      status: NAO_EXISTE,
+      message: error.message,
+    });
   }
 });
 

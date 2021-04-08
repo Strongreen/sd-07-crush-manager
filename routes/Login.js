@@ -36,13 +36,10 @@ Login.post('/', (request, response, next) => {
     });
   } catch (error) {
     console.log(error);
-
-    next({
+    return next({
       status: NAO_EXISTE,
       message: error.message,
     });
-
-    throw new Error(error);
   }
 });
 
