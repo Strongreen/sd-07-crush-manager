@@ -178,4 +178,12 @@ app.post(
   },
 );
 
+app.delete('/crush/:id', middlewareLogin, async (req, res) => {
+  const crushs = readFile(crushFile);
+  const { id } = req.params;
+  const newCrushsWithOutCrushId = crushs.filter((c) => c.id !== parseInt(id, 10));
+  await writeInFile(newCrushsWithOutCrushId);
+  return res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
+});
+
 app.listen(PORT, () => { console.log('Online'); });
