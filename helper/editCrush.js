@@ -1,4 +1,3 @@
-const SUCCESS = 200;
 const { writeFiles } = require('./writeFiles');
 const { 
     validToken,
