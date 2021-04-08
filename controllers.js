@@ -48,7 +48,7 @@ module.exports = {
       if (crushList.length === 0) crush.id = 1;
       else crush.id = crushList.length + 1;
       crushList.push(crush);
-      await fs.promises.writeFile('./crush.json', JSON.stringify(crushList));
+      await fs.promises.writeFile(`./${file}`, JSON.stringify(crushList));
       return response.status(201).send(crush);
     } catch (e) {
       console.log(e);
@@ -70,14 +70,14 @@ module.exports = {
     const crushList = JSON.parse(await fs.promises.readFile(`./${file}`, 'utf-8'));
     const crushListFiltered = crushList.filter((next) => next.id !== id);
     crush.id = parseInt(id, 10);
-    await fs.promises.writeFile('./crush.json', JSON.stringify([crushListFiltered, crush]));
+    await fs.promises.writeFile(`./${file}`, JSON.stringify([crushListFiltered, crush]));
     return response.status(200).send(crush);
   },
   async deleteCrush(request, response) {
     const { id } = request.params;
     const crushList = JSON.parse(await fs.promises.readFile(`./${file}`, 'utf-8'));
     const crushListFiltered = crushList.filter((next) => next.id !== id);
-    await fs.promises.writeFile('./crush.json', JSON.stringify(crushListFiltered));
+    await fs.promises.writeFile(`./${file}`, JSON.stringify(crushListFiltered));
     return response.status(200).send({ message: 'Crush deletado com sucesso' });
   },
 };
