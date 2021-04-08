@@ -3,6 +3,7 @@ const { identifyID } = require('./identifyID');
 const { login } = require('./login');
 const { addCrush } = require('./addCrush');
 const { writeFiles } = require('./writeFiles');
+const { editCrush } = require('./editCrush');
 
 module.exports = {
     readFiles,
@@ -10,4 +11,5 @@ module.exports = {
     login,
     addCrush,
     writeFiles,
+    editCrush,
 };
