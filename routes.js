@@ -21,7 +21,8 @@ routes.route('/crush/:id')
     validateName,
     validateAge,
     validateDate,
-    controllers.updateCrush);
+    controllers.updateCrush,
+  );
 
 routes.post('/crush',
   validateToken,
