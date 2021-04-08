@@ -80,4 +80,15 @@ module.exports = {
     await fs.promises.writeFile(`./${file}`, JSON.stringify(crushListFiltered));
     return response.status(200).send({ message: 'Crush deletado com sucesso' });
   },
+  async searchCrush(request, response) {
+    const { q } = request.query;
+    const crushs = JSON.parse(await fs.promises.readFile(`./${file}`, 'utf-8'));
+
+    if (q === undefined || q === '') {
+      return response.status(200).json(crushs);
+    }
+    const searchArtist = crushs.filter((crush) => (crush.name).includes(q));
+
+    response.status(200).json(searchArtist);
+  },
 };
