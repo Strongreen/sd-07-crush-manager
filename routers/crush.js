@@ -18,6 +18,19 @@ router.get('/', (req, res) => {
 
       return res.status(SUCCESS_200).send(JSON.parse(data));
   } catch (error) {
+    console.log(error.message);
+  }
+});
+
+router.get('/search', checkedTokenMiddleware, (req, res) => {
+  try {
+    const { q } = req.query;
+    console.log(q);
+    const data = fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8');
+    const crushesFilteres = JSON.parse(data).filter((item) => item.name.includes(q));
+
+    return res.status(SUCCESS_200).send(crushesFilteres);
+  } catch (error) {
     console.log('ERRO na leitura do arquivo!', error.message);
   }
 });
@@ -27,10 +40,11 @@ router.get('/:id', (req, res) => {
     const { id } = req.params;
     const data = fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8');
     const crush = JSON.parse(data).find((item) => item.id.toString() === id);
+
     if (!crush) {
       return res.status(NOTFOUND_404).send({ message: 'Crush não encontrado' });
     }
-    return res.status(SUCCESS_200).send(crush);
+    return res.status(SUCCESS_200).send(crush);    
   } catch (error) {
     console.log('ERRO na leitura do arquivo!', error.message);
   }
@@ -83,7 +97,7 @@ router.delete('/:id', rescue(async (req, res) => {
     const data = fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8');
     const crushs = JSON.parse(data);
     const index = crushs.findIndex((item) => item.id === parseInt(id, 10));
-
+    console.log('ENTROU AQUI. LINHA 86');
     if (index === -1) return res.status(404).json('crush não encontrado');
 
     crushs.splice(index, 1);

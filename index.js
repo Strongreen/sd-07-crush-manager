@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 
 const crush = require('./routers/crush');
 const login = require('./routers/login');
+const teste = require('./routers/teste');
 
 const app = express();
 app.use(bodyParser.json());
@@ -17,5 +18,6 @@ app.get('/', (_request, response) => {
 
 app.use('/login', login);
 app.use('/crush', crush);
+app.use('/teste', teste);
 
 app.listen(PORT, () => { console.log('Online'); });
