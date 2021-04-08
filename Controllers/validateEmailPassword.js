@@ -21,7 +21,7 @@ function notDonePassword(value) {
   const passwordLenght = value.toString();
   if (passwordLenght.length < 6) {
     return {
-      message: 'O "password" deve ter pelo menos 6 caracteres',
+      message: 'O "senha" deve ter pelo menos 6 caracteres',
     };
   }
 }
