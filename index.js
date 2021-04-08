@@ -16,16 +16,17 @@ app.get('/', (_request, response) => {
 
 app.listen(PORT, () => { console.log('Online'); });
 
-const getCrushList = () => {
+const getCrushList = async () => {
   try {
-    return JSON.parse(fs.readFileSync('./crush.json', 'utf-8'));
+    const file = await fs.readFileSync('./crush.json', 'utf-8');
+    return JSON.parse(file);
   } catch (err) {
     console.error(`Erro ao ler o arquivo: ${err.path}`);
   }
 };
 
-app.get('/crush', (_req, res) => {
-  const crushList = getCrushList();
+app.get('/crush', async (_req, res) => {
+  const crushList = await getCrushList();
   if (crushList.length !== 0) {
     res.status(SUCCESS).send(crushList);
   } else {
@@ -33,8 +34,8 @@ app.get('/crush', (_req, res) => {
   }
 });
 
-app.get('/crush/:id', (req, res) => {
-  const crushList = getCrushList();
+app.get('/crush/:id', async (req, res) => {
+  const crushList = await getCrushList();
   const { id } = req.params;
   const result = crushList.find((crush) => crush.id === Number(id));
   if (result) {
@@ -73,3 +74,18 @@ app.post('/login', (req, res) => {
     return res.status(SUCCESS).send({ token: `${generateToken()}` });
   }
 });
+
+// const validateToken = (req, res, next) => {
+//   const token = req.headers.authorization;
+//   if (!token) {
+//       return res.status(401).send({ message: 'Token não encontrado' });
+//   }
+//   if (token.length !== 16) {
+//     return res.status(401).send({ message: 'Token inválido' });
+//   }
+//   next();
+// };
+
+// app.post('/crush', validateToken, (req, res) => {
+//   const { name, age, date } = req.body;
+// });
