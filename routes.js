@@ -14,7 +14,14 @@ const {
 
 routes.get('/crush', controllers.getCrushList);
 
-routes.get('/crush/:id', controllers.getCrushById);
+routes.route('/crush/:id')
+  .get(controllers.getCrushById)
+  .put(
+    validateToken,
+    validateName,
+    validateAge,
+    validateDate,
+    controllers.updateCrush);
 
 routes.post('/crush',
   validateToken,
