@@ -163,7 +163,7 @@ app.post('/crush', validationToken, async (req, res) => {
   }
 });
 
-app.put('/crush/:id', validationToken, async (req, res) => {
+app.put(crushId, validationToken, async (req, res) => {
   const myCrush = await firstFile();
   const data = JSON.parse(myCrush);
   const id = Number(req.params.id);
@@ -179,5 +179,21 @@ app.put('/crush/:id', validationToken, async (req, res) => {
     res.status(200).json(data[id - 1]);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+});
+
+app.delete(crushId, validationToken, async (req, res) => {
+  const myCrush = await firstFile();
+  const data = JSON.parse(myCrush);
+  const id = Number(req.params.id);
+
+  const index = id - 1;
+    data.splice(index, 1);
+
+  try {
+    await fs.writeFile(`${__dirname}/crush.json`, JSON.stringify(data));
+        res.status(200).send({ message: 'Crush deletado com sucesso' });
+  } catch (error) {
+    throw new Error(error);
   }
 });
