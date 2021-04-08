@@ -9,7 +9,6 @@ function validToken(token, res) {
         return res.status(NOTFOUND)
                   .send({ message: 'Token inválido' });
     }
-    
 }
 
 module.exports = { validToken };
