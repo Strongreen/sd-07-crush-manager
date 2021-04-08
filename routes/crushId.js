@@ -9,7 +9,7 @@ async function crushIdFunction(request, response) {
     const results = showFile
       .find((result) => 
         result.id.toString() === id);
-    if (!results.length) {
+    if (!results) {
       return response.status(404).send({ message: 'Crush não encontrado' });
     }
     return response.status(200).send(results);
