@@ -7,11 +7,10 @@ async function crushAddFunction(request, response) {
   try {
     const { name, age, date } = body;
     const showFile = await file.readPromise(crushData);
-    const newCrush = { id: 1, name, age, date };
+    const newCrush = { name, age, id: showFile.length + 1, date };
     showFile.push(newCrush);
-    console.log(showFile);
     return response.status(201).send({
-      id: newCrush.id,
+      id: showFile.length,
       name: newCrush.name,
       age: newCrush.age,
       date: newCrush.date,

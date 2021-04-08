@@ -7,6 +7,8 @@ const validPass = require('./valid/validPass');
 const validEmail = require('./valid/validEmail');
 const crushAdd = require('./routes/crushAdd');
 const validToken = require('./valid/validToken');
+const validCrush = require('./valid/validCrush');
+const validDate = require('./valid/validCrushDate');
 
 const { crushFunction } = crush;
 const { crushIdFunction } = crushId;
@@ -15,6 +17,8 @@ const { validEmailFunction } = validEmail;
 const { validPassFunction } = validPass;
 const { crushAddFunction } = crushAdd;
 const { validTokenFunction } = validToken;
+const { validNameFunction, validAgeFunction } = validCrush;
+const { validDateFunction, validRateFunction, validDatedAtFunction } = validDate;
 
 const app = express();
 app.use(bodyParser.json());
@@ -33,6 +37,13 @@ app.get('/crush/:id', crushIdFunction);
 
 app.post('/login', validEmailFunction, validPassFunction, crushLoginFunction);
 
-app.post('/crush', validTokenFunction, crushAddFunction);
+app.post('/crush', 
+  validTokenFunction,
+  validNameFunction,
+  validAgeFunction, 
+  validDateFunction,
+  validRateFunction,
+  validDatedAtFunction,
+  crushAddFunction);
 
 app.listen(PORT, () => { console.log('Online'); });

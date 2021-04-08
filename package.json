@@ -8,7 +8,8 @@
     "restore": "cp tests/seed.json crush.json",
     "debug": "nodemon -w --exec node index.js",
     "start": "node index.js",
-    "lint": "eslint --no-inline-config --no-error-on-unmatched-pattern -c .eslintrc.json . --ext .js,.jsx"
+    "lint": "eslint --no-inline-config --no-error-on-unmatched-pattern -c .eslintrc.json . --ext .js,.jsx",
+    "dev": "npx nodemon --ignore crush.json index.js"
   },
   "keywords": [],
   "author": "",
