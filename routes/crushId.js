@@ -9,10 +9,10 @@ async function crushIdFunction(request, response) {
     const results = showFile
       .find((result) => 
         result.id.toString() === id);
-    if (!results) {
-      response.status(404).send({ message: 'Crush não encontrado' });
+    if (!results.length) {
+      return response.status(404).send({ message: 'Crush não encontrado' });
     }
-    response.status(200).send(results);
+    return response.status(200).send(results);
   } catch (e) {
     throw new Error(e);
   } 
