@@ -186,4 +186,18 @@ app.delete('/crush/:id', middlewareLogin, async (req, res) => {
   return res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
 });
 
+app.get('/crush/search', middlewareLogin, (req, res) => {
+  const crushs = readFile(crushFile);
+  const { q } = req.query;
+  q.toLocaleLowerCase();
+
+  if (q === undefined) {
+    return res.status(SUCCESS).send([]);
+  } if (q === '') {
+    return res.status(SUCCESS).send(crushs);
+  }
+  const crushIncludeQ = crushs.filter((c) => c.name.toLowerCase().includes(q));  
+  return res.status(SUCCESS).send(crushIncludeQ);
+});
+
 app.listen(PORT, () => { console.log('Online'); });
