@@ -13,15 +13,13 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app
-  .route('/crush')
-  .get(readFiles)
-  .post(addCrush);
+app.get('/crush', readFiles);
 
-app
-  .route('/crush/:id')
-  .get(identifyID)
-  .put(editCrush);
+app.post('/crush', addCrush);
+
+app.get('/crush/:id', identifyID);
+
+app.put('/crush/:id', editCrush);
 
 app.post('/login', login);
 
