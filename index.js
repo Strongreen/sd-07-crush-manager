@@ -17,6 +17,6 @@ app.get('/crush', readFiles);
 
 app.get('/crush/:id', identifyID);
 
-app.get('/login', login);
+app.post('/login', login);
 
 app.listen(PORT, () => { console.log('Online'); });
