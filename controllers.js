@@ -73,4 +73,11 @@ module.exports = {
     await fs.promises.writeFile('./crush.json', JSON.stringify([crushListFiltered, crush]));
     return response.status(200).send(crush);
   },
+  async deleteCrush(request, response) {
+    const { id } = request.params;
+    const crushList = JSON.parse(await fs.promises.readFile(`./${file}`, 'utf-8'));
+    const crushListFiltered = crushList.filter((next) => next.id !== id);
+    await fs.promises.writeFile('./crush.json', JSON.stringify(crushListFiltered));
+    return response.status(200).send({ message: 'Crush deletado com sucesso' });
+  },
 };

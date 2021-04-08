@@ -22,6 +22,10 @@ routes.route('/crush/:id')
     validateAge,
     validateDate,
     controllers.updateCrush,
+  )
+  .delete(
+    validateToken,
+    controllers.deleteCrush,
   );
 
 routes.post('/crush',
