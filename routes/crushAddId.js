@@ -9,6 +9,10 @@ async function crushAddIdFunction(request, response) {
     const { name, age, date } = request.body;
     const showFile = await file.readPromise(crushData);
     const index = showFile.findIndex((result) => result.id.toString() === id);
+    console.log(index);
+    if (index === -1) {
+      return response.status(404).send({ message: 'Crush não encontrado' });
+    } 
     showFile[index].name = name;
     showFile[index].age = age;
     showFile[index].date = date;
@@ -20,22 +24,3 @@ async function crushAddIdFunction(request, response) {
 }
 
 module.exports = { crushAddIdFunction };
-
-//  async function crushAddIdFunction(request, response) {
-//    try {
-//      const { id } = request.params;
-//      const { name, age, date } = request.body;
-//      const showFile = await file.readPromise(crushData);
-//      showFile.map((result) => {
-//          if (result.id.toString() === id) {
-//           result.name = name;
-//           result.age = age;
-//           result.date = date;
-//          }
-//          return result;
-//          //  response.status(200).send(result);
-//      });
-//    } catch (error) {
-//      throw new Error(error);
-//    }
-//  }
