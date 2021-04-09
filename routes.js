@@ -4,7 +4,11 @@ const route = express.Router();
 
 const crushController = require('./controllers/crushController');
 
-route.get('/crush', crushController.getAllCrushs);
+const middlewares = require('./middlewares');
+
+const { validateEmail } = middlewares;
+
+route.get('/crush', validateEmail, crushController.getAllCrushs);
 
 route.get('/crush/:id', crushController.getCrushById);
 

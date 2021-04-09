@@ -4,6 +4,8 @@ const app = express();
 
 const routes = require('./routes');
 
+const { errorMiddleware } = require('./middlewares');
+
 app.use(express.json());
 app.use(routes);
 
@@ -15,6 +17,7 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
+app.use(errorMiddleware);
 app.listen(PORT, () => {
   console.log('Online');
 });
