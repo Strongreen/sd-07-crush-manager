@@ -3,13 +3,18 @@ const express = require('express');
 
 const Crush = express.Router();
 
+const getCrushes = async () => {
+  const result = await fs.readFile(`${__dirname}/../data/crush.json`);
+  return result;
+};
+
 Crush.get('/', async (_req, res) => {
   const noCrush = [];
-  const result = await fs.readFile(`${__dirname}/../data/crush.json`);
-  const crush = result;
+  const crush = await getCrushes();
   try {
-    if (crush.length !== 0) return res.status(200).send(JSON.parse(crush));
-    return res.status(200).send(noCrush);
+    if (crush.length === 0) return res.status(200).send(noCrush);
+    console.log(JSON.parse(crush));
+    return res.status(200).send(JSON.parse(crush));
   } catch (error) {
     console.log(error);
   }
