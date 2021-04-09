@@ -32,7 +32,7 @@ app
   .get(readFiles)
   .post(validToken, addCrush);
 
-app.get('/crush/search',validToken, searchCrush);
+app.get('/crush/search', validToken, searchCrush);
 
 app
   .route('/crush/:id')

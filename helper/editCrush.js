@@ -1,6 +1,5 @@
 const { writeFiles } = require('./writeFiles');
 const { 
-    validToken,
     validName,
     validAge,
     validDate,
