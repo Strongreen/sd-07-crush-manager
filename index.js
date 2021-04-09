@@ -86,23 +86,76 @@ const validateToken = (req, res, next) => {
   next();
 };
 
-const validateData = (name, age, date) => {
+const validateName = (req, res, next) => {
+  const { name } = req.body;
   if (!name || name.length === 0) {
     return res.status(400).send({ message: 'O campo "name" é obrigatório' });
   }
   if (name.length < 3) {
     return res.status(400).send({ message: 'O "name" deve ter pelo menos 3 caracteres' });
   }
-  if (!age || name.length === 0) {
+  next();
+};
+
+const validateAge = (req, res, next) => {
+  const { age } = req.body;
+  if (!age || age.length === 0) {
     return res.status(400).send({ message: 'O campo "age" é obrigatório' });
   }
   if (age < 18) {
     return res.status(400).send({ message: 'O crush deve ser maior de idade' });
   }
+  next();
+};
 
-}
+const validateRate = (date) => {
+  if (date.rate < 1 || date.rate > 5) {
+    return false;
+  };
+};
 
-app.post('/crush', validateToken, (req, res) => {
+const validateDate = (req, res, next) => {
+  const { date } = req.body;
+  if (!date || !date.datedAt || typeof (date.rate) !== 'number') {
+    return res
+      .status(400)
+      .send({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
+  }
+  if (!validateRate(date)) {
+    return res
+    .status(400)
+    .send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+  }
+  const regex = /(((^0|^1|^2)[0-9])|(^3[0-1]))\/((0[0-9])|(1[0-2]))\/(((19|20)[0-9]{2}$))/mg;
+  const regexTest = regex.test(date.dateAt);
+  if (!regexTest) {
+    return res.status(400).send({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
+  }
+  next();
+};
+
+// const addNewCrush = async (req, res) => {
+//   const crushList = await getCrushList();
+//   const { name, age, date } = req.body;
+//   const id = crushList.length + 1;
+
+//   const newCrush = ({ name, age, id, date });
+//   crushList.push(newCrush);
+
+//   fs.writeFile('./crush.json', JSON.stringify(crushList));
+//   return res.status(201).json(newCrush);
+// };
+
+app.post('/crush',
+  validateToken, validateName, validateAge,
+  validateRate, validateDate, async (req, res) => {
+    const crushList = await getCrushList();
   const { name, age, date } = req.body;
-  validateData(name, age, date);
-});
+  const id = crushList.length + 1;
+
+  const newCrush = ({ name, age, id, date });
+  crushList.push(newCrush);
+
+  fs.writeFile('./crush.json', JSON.stringify(crushList));
+  return res.status(201).send(newCrush);
+  });
