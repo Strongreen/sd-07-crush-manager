@@ -30,14 +30,12 @@ app
   .get(readFiles)
   .post(addCrush);
 
+app.get('/crush/search', searchCrush);
+
 app
   .route('/crush/:id')
   .get(identifyID)
   .put(editCrush)
   .delete(deleteCrush);
-
-app
-  .route('/crush/search')
-  .get(searchCrush);
 
 app.listen(PORT, () => { console.log('Online'); });

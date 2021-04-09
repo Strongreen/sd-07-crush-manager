@@ -1,13 +1,9 @@
-const NOTFOUND = 401;
-
-function validToken(token, res) {
+function validToken(token) {
     if (!token) {
-        return res.status(NOTFOUND)
-                  .send({ message: 'Token não encontrado' });
+        throw new Error('Token não encontrado');
     }
     if (token.length === 0 || token.length !== 16) {
-        return res.status(NOTFOUND)
-                  .send({ message: 'Token inválido' });
+        throw new Error('Token inválido');
     }
 }
 

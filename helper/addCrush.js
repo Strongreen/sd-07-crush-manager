@@ -11,12 +11,21 @@ const {
 
 const SUCCESS = 201;
 const NOTFOUND = 400;
+const TOKEN = 401;
+
+function Valid(req, res) {
+  const { authorization } = req.headers;
+  try {
+    validToken(authorization);
+  } catch (error) {
+    res.status(TOKEN).send({ message: error.message });
+  }
+}
 
 async function addCrush(req, res) {
-  const { authorization } = req.headers;
-  validToken(authorization, res);
-  const { name, age, date } = req.body;
+  Valid(req, res);
   try {
+    const { name, age, date } = req.body;
     validName(name);
     validAge(age);
     validDate(date);

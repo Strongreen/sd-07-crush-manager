@@ -13,7 +13,6 @@ const { filterCrushes } = require('./filterCrushes');
 const { newCrush } = require('./newCrush');
 const { editedCrush } = require('./editedCrush');
 const { searchCrushes } = require('./searchCrushes');
-const { validTokenSearch } = require('./validTokenSearch');
 
 module.exports = {
     validName,
@@ -31,5 +30,4 @@ module.exports = {
     newCrush,
     editedCrush,
     searchCrushes,
-    validTokenSearch,
 };
