@@ -156,3 +156,17 @@ app.post('/crush',
     });
   }
 });
+
+app.put('/crush/:id',
+  validateToken, validateName, validateAge,
+  validateDate, validateRate, async (req, res) => {
+    const crushList = await getCrushList();
+  const { name, age, date } = req.body;
+  const { id } = req.params;
+  const crushId = parseInt(id, 10);
+  const crushToUpdate = crushList.find((crush) => crush.id === crushId);
+  crushToUpdate.name = name;
+  crushToUpdate.age = age;
+  crushToUpdate.date = date;
+  return res.status(200).send(crushToUpdate);
+});
