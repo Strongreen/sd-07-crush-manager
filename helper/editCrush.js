@@ -13,8 +13,6 @@ const NOTFOUND = 400;
 const SUCCESS = 200;
 
 async function editCrush(req, res) {
-  const { authorization } = req.headers;
-  validToken(authorization, res);
   const { id } = req.params;
   const { name, age, date } = req.body;
   try {
@@ -26,9 +24,9 @@ async function editCrush(req, res) {
     validRate(rate);
     const crush = await editedCrush(req.body, Number(id));
     writeFiles(crush);
-    res.status(SUCCESS).send(crush);
+    return res.status(SUCCESS).send(crush);
   } catch (error) {
-    res.status(NOTFOUND).send({ message: error.message });
+    return res.status(NOTFOUND).send({ message: error.message });
   }
 }
 

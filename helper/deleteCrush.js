@@ -1,12 +1,10 @@
-const { validToken, getId, filterCrushes } = require('../Validated');
+const { getId, filterCrushes } = require('../Validated');
 
 const { writeFiles } = require('./writeFiles');
 
 const SUCCESS = 200;
 
 async function deleteCrush(req, res) {
-  const { authorization } = req.headers;
-  validToken(authorization, res);
   const { id } = req.params;
   const crush = filterCrushes(id);
   if (crush) {

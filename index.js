@@ -10,6 +10,8 @@ const {
   searchCrush,
 } = require('./helper');
 
+const { validToken } = require('./Validated');
+
 const app = express();
 app.use(bodyParser.json());
 
@@ -28,14 +30,14 @@ app
 app
   .route('/crush')
   .get(readFiles)
-  .post(addCrush);
+  .post(validToken, addCrush);
 
-app.get('/crush/search', searchCrush);
+app.get('/crush/search',validToken, searchCrush);
 
 app
   .route('/crush/:id')
   .get(identifyID)
-  .put(editCrush)
-  .delete(deleteCrush);
+  .put(validToken, editCrush)
+  .delete(validToken, deleteCrush);
 
 app.listen(PORT, () => { console.log('Online'); });

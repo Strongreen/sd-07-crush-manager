@@ -14,7 +14,7 @@ function login(req, res) {
     validPassword(password);
     return res.status(SUCCESS).send(CreateToken());
   } catch (error) {
-    res.status(NOTFOUND).send({ message: error.message });
+    return res.status(NOTFOUND).send({ message: error.message });
   }
 }
 

@@ -1,6 +1,5 @@
 const { writeFiles } = require('./writeFiles');
 const { 
-    validToken,
     validName,
     validAge,
     validDatedAt,
@@ -13,8 +12,6 @@ const SUCCESS = 201;
 const NOTFOUND = 400;
 
 async function addCrush(req, res) {
-  const { authorization } = req.headers;
-  validToken(authorization, res);
   try {
     const { name, age, date } = req.body;
     validName(name);
@@ -25,9 +22,9 @@ async function addCrush(req, res) {
     validRate(rate);
     const crush = await newCrush(req.body);
     writeFiles(crush.crushes, res);
-    res.status(SUCCESS).send(crush.crush);
+    return res.status(SUCCESS).send(crush.crush);
   } catch (error) {
-    res.status(NOTFOUND).send({ message: error.message });
+    return res.status(NOTFOUND).send({ message: error.message });
   }
 }
 
