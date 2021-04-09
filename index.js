@@ -50,6 +50,28 @@ app.get(crushID, async (req, res) => {
   }
 });
 
+const validateToken = (req, res, next) => {
+  const token = req.headers.authorization;
+  console.log(token);
+  if (!token) {
+      return res.status(401).send({ message: 'Token não encontrado' });
+  }
+  if (token.length !== 16) {
+    return res.status(401).send({ message: 'Token inválido' });
+  }
+  next();
+};
+
+app.get('./crush/search', validateToken, async (req, res) => {
+  const { q } = req.query;
+  const crushList = await getCrushList();
+  if (!q) {
+    return res.status(200).json(crushList);
+  }
+  const response = crushList.filter((crush) => crush.name.includes(q));
+  return res.status(200).json(response);
+});
+
 const validateEmail = (email) => {
   const regex = /\S+@\S+\.\S+/;
   return regex.test(email);
@@ -77,17 +99,6 @@ app.post('/login', (req, res) => {
     return res.status(SUCCESS).send({ token: `${generateToken()}` });
   }
 });
-
-const validateToken = (req, res, next) => {
-  const token = req.headers.authorization;
-  if (!token) {
-      return res.status(401).send({ message: 'Token não encontrado' });
-  }
-  if (token.length !== 16) {
-    return res.status(401).send({ message: 'Token inválido' });
-  }
-  next();
-};
 
 const validateName = (req, res, next) => {
   const { name } = req.body;
