@@ -1,12 +1,22 @@
 const express = require('express');
 const fs = require('fs');
 const CryptoJS = require('crypto-js');
-// const data = require('../crush.json');
+const dataFile = require('../crush.json');
+const validation = require('./validation');
 
 const app = express();
 const sucess = 200;
 const notFound = 404;
 const mandatory = 400;
+
+const {
+  validateName,
+  validateDate,
+  validateAge,
+  validateRate,
+  validationToken,
+  validateDataObject,
+ } = validation;
 
 const validatePass = (pass) => {
   if (pass !== undefined) {
@@ -80,18 +90,28 @@ app.post('/login', (req, res) => {
   }
   return res.status(mandatory).send(validateData(email, password));
 });
+// Gambiarra temporaria 
+const id = 5;
 
-app.post('/crush', (req, res) => {
-  const newCrush = req.body;
-  const crushList = JSON.parse(fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8'));
-  const newdata = [...crushList, newCrush];
+app.post('/crush', async (req, res) => {
+  const { name, age, date } = req.body;
+  const { headers } = req;
+  const { authorization } = headers;
   
-  try {
-    fs.writeFileSync(crushList, JSON.stringify(newdata));
-    res.status(201).send('Crush foi cadastrado com sucesso');
-  } catch (error) {
-    throw new Error(error);
-  }
+    const newCrush = { id, name, age, date };
+
+  const newCrushList = [dataFile, newCrush];
+  validationToken(headers, authorization, 'authorization', res);
+  validateDataObject(date, res);
+  validateRate(date.rate, res);
+  validateDate(date.datedAt, res);
+  validateName(name, res);
+  validateAge(age, res);
+    
+  await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newCrushList));
+  return res
+    .status(201)
+    .send(newCrush);
 });
 
 // app.put('/crush/:id', (req, res) => {
