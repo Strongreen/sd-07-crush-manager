@@ -1,5 +1,6 @@
 const express = require('express');
-const { crush } = require('./src/routers');
+const fs = require('fs').promises;
+const path = require('path');
 
 const app = express();
 app.use(express.json());
@@ -12,6 +13,17 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.use('/crush', crush);
+app.get('/crush', async (req, res) => {
+  try {
+    const response = await fs.readFile(path.join(__dirname, './crush.json'));
+    const data = await JSON.parse(response);
+    if (response.length === 0) return res.status(200).send([]);
+    res.status(200).send(data);
+  } catch (error) {
+    console.log(error);
+  }
+});
 
-app.listen(PORT, () => { console.log('Online'); });
+app.listen(PORT, () => {
+  console.log('Online');
+});
