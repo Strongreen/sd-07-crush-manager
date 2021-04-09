@@ -12,6 +12,16 @@ async function writeCrush(data) {
   await fs.writeFile('./crush.json', JSON.stringify(data, null, 2));
 }
 
+routeCrush.get('/search', validCrush[0], async (req, res) => {
+  const { q } = req.query;
+  const dataCrush = await readCrush();
+  const filterCrush = dataCrush.filter((e) => e.name.toLowerCase().includes(q.toLowerCase()));
+  if (filterCrush.length === 0) {
+    return res.status(200).send(dataCrush);
+  }
+  return res.status(200).send(filterCrush);
+});
+
 routeCrush.get('/', async (req, res) => {
   const dataCrush = await readCrush();
   return res.status(200).send(dataCrush);
@@ -29,8 +39,7 @@ routeCrush.get('/:id', async (req, res) => {
   return res.status(200).send(filterIdData);
 });
 
-routeCrush.use(validCrush[0]);
-routeCrush.delete('/:id', async (req, res) => {
+routeCrush.delete('/:id', validCrush[0], async (req, res) => {
   const id = Number(req.params);
   const dataCrush = await readCrush();
   const filterIdData = dataCrush.find((element) => element.id !== id);
