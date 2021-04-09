@@ -111,7 +111,7 @@ const validateAge = (req, res, next) => {
 const validateRate = (req, res, next) => {
   const { date } = req.body;
   if (date.rate < 1 || date.rate > 5) {
-    console.log("entrou aqui");
+    console.log('entrou aqui');
     return res
     .status(400)
     .send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
@@ -121,23 +121,18 @@ const validateRate = (req, res, next) => {
 
 const validateDate = (req, res, next) => {
   const { date } = req.body;
-  console.log(date);
-  if (date === undefined || date === {}) {
-    // perguntar pro Zambelli pq isso não precisa
-    console.log("linha 125");
+  if (date === undefined) {
     return res
       .status(400)
       .send({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
   }
   if (!date.datedAt || date.rate === undefined) {
-    console.log('linha 131');
     return res
       .status(400)
       .send({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
   }
   const regex = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i;
   if (!regex.test(date.datedAt)) {
-    console.log("linha 140");
     return res.status(400).send({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
   }
   next();
@@ -157,8 +152,8 @@ app.post('/crush',
     await fs.writeFile('./crush.json', JSON.stringify(crushList));
     return res.status(201).send(newCrush);
   } catch (error) {
-    console.log(error);
     return res.status(400).send({
       message: error.message,
     });
-  }});
+  }
+});
