@@ -56,7 +56,9 @@ function validateName(name) {
 
 function validateAge(age) {
   if (!age) return { message: 'O campo "age" é obrigatório' };
-  if (age < 18) return { message: 'O crush deve ser maior de idade' };
+  if (age < 18) {
+    return { message: 'O crush deve ser maior de idade' };
+  } 
 }
 
 function validateDateFormat(date) {
@@ -78,19 +80,19 @@ function validateDate(date) {
 }
 
 function validateFildeData(date) {
-  const isValidateDate = validateDate(date);
-  if (isValidateDate) return isValidateDate;
-  const isValidateDateFormat = validateDateFormat(date);
-  if (isValidateDateFormat) return isValidateDateFormat;
-  const isValidateRate = validateRate(date);
-  if (isValidateRate) return isValidateRate;
+  const isInvalidDate = validateDate(date);
+  if (isInvalidDate) return isInvalidDate;
+  const isInvalidDateFormat = validateDateFormat(date);
+  if (isInvalidDateFormat) return isInvalidDateFormat;
+  const isInvalidRate = validateRate(date);
+  if (isInvalidRate) return isInvalidRate;
 }
 
 function validateNameAndAge(name, age) {
   const isValidateName = validateName(name);
   if (isValidateName) return isValidateName;
   const isValidateAge = validateAge(age);
-  if (isValidateName) return isValidateAge;
+  if (isValidateAge) return isValidateAge;
 }
 
 function verifyEmail(email) {
