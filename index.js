@@ -1,26 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const crush = require('./routes/crush');
-const crushId = require('./routes/crushId');
-const crushLogin = require('./routes/crushLogin');
-const validPass = require('./valid/validPass');
-const validEmail = require('./valid/validEmail');
-const crushAdd = require('./routes/crushAdd');
-const validToken = require('./valid/validToken');
-const validCrush = require('./valid/validCrush');
-const validDate = require('./valid/validCrushDate');
-const crushAddId = require('./routes/crushAddId');
-
-const { crushFunction } = crush;
-const { crushIdFunction } = crushId;
-const { crushLoginFunction } = crushLogin;
-const { validEmailFunction } = validEmail;
-const { validPassFunction } = validPass;
-const { crushAddFunction } = crushAdd;
-const { validTokenFunction } = validToken;
-const { validNameFunction, validAgeFunction } = validCrush;
-const { validDateFunction, validRateFunction, validDatedAtFunction } = validDate;
-const { crushAddIdFunction } = crushAddId;
+const { crushFunction } = require('./routes/crush');
+const { crushIdFunction } = require('./routes/crushId');
+const { crushLoginFunction } = require('./routes/crushLogin');
+const { validPassFunction } = require('./valid/validPass');
+const { validEmailFunction } = require('./valid/validEmail');
+const { crushAddFunction } = require('./routes/crushAdd');
+const { validTokenFunction } = require('./valid/validToken');
+const { validNameFunction, validAgeFunction } = require('./valid/validCrush');
+const { validDateFunction,
+  validRateFunction,
+  validDatedAtFunction,
+} = require('./valid/validCrushDate');
+const { crushAddIdFunction } = require('./routes/crushAddId');
+const { crushDeleteFunction } = require('./routes/crushDelete');
 
 const app = express();
 app.use(bodyParser.json());
@@ -32,10 +25,11 @@ const PORT = '3000';
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
+const crushIdPath = '/crush/:id';
 
 app.get('/crush', crushFunction);
 
-app.get('/crush/:id', crushIdFunction);
+app.get(crushIdPath, crushIdFunction);
 
 app.post('/login', validEmailFunction, validPassFunction, crushLoginFunction);
 
@@ -48,7 +42,7 @@ app.post('/crush',
   validDatedAtFunction,
   crushAddFunction);
 
-app.put('/crush/:id', 
+app.put(crushIdPath, 
   validTokenFunction,
   validNameFunction,
   validAgeFunction,
@@ -56,5 +50,9 @@ app.put('/crush/:id',
   validRateFunction,
   validDatedAtFunction,
   crushAddIdFunction);
+
+app.delete(crushIdPath,
+  validTokenFunction,
+  crushDeleteFunction);
 
 app.listen(PORT, () => { console.log('Online'); });
