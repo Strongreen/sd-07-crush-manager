@@ -1,35 +1,14 @@
-const fs = require('fs');
+const { getAllCrushs, getCrushById } = require('../services/crushService');
 
-const getCrushs = () => 
-     fs.promises
-      .readFile(`${__dirname}/../crush.json`, 'utf8')
-      .then((content) => content)
-      .then((stringified) => JSON.parse(stringified))
-      .catch((error) => error.message);
-
-exports.getAllCrushs = async (_req, res) => {
-    const crushs = await getCrushs();
+exports.getAllCrushsController = async (_req, res) => {
+    const crushs = await getAllCrushs();
     return res.status(200).send(crushs);
 };
 
-exports.getCrushById = async (req, res) => {
+exports.getCrushByIdController = async (req, res) => {
     const { id } = req.params;
     const notFound = { message: 'Crush não encontrado' };
-    const crushs = await getCrushs();
-    const crush = crushs[id - 1];
+    const crush = await getCrushById(id);
     if (crush) return res.status(200).send(crush);
     return res.status(404).send(notFound);
 };
-
-/* 
-  function setCrushs(index, newCrush) {
-    data[index] = newCrush;
-    fs.promises
-      .writeFile(data, JSON.stringify(data), 'utf8')
-      .then(() => {
-        console.log('Crush adicionado com sucesso!');
-      })
-      .catch((error) => {
-        console.error(error.message);
-      });
-  } */
