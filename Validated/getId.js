@@ -1,8 +1,8 @@
 const fs = require('fs');
 
-async function getId() {
+function getId() {
   const path = `${__dirname}/../crush.json`;
-  const crushes = JSON.parse(await fs.readFileSync(path, 'utf8'));
+  const crushes = JSON.parse( fs.readFileSync(path, 'utf8'));
   return { crushes, id: Number(crushes.length) };
 }
 

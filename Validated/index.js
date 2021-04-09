@@ -12,7 +12,7 @@ const { validFoundCrush } = require('./validFoundCrush');
 const { filterCrushes } = require('./filterCrushes');
 const { newCrush } = require('./newCrush');
 const { editedCrush } = require('./editedCrush');
-const { searchCrushes } = require('./editedCrush');
+const { searchCrushes } = require('./searchCrushes');
 
 module.exports = {
     validName,

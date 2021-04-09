@@ -14,8 +14,8 @@ async function newCrush(body) {
             rate,
           },
         };
-          crushes[id] = crush;
-      return crushes;
+        crushes[id] = crush;
+      return { crush, crushes };
     }
 }
 
