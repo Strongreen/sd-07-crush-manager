@@ -8,7 +8,7 @@ async function crushAddIdFunction(request, response) {
     const { id } = request.params;
     const { name, age, date } = request.body;
     const showFile = await file.readPromise(crushData);
-    const index = showFile.findIndex((result) => result.id.toString() === id);
+    const index = showFile.findIndex((result) => result.id === Number(id));
     console.log(index);
     if (index === -1) {
       return response.status(404).send({ message: 'Crush não encontrado' });
