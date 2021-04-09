@@ -3,21 +3,12 @@ const { validToken, getId, filterCrushes } = require('../Validated');
 const { writeFiles } = require('./writeFiles');
 
 const SUCCESS = 200;
-const TOKEN = 401;
-
-function Valid(req, res) {
-  const { authorization } = req.headers;
-  try {
-    validToken(authorization);
-  } catch (error) {
-    res.status(TOKEN).send({ message: error.message });
-  }
-}
 
 async function deleteCrush(req, res) {
+  const { authorization } = req.headers;
+  validToken(authorization, res);
   const { id } = req.params;
-  Valid(req, res);
-  const crush = filterCrushes(id, res);
+  const crush = filterCrushes(id);
   if (crush) {
     const { crushes } = await getId();
     if (crushes) {
