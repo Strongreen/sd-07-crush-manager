@@ -69,7 +69,7 @@ app.post('/login', (req, res) => {
   } else if (!password) {
     res.status('400').send({ message: 'O campo "password" é obrigatório' });
   } else if (!validatePassword(password)) {
-    res.status('400').send({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+    res.status('400').send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   } else {
     return res.status(SUCCESS).send({ token: `${generateToken()}` });
   }
@@ -111,7 +111,6 @@ const validateAge = (req, res, next) => {
 const validateRate = (req, res, next) => {
   const { date } = req.body;
   if (date.rate < 1 || date.rate > 5) {
-    console.log('entrou aqui');
     return res
     .status(400)
     .send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
