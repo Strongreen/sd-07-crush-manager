@@ -13,8 +13,7 @@ Crush.get('/', async (_req, res) => {
   const crush = await getCrushes();
   try {
     if (crush.length === 0) return res.status(200).send(noCrush);
-    console.log(JSON.parse(crush));
-    return res.status(200).send(JSON.parse(crush));
+    res.status(200).send(JSON.parse(crush));
   } catch (error) {
     console.log(error);
   }
