@@ -14,4 +14,14 @@ app.get('/', async (_req, res) => {
     res.status(200).send(result);
 });
 
+app.get('/:id', async (req, res) => {
+    const result = await readCrushFile();
+    const { id } = req.params;    
+    const filteredCrush = result.find((crush) => crush.id === parseInt(id, 10));
+    if (filteredCrush === undefined) {
+        res.status(404).send({ message: 'Crush não encontrado' }); 
+    }
+    res.status(200).send(filteredCrush);    
+});
+
 module.exports = app;
