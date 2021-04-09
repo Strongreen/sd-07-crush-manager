@@ -16,9 +16,12 @@ app.get('/', (_request, response) => {
 
 app.listen(PORT, () => { console.log('Online'); });
 
+const crushID = '/crush/:id';
+const crushJSON = './crush.json';
+
 const getCrushList = async () => {
   try {
-    const file = await fs.readFile('./crush.json', 'utf-8');
+    const file = await fs.readFile(crushJSON, 'utf-8');
     return JSON.parse(file);
   } catch (err) {
     console.error(`Erro ao ler o arquivo: ${err.path}`);
@@ -34,7 +37,7 @@ app.get('/crush', async (_req, res) => {
   }
 });
 
-app.get('/crush/:id', async (req, res) => {
+app.get(crushID, async (req, res) => {
   const crushList = await getCrushList();
   const { id } = req.params;
   const result = crushList.find((crush) => crush.id === Number(id));
@@ -148,7 +151,7 @@ app.post('/crush',
   crushList.push(newCrush);
 
   try {
-    await fs.writeFile('./crush.json', JSON.stringify(crushList));
+    await fs.writeFile(crushJSON, JSON.stringify(crushList));
     return res.status(201).send(newCrush);
   } catch (error) {
     return res.status(400).send({
@@ -157,16 +160,26 @@ app.post('/crush',
   }
 });
 
-app.put('/crush/:id',
+app.put(crushID,
   validateToken, validateName, validateAge,
   validateDate, validateRate, async (req, res) => {
     const crushList = await getCrushList();
   const { name, age, date } = req.body;
   const { id } = req.params;
-  const crushId = parseInt(id, 10);
-  const crushToUpdate = crushList.find((crush) => crush.id === crushId);
+  const crushToUpdate = crushList.find((crush) => crush.id === Number(id));
   crushToUpdate.name = name;
   crushToUpdate.age = age;
   crushToUpdate.date = date;
   return res.status(200).send(crushToUpdate);
+});
+
+app.delete(crushID,
+  validateToken, async (req, res) => {
+    const crushList = await getCrushList();
+  const { id } = req.params;
+  const newCrushList = crushList.filter((crush) => crush.id !== Number(id));
+  await fs.writeFile('./crush.json', JSON.stringify(newCrushList));
+  return res.status(200).send({
+    message: 'Crush deletado com sucesso',
+  });
 });
