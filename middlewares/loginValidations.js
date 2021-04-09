@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const app = express();
+
 app.use(bodyParser.json());
 
 app.post('/', (request, response, next) => {
@@ -23,7 +24,7 @@ app.post('/', (request, response, next) => {
   // Validation Email and password
   const validateEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (validateEmail.test(email)) {
-    if (password.lenght > 5) {
+    if (password.toString().length > 5) {
       // Confirmation and middleware exit
       next();
     } else {
