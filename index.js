@@ -38,6 +38,61 @@ function tokenGenerate() {
   const token16Characters = token.slice(0, 16);
   return token16Characters;
 }
+function validateToken(req, res, next) { 
+  const token = req.headers.authorization;
+  if (token === undefined) {
+      return res.status(401).send({ message: 'Token não encontrado' });
+  }
+  
+  if (token.length !== 16) return res.status(401).send({ message: 'Token inválido' });
+  next();  
+}
+function validateName(name) {
+  if (!name) return { message: 'O campo "name" é obrigatório' };
+  if (name.length < 3) {
+    return { message: 'O "name" deve ter pelo menos 3 caracteres' }; 
+  }
+} 
+
+function validateAge(age) {
+  if (!age) return { message: 'O campo "age" é obrigatório' };
+  if (age < 18) return { message: 'O crush deve ser maior de idade' };
+}
+
+function validateDateFormat(date) {
+  const { datedAt } = date;
+  const reg = /^(0[1-9]|1\d|2\d|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}$/;
+  const validateBoolean = reg.test(datedAt);
+  if (!validateBoolean) return { message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' };
+}
+function validateRate(date) {
+  const { rate } = date;
+  if (Number(rate) < 1 || Number(rate) > 5) {
+    return { message: 'O campo "rate" deve ser um inteiro de 1 à 5' }; 
+  }
+}
+function validateDate(date) {
+  if (date === undefined || date.datedAt === undefined || date.rate === undefined) {  
+    return { message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' };
+  }
+}
+
+function validateFildeData(date) {
+  const isValidateDate = validateDate(date);
+  if (isValidateDate) return isValidateDate;
+  const isValidateDateFormat = validateDateFormat(date);
+  if (isValidateDateFormat) return isValidateDateFormat;
+  const isValidateRate = validateRate(date);
+  if (isValidateRate) return isValidateRate;
+}
+
+function validateNameAndAge(name, age) {
+  const isValidateName = validateName(name);
+  if (isValidateName) return isValidateName;
+  const isValidateAge = validateAge(age);
+  if (isValidateName) return isValidateAge;
+}
+
 function verifyEmail(email) {
   const reg = /\S+@\S+\.\S+/;
   return reg.test(email);
@@ -51,29 +106,36 @@ function verifyPassword(password) {
     return 1;
 }  
  
-  app.get('/crush/search', rescue(async (req, res) => {
-  console.log('99');
-  const { token } = req.headers;
-  const { q } = req.query; 
-  console.log(q); 
-  if (!token) return res.status(401).send({ message: 'Token não encontrado' }); 
-  console.log('59'); 
-  if (token.length !== 16) return res.status(401).send({ message: 'Token inválido' });
+  app.get('/crush/search', validateToken, rescue(async (req, res) => {
+  const { q } = req.query.q;
   const crushList = await readCrushFile();
-  console.log(crushList);
-  if (!q) {    
-    return res.status(200).send(crushList);
-  }
-  console.log('65'); 
-    const crushMatch = crushList.filter((crush) => crush.name.includes(q));
-  console.log(crushMatch);
-    return res.status(200).send(crushMatch);
+  if (!q) res.status(200).send(crushList); 
+
+  const crushMatch = crushList.filter((crush) => crush.name.includes(q));
+  res.status(200).send(crushMatch);
   }));
+
+  app.post('/crush', validateToken, async (req, res) => {
+    const { name, age, date } = req.body;
+    const resultValidateNameAndAge = validateNameAndAge(name, age);
+    if (resultValidateNameAndAge) return res.status(400).send(resultValidateNameAndAge);
+    const resultValidateFildeData = validateFildeData(date);
+    if (resultValidateFildeData) return res.status(400).send(resultValidateFildeData);
+
+    const crushList = await readCrushFile();
+    const id = crushList.length + 1;
+    const newCrush = { id, name, age, date };
+    const newCrushList = [...crushList, newCrush];
+
+    await writeCrushFile(newCrushList);
+    res.status(201).send(newCrush);
+  }); 
   app.get('/crush', async (_req, res) => {
     const result = await readCrushFile();
     if (result.length === 0) res.status(200).send([]);
     return res.status(200).send(result);
   });  
+
   app.get('/crush/:id', async (req, res) => {
     const crushList = await readCrushFile();
     const { id } = req.params;
@@ -82,6 +144,7 @@ function verifyPassword(password) {
     if (filteredCrush) return res.status(200).send(filteredCrush);
     return res.status(404).send({ message: 'Crush não encontrado' });  
   });
+
   app.post('/login', (req, res) => {   
     const { email, password } = req.body;
     if (!email) res.status(400).send({ message: 'O campo "email" é obrigatório' });
@@ -99,20 +162,16 @@ function verifyPassword(password) {
     }
     res.status(200).send({ token: tokenGenerate() });
   });
-  app.delete('/crush/:id', rescue(async (req, res) => {
-    const { token } = req.headers;
+
+  app.delete('/crush/:id', validateToken, rescue(async (req, res) => {
     const { id } = req.params; 
     const crushId = parseInt(id, 10);
-    if (!token) return res.status(401).send({ message: 'Token não encontrado' });
-    if (token.length !== 16) return res.status(401).send({ message: 'Token inválido' });
+   
     const crushList = await readCrushFile();
     const crushsFiltered = crushList.filter((crush) => crush.id !== crushId);
-    try {
+    
     await writeCrushFile(crushsFiltered);
-    return res.status(200).json({ message: 'Crush deletado com sucesso' });
-    } catch (error) {
-      res.status(500).send(`Algo deu errado! Mensagem: ${error.message}`);
-    }
+    res.status(200).json({ message: 'Crush deletado com sucesso' });    
     }));
 app.use((err, _req, res, _next) => 
 res.status(500).send(`Algo deu errado! Mensagem: ${err.message}`));
