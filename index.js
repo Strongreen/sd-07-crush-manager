@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs');
+const fs = require('fs').promises;
 const crypto = require('crypto');
 
 const app = express();
@@ -18,7 +18,7 @@ app.listen(PORT, () => { console.log('Online'); });
 
 const getCrushList = async () => {
   try {
-    const file = await fs.readFileSync('./crush.json', 'utf-8');
+    const file = await fs.readFile('./crush.json', 'utf-8');
     return JSON.parse(file);
   } catch (err) {
     console.error(`Erro ao ler o arquivo: ${err.path}`);
@@ -123,6 +123,7 @@ const validateDate = (req, res, next) => {
   const { date } = req.body;
   console.log(date);
   if (date === undefined || date === {}) {
+    // perguntar pro Zambelli pq isso não precisa
     console.log("linha 125");
     return res
       .status(400)
@@ -156,7 +157,7 @@ app.post('/crush',
     await fs.writeFile('./crush.json', JSON.stringify(crushList));
     return res.status(201).send(newCrush);
   } catch (error) {
-    console.log("passou aqui");
+    console.log(error);
     return res.status(400).send({
       message: error.message,
     });
