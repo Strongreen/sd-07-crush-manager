@@ -1,15 +1,10 @@
-const { validFoundCrush } = require('./validFoundCrush');
 const { getId } = require('./getId');
 
-async function searchCrushes(search, res) {
+async function searchCrushes(search) {
   if (!search) return [];
   const { crushes } = await getId();
-  const regexSeach = /[a-zA-Z]+/;
-  if (crushes) {
-    const filterCrush = crushes.find((crush) => crush.nome === regexSeach);
-    validFoundCrush(filterCrush, res);
-    return filterCrush;
-  }
+  const filterCrush = crushes.filter((crush) => crush.nome.includes(search));
+  return { crushes, filterCrush }; 
 }
 
 module.exports = { searchCrushes };

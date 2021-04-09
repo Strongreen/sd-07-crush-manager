@@ -1,9 +1,11 @@
-const NOTFOUND = 400;
-
-function validPassword(password, res) {
-  if (!password) return res.status(NOTFOUND).send({ message: 'O campo "password" é obrigatório' });
+function validPassword(password) {
+  const messagem = 'A "senha" deve ter pelo menos 6 caracteres';
+  const message = 'O campo "password" é obrigatório';
+  if (!password) {
+    throw new Error(message);
+  }  
   if (password.length < 6) {
-    return res.status(NOTFOUND).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
+    throw new Error(messagem); 
   }
 }
 

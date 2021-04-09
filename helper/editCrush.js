@@ -6,7 +6,6 @@ const {
     validDate,
     validDatedAt,
     validRate,
-    filterCrushes,
     editedCrush,
  } = require('../Validated');
 
@@ -25,8 +24,7 @@ async function editCrush(req, res) {
     const { datedAt, rate } = date;
     validDatedAt(datedAt);
     validRate(rate);
-    const selectCrush = await filterCrushes(id, res);
-    const crush = await editedCrush(req.body, selectCrush.id);
+    const crush = await editedCrush(req.body, Number(id));
     writeFiles(crush);
     res.status(SUCCESS).send(crush);
   } catch (error) {

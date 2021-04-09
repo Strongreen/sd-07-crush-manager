@@ -37,7 +37,7 @@ app
   .delete(deleteCrush);
 
 app
-  .route('/crush/search?q=')
+  .route('/crush/search')
   .get(searchCrush);
 
 app.listen(PORT, () => { console.log('Online'); });

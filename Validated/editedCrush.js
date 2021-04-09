@@ -1,22 +1,20 @@
-const { getId } = require('./getId');
+// const { getId } = require('./getId');
 
-async function editedCrush(body, id) {
+function editedCrush(body, id) {
     const { name, age, date } = body;
-    const { datedAt, rate } = date;
-    const { crushes } = await getId();
-    if (id) {
+    // const { crushes } = await getId();
+    try {
       const crush = {
-          id,
-          name,
-          age,
-          date: {
-            datedAt,
-            rate,
-          },
-        };
-          crushes[id - 1] = crush;
-      return crushes;
+        id,
+        name,
+        age,
+        date,
+      };
+        // crushes[id - 1] = crush;
+    return crush;
+    } catch (error) {
+      throw new Error('ID não encontrado');
     }
-}
+  }
 
 module.exports = { editedCrush };

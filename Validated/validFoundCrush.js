@@ -1,8 +1,7 @@
-const NOTFOUND = 404;
-
-function validFoundCrush(filterCrush, res) {
+function validFoundCrush(filterCrush) {
+  const message = 'Crush não encontrado';
   if (!filterCrush) {
-    return res.status(NOTFOUND).send({ message: 'Crush não encontrado' });
+    throw new Error(message);
   }
 }
 
