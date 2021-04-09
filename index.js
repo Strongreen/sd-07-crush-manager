@@ -108,10 +108,14 @@ const validateAge = (req, res, next) => {
   next();
 };
 
-const validateRate = (date) => {
+const validateRate = (req, res, next) => {
+  const { date } = req.body;
   if (date.rate < 1 || date.rate > 5) {
-    return false;
-  };
+    return res
+    .status(400)
+    .send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+  }
+  next();
 };
 
 const validateDate = (req, res, next) => {
@@ -120,11 +124,6 @@ const validateDate = (req, res, next) => {
     return res
       .status(400)
       .send({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
-  }
-  if (!validateRate(date)) {
-    return res
-    .status(400)
-    .send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
   const regex = /(((^0|^1|^2)[0-9])|(^3[0-1]))\/((0[0-9])|(1[0-2]))\/(((19|20)[0-9]{2}$))/mg;
   const regexTest = regex.test(date.dateAt);
@@ -148,7 +147,7 @@ const validateDate = (req, res, next) => {
 
 app.post('/crush',
   validateToken, validateName, validateAge,
-  validateRate, validateDate, async (req, res) => {
+  validateDate, validateRate, async (req, res) => {
     const crushList = await getCrushList();
   const { name, age, date } = req.body;
   const id = crushList.length + 1;
