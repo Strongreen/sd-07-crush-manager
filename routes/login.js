@@ -9,24 +9,29 @@ app.use(bodyParser.json());
 
 const tokenGenerator = () => crypto.randomBytes(8).toString('hex');
 const passwordValidator = (password) => password.length >= 6;
-
-app.post('/', (req, res) => {
+const emptyOrUdefined = (value) => {
+  if (value === undefined || value === '') return true;
+  return false;
+};
+app.post('/', (req, res, next) => {
   const { email, password } = req.body;
+
+  if (emptyOrUdefined(email)) {
+    res.status(400).send({ message: 'O campo "email" é obrigatório' });
+  } else if (emptyOrUdefined(password)) {
+    res.status(400).send({ message: 'O campo "password" é obrigatório' });
+  }
+
   const validEmail = emailValidator.validate(email);
   const validPassword = passwordValidator(password);
-
-  if (!email) {
-    res.status(400).send({ message: 'O campo "email" é obrigatório' });
-  } else if (!validEmail) {
+  if (!validEmail) {
     res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
-  } else if (!password) {
-    res.status(400).send({ message: 'O campo "password" é obrigatório' });
   } else if (!validPassword) {
     res.status(400).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
-  } else {
-    const token = tokenGenerator();
-    res.status(200).send({ token });
   }
+  res.status(200).send({ token: tokenGenerator() });
+
+  next();
 });
 
 module.exports = app;
