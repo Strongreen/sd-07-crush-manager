@@ -8,6 +8,12 @@ app.use(bodyParser.json());
 
 const SUCCESS = 200;
 const PORT = '3000';
+const crushTest = {
+  name: 'Zendaya Maree',
+  age: 24,
+  id: 5,
+  date: { rate: 5, datedAt: '25/09/2020' },
+};
 
 // a ordem importa porque o primeiro que está chegando e o segundo oq esta saindo
 app.get('/crush', (req, res) => {
@@ -36,8 +42,8 @@ app.get('/crush/:id', (req, res) => {
         message: 'Crush não encontrado',
       });
     } else {
-    console.log(`Conteúdo do arquivo id: ${idData}`);
-    res.status(SUCCESS).json((idData));
+      console.log(`Conteúdo do arquivo id: ${idData}`);
+      res.status(SUCCESS).json(idData);
     }
   });
 });
@@ -48,13 +54,41 @@ app.post('/login', (req, res) => {
     res.status(400).send({ message: 'O campo "email" é obrigatório' });
   } else if (!password) {
     res.status(400).send({ message: 'O campo "password" é obrigatório' });
-  } else if (email === 'eu não sou um email') {
-    res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
+  } else if (email === 'eu não sou um email') { // consertar
+    res
+      .status(400)
+      .send({ message: 'O "email" deve ter o formato "email@email.com"' });
   } else if (password.length < 6) {
-    res.status(400).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
+    res
+      .status(400)
+      .send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   } else {
     console.log('salvo');
-  res.status(SUCCESS).json({ token: '7mqaVRXJSp886CGr' });
+    res.status(SUCCESS).json({ token: '7mqaVRXJSp886CGr' });
+  }
+});
+
+app.post('/crush', (req, res) => {
+  const { Authorization } = req.headers;
+  console.log(Authorization);
+  const { name, age, date } = req.body;
+  if (!Authorization) {
+    res.status(401).send({ message: 'Token não encontrado' });
+  } else if (Authorization === 99999999) { // consertar
+    res.status(401).send({ message: 'Token inválido' });
+  } else if (!name) {
+    res.status(400).send({ message: 'O campo "name" é obrigatório' });
+  } else if (name.length < 3) {
+    res.status(400).send({ message: 'O "name" deve ter pelo menos 3 caracteres' });
+  } else if (!age) {
+    res.status(400).send({ message: 'O campo "age" é obrigatório' });
+  } else if (name.length < 18) {
+    res.status(400).send({ message: 'O crush deve ser maior de idade' });
+  } else if (!date.datedAt || !date.rate) {
+    res.status(400).send({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
+  } else {
+    console.log('salvo');
+    res.status(201).json(crushTest);
   }
 });
 
@@ -63,4 +97,6 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.listen(PORT, () => { console.log('Online'); });
+app.listen(PORT, () => {
+  console.log('Online');
+});
