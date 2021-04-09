@@ -75,17 +75,34 @@ app.post('/login', (req, res) => {
   }
 });
 
-// const validateToken = (req, res, next) => {
-//   const token = req.headers.authorization;
-//   if (!token) {
-//       return res.status(401).send({ message: 'Token não encontrado' });
-//   }
-//   if (token.length !== 16) {
-//     return res.status(401).send({ message: 'Token inválido' });
-//   }
-//   next();
-// };
+const validateToken = (req, res, next) => {
+  const token = req.headers.authorization;
+  if (!token) {
+      return res.status(401).send({ message: 'Token não encontrado' });
+  }
+  if (token.length !== 16) {
+    return res.status(401).send({ message: 'Token inválido' });
+  }
+  next();
+};
 
-// app.post('/crush', validateToken, (req, res) => {
-//   const { name, age, date } = req.body;
-// });
+const validateData = (name, age, date) => {
+  if (!name || name.length === 0) {
+    return res.status(400).send({ message: 'O campo "name" é obrigatório' });
+  }
+  if (name.length < 3) {
+    return res.status(400).send({ message: 'O "name" deve ter pelo menos 3 caracteres' });
+  }
+  if (!age || name.length === 0) {
+    return res.status(400).send({ message: 'O campo "age" é obrigatório' });
+  }
+  if (age < 18) {
+    return res.status(400).send({ message: 'O crush deve ser maior de idade' });
+  }
+
+}
+
+app.post('/crush', validateToken, (req, res) => {
+  const { name, age, date } = req.body;
+  validateData(name, age, date);
+});
