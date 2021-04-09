@@ -1,10 +1,8 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs');
-const data = require('./crush.json');
+const { crush } = require('./src/routers');
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 
 const SUCCESS = 200;
 const PORT = '3000';
@@ -13,5 +11,7 @@ const PORT = '3000';
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
+
+app.use('/crush', crush);
 
 app.listen(PORT, () => { console.log('Online'); });
