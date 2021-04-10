@@ -15,6 +15,7 @@ app.get('/', (_request, response) => {
 });
 
 app.use('/crush', routes.getAllCrushes);
+app.use('/crush/search', routes.searchCrush);
 app.use('/crush', routes.getCrushById);
 app.use('/login', routes.login);
 app.use('/crush', routes.deleteCrush);
