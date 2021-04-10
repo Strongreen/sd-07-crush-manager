@@ -8,8 +8,8 @@ const {
   dateAuth2,
   emailAuth,
 } = require('./validateFunctions.js');
-const crushGet = require('./getCrush');
-const crushPost = require('./postCrush');
+const crushGet = require('./services/getCrush');
+const crushPost = require('./services/postCrush');
 
 const app = express();
 app.use(express.json());
@@ -17,6 +17,7 @@ app.use(express.json());
 const SUCCESS = 200;
 const PORT = '3000';
 const crushFile = './crush.json';
+const crushRoute = '/crush';
 const crushRouteId = '/crush/:id';
 
 // não remova esse endpoint, e para o avaliador funcionar
@@ -24,8 +25,8 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.use('/crush', crushGet);
-app.use('/crush', crushPost);
+app.use(crushRoute, crushGet);
+app.use(crushRoute, crushPost);
 
 app.post('/login', emailAuth, (req, res) => {
   const { password } = req.body;

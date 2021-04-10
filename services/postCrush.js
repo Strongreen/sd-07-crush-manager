@@ -6,7 +6,7 @@ const {
   ageAuth,
   dateAuth,
   dateAuth2,
-} = require('./validateFunctions.js');
+} = require('../validateFunctions.js');
 
 const router = express.Router();
 
