@@ -6,10 +6,10 @@ const {
   ageAuth,
   dateAuth,
   dateAuth2,
-  emailAuth,
 } = require('./validateFunctions.js');
 const crushGet = require('./services/getCrush');
 const crushPost = require('./services/postCrush');
+const login = require('./services/login');
 
 const app = express();
 app.use(express.json());
@@ -27,23 +27,7 @@ app.get('/', (_request, response) => {
 
 app.use(crushRoute, crushGet);
 app.use(crushRoute, crushPost);
-
-app.post('/login', emailAuth, (req, res) => {
-  const { password } = req.body;
-  if (!password || password === '') {
-    return res.status(400).json({
-      message: 'O campo "password" é obrigatório',
-    });
-  }
-  if (password.length < 6) {
-    return res.status(400).json({
-      message: 'A "senha" deve ter pelo menos 6 caracteres',
-    });
-  }
-  return res.status(SUCCESS).json({
-    token: '7mqaVRXJSp886CGr',
-  });
-});
+app.use('/', login);
 
 app.put(
   crushRouteId,
