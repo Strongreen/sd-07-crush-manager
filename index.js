@@ -8,12 +8,12 @@ app.use(bodyParser.json());
 
 const SUCCESS = 200;
 const PORT = '3000';
-const crushTest = {
-  name: 'Zendaya Maree',
-  age: 24,
-  id: 5,
-  date: { rate: 5, datedAt: '25/09/2020' },
-};
+// const crushTest = {
+//   name: 'Zendaya Maree',
+//   age: 24,
+//   id: 5,
+//   date: { rate: 5, datedAt: '25/09/2020' },
+// };
 
 // a ordem importa porque o primeiro que está chegando e o segundo oq esta saindo
 app.get('/crush', (req, res) => {
@@ -54,7 +54,8 @@ app.post('/login', (req, res) => {
     res.status(400).send({ message: 'O campo "email" é obrigatório' });
   } else if (!password) {
     res.status(400).send({ message: 'O campo "password" é obrigatório' });
-  } else if (email === 'eu não sou um email') { // consertar
+  } else if (email === 'eu não sou um email') {
+    // consertar
     res
       .status(400)
       .send({ message: 'O "email" deve ter o formato "email@email.com"' });
@@ -68,27 +69,64 @@ app.post('/login', (req, res) => {
   }
 });
 
+const existenceError = (req, res, objName) => {
+  if (!req) {
+    return res
+      .status(400)
+      .send({ message: `O campo ${objName} é obrigatório` });
+  }
+};
+
+const tokenValidation = (req, res) => {
+  if (!req) {
+    return res.status(401).send({ message: 'Token não encontrado' });
+  }
+  if (req === 99999999) {
+    // consertar
+    return res.status(401).send({ message: 'Token inválido' });
+  }
+  return console.log('Token ok');
+};
+
+const dateFormValidation = (req, res) => {
+  if (req.datedAt === '42-20-3333') { // consertar
+    return res.status(400).send({ 
+      message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"',
+    });
+  }
+};
+
+const dateValidation = (req, res) => {
+  dateFormValidation(req, res);
+  if (!req.datedAt || !req.rate) {
+    return res.status(400).send({
+      message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
+    });
+  }
+  if (req.rate > 5 || req.rate < 1) {
+    return res.status(400).send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+   }
+   return console.log('Date ok');
+};
+
 app.post('/crush', (req, res) => {
-  const { Authorization } = req.headers;
-  console.log(Authorization);
+  const { authorization } = req.headers;
   const { name, age, date } = req.body;
-  if (!Authorization) {
-    res.status(401).send({ message: 'Token não encontrado' });
-  } else if (Authorization === 99999999) { // consertar
-    res.status(401).send({ message: 'Token inválido' });
-  } else if (!name) {
-    res.status(400).send({ message: 'O campo "name" é obrigatório' });
-  } else if (name.length < 3) {
-    res.status(400).send({ message: 'O "name" deve ter pelo menos 3 caracteres' });
-  } else if (!age) {
-    res.status(400).send({ message: 'O campo "age" é obrigatório' });
-  } else if (name.length < 18) {
+  existenceError(name, res, 'name');
+  existenceError(age, res, 'age');
+  tokenValidation(authorization, res);
+  dateValidation(date, res);
+  if (name.length < 3) {
+    res
+      .status(400)
+      .send({ message: 'O "name" deve ter pelo menos 3 caracteres' });
+  } else if (age.length < 18) {
     res.status(400).send({ message: 'O crush deve ser maior de idade' });
-  } else if (!date.datedAt || !date.rate) {
-    res.status(400).send({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
   } else {
     console.log('salvo');
-    res.status(201).json(crushTest);
+    res
+      .status(201)
+      .json({ name, age, date: { datedAt: date.datedAt, rate: date.rate } });
   }
 });
 
