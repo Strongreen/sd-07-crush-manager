@@ -18,5 +18,6 @@ app.get('/', (_request, response) => {
 app.use(express.json());
 app.use(routes.getAllCrush);
 app.use(routes.getCrushId);
+app.use(routes.login);
 
 app.listen(PORT, () => { console.log('Online'); });
