@@ -15,9 +15,9 @@ function isValidPassword(request, response, next) {
     response.status(FAIL).send({ message: passwordIs.empy });
   } else if (!passwordValid(password)) {
     response.status(FAIL).send({ message: passwordIs.invalid });
+  } else {
+    next();
   }
-
-  next();
 }
 
 module.exports = isValidPassword;

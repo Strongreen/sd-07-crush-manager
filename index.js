@@ -10,7 +10,6 @@ const PORT = '3000';
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
-
 app.use('/crush', route.crush);
 app.use('/login', route.login);
 

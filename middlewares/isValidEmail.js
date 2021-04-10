@@ -15,9 +15,9 @@ function isValidEmail(request, response, next) {
     response.status(FAIL).send({ message: emailIs.empy });
   } else if (!emailValid(email)) {
     response.status(FAIL).send({ message: emailIs.invalid });
+  } else {
+    next();
   }
-
-  next();
 }
 
 module.exports = isValidEmail;
