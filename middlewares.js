@@ -11,7 +11,7 @@ exports.validateEmailMiddleware = (req, res, next) => {
 
 exports.validatePasswordMiddleware = (req, res, next) => {
     const passwordNotFoundError = { message: 'O campo "password" é obrigatório' };
-    const invalidPasswordError = { message: 'O "password" deve ter pelo menos 6 caracteres' };
+    const invalidPasswordError = { message: 'A "senha" deve ter pelo menos 6 caracteres' };
     const { password } = req.body;
     if (!password || password === '') return res.status(400).send(passwordNotFoundError);
     if (!isValidPassword(password)) return res.status(400).send(invalidPasswordError);
