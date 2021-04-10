@@ -20,9 +20,15 @@ app.get('/', (_request, response) => {
 });
 app.use(bodyParser.json());
 app.get(CRUSH, crushControllers.getCrush);
-app.post(CRUSH, validatedToken, validatedNameAge, validatedDate, crushControllers.addCrush);
+app.get(
+  `${CRUSH}/search`,
+  validatedToken,
+  validatedNameAge,
+  validatedDate,
+  crushControllers.searchCrush,
+);
 app.get(`${CRUSH}/:id`, crushControllers.getCrushById);
-app.post('/login', loginControllers.getLogin);
+app.post(CRUSH, validatedToken, validatedNameAge, validatedDate, crushControllers.addCrush);
 app.put(
   `${CRUSH}/:id`,
   validatedToken,
@@ -37,13 +43,7 @@ app.delete(
   validatedDate,
   crushControllers.deleteCrush,
 );
-app.get(
-  `${CRUSH}/search`,
-  validatedToken,
-  validatedNameAge,
-  validatedDate,
-  crushControllers.searchCrush,
-);
+app.post('/login', loginControllers.getLogin);
 app.listen(PORT, () => {
   console.log('Online');
 });

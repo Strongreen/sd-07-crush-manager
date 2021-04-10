@@ -10,6 +10,17 @@ const getCrush = async (req, res) => {
   res.status(200).send(dataCrush);
 };
 
+const searchCrush = async (req, res) => {
+  const { q } = req.query;
+
+  try {
+    const listCrush = await allCrush();
+    const filterCrush = listCrush.filter((crush) => crush.name.includes(q));
+    if (!filterCrush) return res.status(200).send([]);
+    res.status(200).send(filterCrush);
+  } catch (error) { throw new Error(error); }
+};
+
 const getCrushById = async (req, res) => {
  try {
   const { id } = req.params;
@@ -22,17 +33,6 @@ const getCrushById = async (req, res) => {
 
   return res.status(200).json(crush);
  } catch (error) { throw new Error(error); }  
-};
-
-const addCrush = async (req, res) => {
-  try {
-    const listCrush = await allCrush();
-    const addNewCrush = { id: listCrush[listCrush.length - 1].id + 1, ...req.body };
-    const newListCrush = [...listCrush, addNewCrush];
-
-    await writeFile(resolve(__dirname, '..', crushFile), JSON.stringify(newListCrush));
-    return res.status(201).json(addNewCrush);
-  } catch (error) { throw new Error(error); } 
 };
 
 const updateCrush = async (req, res) => {
@@ -65,18 +65,15 @@ const deleteCrush = async (req, res) => {
   } catch (error) { throw new Error(error); }
 };
 
-const searchCrush = async (req, res) => {
-  const { q } = req.query;
-
+const addCrush = async (req, res) => {
   try {
     const listCrush = await allCrush();
-    const filterCrush = listCrush.filter(({ name }) => name
-    .toLowerCase()
-    .includes(q.toLowerCase()));
-    if (filterCrush) {
-      return res.status(200).json(filterCrush);
-    } 
-  } catch (error) { throw new Error(error); }
+    const addNewCrush = { id: listCrush[listCrush.length - 1].id + 1, ...req.body };
+    const newListCrush = [...listCrush, addNewCrush];
+
+    await writeFile(resolve(__dirname, '..', crushFile), JSON.stringify(newListCrush));
+    return res.status(201).json(addNewCrush);
+  } catch (error) { throw new Error(error); } 
 };
 
 module.exports = {
