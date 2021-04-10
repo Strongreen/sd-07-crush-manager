@@ -54,13 +54,13 @@ app.post('/login', (req, res) => {
     return res.status(BAD_REQUEST).json({ message: 'O campo "email" é obrigatório' });
   }
   if (!emailIsValid) {
-    res.status(NOT_FOUND).json({ message: 'O "email" deve ter o formato "email@email.com"' });
+    res.status(BAD_REQUEST).json({ message: 'O "email" deve ter o formato "email@email.com"' });
   }
   if (!password) {
     res.status(BAD_REQUEST).json({ message: 'O campo "password" é obrigatório' });
   }
   if (!passwordIsValid) {
-    res.status(NOT_FOUND).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
+    res.status(BAD_REQUEST).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
   }
   res.status(SUCCESS).json(token);
 });
