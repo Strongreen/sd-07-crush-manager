@@ -12,7 +12,6 @@ const ERROR = 404;
 
 app.get('/search', hasToken, (request, response) => {
   const { q: query } = request.query;
-  console.log(crushData);
   const data = crushData.filter(({ name }) => name.toLowerCase().includes(query.toLowerCase()));
   response.status(SUCCESS).send(data);
 });
