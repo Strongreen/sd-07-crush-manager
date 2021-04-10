@@ -14,6 +14,22 @@ async function getCrushById(id) {
   return crush;
 }
 
+async function setCrushs(newCrush) {
+  const crushs = await getAllCrushs();
+  const crush = newCrush;
+  crush.id = crushs.length + 1;
+  crushs.push(crush);
+  try {
+    fs.promises.writeFile(
+      `${__dirname}/../crush.json`,
+      JSON.stringify(crushs),
+      'utf8',
+    );
+  } catch (error) {
+    console.error(error.message);
+  }
+}
+
 async function deleteCrushById(id) {
   const crushs = await getAllCrushs();
   const newCrushList = crushs.filter((crush) => crush.id !== Number(id));
@@ -48,25 +64,11 @@ function isRateInRange(rate) {
   if (rate >= 1 && rate <= 5) return true;
   return false;
 }
-/* 
-function setCrushs(newCrush) {
-    const crushs = await getAllCrushs();
-    crush = newCrush;
-    crush[id] = crushs.length + 1;
-    crushs.push(crush);
-    return fs.promises
-      .writeFile(`${__dirname}/../crush.json`, JSON.stringify(data), 'utf8')
-      .then(() => {
-        console.log('Crush adicionado com sucesso!');
-      })
-      .catch((error) => {
-        console.error(error.message);
-      });
-  } */
 
 module.exports = {
   getAllCrushs,
   getCrushById,
+  setCrushs,
   deleteCrushById,
   isValidName,
   isOverEighteen,

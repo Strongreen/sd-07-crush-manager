@@ -1,4 +1,8 @@
-const { getAllCrushs, getCrushById, deleteCrushById } = require('../services/crushService');
+const {
+    getAllCrushs,
+    getCrushById,
+    deleteCrushById,
+    setCrushs } = require('../services/crushService');
 
 exports.getAllCrushsController = async (_req, res) => {
     const crushs = await getAllCrushs();
@@ -11,6 +15,12 @@ exports.getCrushByIdController = async (req, res) => {
     const crush = await getCrushById(id);
     if (crush) return res.status(200).send(crush);
     return res.status(404).send(notFound);
+};
+
+exports.createCrushController = async (req, res) => {
+    const crush = req.body;
+    await setCrushs(crush);
+    return res.status(201).send(crush);
 };
 
 exports.deleteCrushByIdController = async (req, res) => {

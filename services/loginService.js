@@ -17,7 +17,7 @@ function isValidPassword(password) {
 }
 
 function isValidToken(token) {
-  if (token.length !== 16) return false;
+  if (String(token).length !== 16) return false;
   return true;
 }
 
