@@ -49,34 +49,29 @@ const encrypt = (object) => {
   return newEncript;
 };
 
+const crushFile = () => fs.promises.readFile(`${__dirname}/../crush.json`, 'utf-8');
+
+const filterId = async (id) => {
+  const selectCrush = await crushFile();
+  return JSON.parse(selectCrush).find((acc) => Number(acc.id) === Number(id));
+}; 
+
 app.get('/', (_request, response) => {
   response.status(sucess).send();
 });
 
-app.get('/crush', (_req, res) => {
-  const dataCrush = JSON.parse(
-    fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8'),
-  );
-  if (dataCrush.length > 0) {
-    return res.status(sucess).send(dataCrush);
-  }
-  return res.status(sucess).send([]);
+app.get('/crush', async (_req, res) => {
+  const dataCrush = await crushFile();
+  return res.status(sucess).send(dataCrush); 
 });
 
-app.get('/crush/:id', (req, res) => {
+app.get('/crush/:id', async (req, res) => {
   const { id } = req.params;
-  const data = JSON.parse(
-    fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8'),
-  );
-  const newData = data.filter((acc) => acc.id === parseInt(id, 2));
-  try {
-    if (newData.length > 0) {
-      return res.status(sucess).send(newData[0]);
-    }
-    return res.status(notFound).send({ message: 'Crush não encontrado' });
-  } catch (error) {
-    throw new Error(error);
-  }
+  const data = await filterId(id);
+
+  if (!data) return res.status(notFound).send({ message: 'Crush não encontrado' });
+  
+  return res.status(sucess).send(data);
 });
 
 app.get('/crush/search?q=searchTerm', (req, res) => {
@@ -90,6 +85,7 @@ app.post('/login', (req, res) => {
   }
   return res.status(mandatory).send(validateData(email, password));
 });
+
 // Gambiarra temporaria 
 const id = 5;
 
