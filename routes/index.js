@@ -8,6 +8,7 @@ const app = express();
 const sucess = 200;
 const notFound = 404;
 const mandatory = 400;
+const URL_ID = '/crush/:id';
 
 const { validateFilds, validationToken } = validation;
 
@@ -58,7 +59,7 @@ app.get('/crush', (_req, res) => {
   return res.status(sucess).send(dataCrush); 
 });
 
-app.get('/crush/:id', async (req, res) => {
+app.get(URL_ID, async (req, res) => {
   const { id } = req.params;
   const data = await filterId(id);
 
@@ -100,11 +101,27 @@ app.post('/crush', async (req, res) => {
     .send(newCrush);
 });
 
-// app.put('/crush/:id', (req, res) => {
-//   res.status(sucess).send();
-// });
+app.put(URL_ID, async (req, res) => {
+  const { id } = req.params;
+  const { authorization } = req.headers;
+  const { name, age, date } = req.body;
+  const isOk = validateFilds({ authorization, name, age, date });
+  if (isOk) return res.status(isOk.status).send({ message: isOk.message });
+  const dataCrushList = await crushFile();
+  const list = JSON.parse(dataCrushList).filter((act) => act.id !== id);
 
-app.delete('/crush/:id', async (req, res) => {
+  const userId = Number(id);
+  const newCrush = { id: userId, name, age, date };
+  console.log(newCrush);
+  const newCrushList = [...list, newCrush];
+    
+  await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newCrushList));
+  return res
+    .status(200)
+    .send(newCrush);
+});
+
+app.delete(URL_ID, async (req, res) => {
   const { id } = req.params;
   const { authorization } = req.headers;
   const dataCrush = await crushFile();
