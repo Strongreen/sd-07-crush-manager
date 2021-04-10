@@ -1,9 +1,11 @@
 const crypto = require('crypto');
 const express = require('express');
-const loginMiddleware = require('../middlewares/loginValidations');
+const loginEmailCheck = require('../middlewares/loginEmailCheck');
+const loginPassCheck = require('../middlewares/loginPassCheck');
 
 const app = express();
-app.use(loginMiddleware);
+app.use(loginEmailCheck);
+app.use(loginPassCheck);
 
 app.post('/', (request, response) => {
   response.status(200).send({
