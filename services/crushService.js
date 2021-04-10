@@ -28,6 +28,26 @@ async function deleteCrushById(id) {
   }
 }
 
+function isValidName(name) {
+  if (name.length <= 3) return false;
+  return true;
+}
+
+function isOverEighteen(age) {
+  if (age < 18) return false;
+  return true;
+}
+
+function isValidDate(date) {
+  const regex = /^(0?[1-9]|[12][0-9]|3[01])[/-](0?[1-9]|1[012])[/-]\d{4}$/;
+  if (!date.match(regex)) return false;
+  return true;
+}
+
+function isRateInRange(rate) {
+  if (rate >= 1 && rate <= 5) return true;
+  return false;
+}
 /* 
 function setCrushs(newCrush) {
     const crushs = await getAllCrushs();
@@ -48,4 +68,8 @@ module.exports = {
   getAllCrushs,
   getCrushById,
   deleteCrushById,
+  isValidName,
+  isOverEighteen,
+  isValidDate,
+  isRateInRange,
 };
