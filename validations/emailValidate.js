@@ -7,10 +7,10 @@ const emailValidate = (email) => {
   const emailValid = validateEmail(email);
 
   if (email === '' || email === undefined) {
-    throw new Error('O campo \"email\" é obrigatório');
+    throw new Error('O campo "email" é obrigatório');
 }
   if (!emailValid) {
-    throw new Error('O \"email\" deve ter o formato \"email@email.com\"');
+    throw new Error('O "email" deve ter o formato "email@email.com"');
   }
   return true;
 };
