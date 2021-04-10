@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const CryptoJS = require('crypto-js');
-const dataFile = require('../crush.json');
+// const dataFile = require('../crush.json');
 const validation = require('./validation');
 
 const app = express();
@@ -9,14 +9,7 @@ const sucess = 200;
 const notFound = 404;
 const mandatory = 400;
 
-const {
-  validateName,
-  validateDate,
-  validateAge,
-  validateRate,
-  validationToken,
-  validateDataObject,
- } = validation;
+const { validateFilds } = validation;
 
 const validatePass = (pass) => {
   if (pass !== undefined) {
@@ -60,8 +53,8 @@ app.get('/', (_request, response) => {
   response.status(sucess).send();
 });
 
-app.get('/crush', async (_req, res) => {
-  const dataCrush = await crushFile();
+app.get('/crush', (_req, res) => {
+  const dataCrush = JSON.parse(fs.readFileSync(`${__dirname}/../crush.json`, 'utf-8'));
   return res.status(sucess).send(dataCrush); 
 });
 
@@ -80,29 +73,26 @@ app.get('/crush/search?q=searchTerm', (req, res) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
+  
   if (validateData(email, password) === true) {
     return res.status(sucess).send({ token: encrypt(password) });
   }
   return res.status(mandatory).send(validateData(email, password));
 });
 
-// Gambiarra temporaria 
-const id = 5;
-
 app.post('/crush', async (req, res) => {
+  const { authorization } = req.headers;
   const { name, age, date } = req.body;
-  const { headers } = req;
-  const { authorization } = headers;
   
-    const newCrush = { id, name, age, date };
+  const isOk = validateFilds({ authorization, name, age, date });
 
-  const newCrushList = [dataFile, newCrush];
-  validationToken(headers, authorization, 'authorization', res);
-  validateDataObject(date, res);
-  validateRate(date.rate, res);
-  validateDate(date.datedAt, res);
-  validateName(name, res);
-  validateAge(age, res);
+  if (isOk) return res.status(isOk.status).send({ message: isOk.message });
+
+  const dataCrushList = await crushFile();
+
+  const newCrush = { id: JSON.parse(dataCrushList).length + 1, name, age, date };
+ 
+  const newCrushList = [...dataCrushList, newCrush];
     
   await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newCrushList));
   return res

@@ -1,87 +1,84 @@
 const message = 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios';
 
-const validateName = (name, res) => {
-  if (name) {
-    if (name.length > 3) {
-      return true;
-    }
-    return res
-      .status(400)
-      .send({ message: 'O "name" deve ter pelo menos 3 caracteres' });
-  }
-  return res.status(400).send({ message: 'O campo "name" é obrigatório' });
+const validateName = (name) => {
+  if (!name) return 'O campo "name" é obrigatório';
+  if (name.length < 3) return 'O "name" deve ter pelo menos 3 caracteres';
 };
 
-const validateDate = (date, res) => {
+const validateDate = (date) => {
   const dateFormate = /^(0?[1-9]|[12][0-9]|3[01])[/-](0?[1-9]|1[012])[/-]\d{4}$/;
-  if (date !== undefined) {
-    if (date.match(dateFormate)) {
-      return true;
-    }
-    return res.status(400).send({
-      message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"',
-    });
+
+  if (date === undefined) {
+    return message;
   }
-  return res
-    .status(400)
-    .json({
-      message:
-        'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
-    });
+  if (!date.match(dateFormate)) {
+    return 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"';
+  }
 };
 
-const validateAge = (age, res) => {
-  if (age !== undefined) {
-    if (age > 18) {
-      return true;
-    }
-    return res.status(400).send({ message: 'O crush deve ser maior de idade' });
+const validateAge = (age) => {
+  let result;
+
+  if (age === undefined) {
+    result = 'O campo "age" é obrigatório';
   }
-  return res.status(400).send({ message: 'O campo "age" é obrigatório' });
+  if (age < 18) {
+    result = 'O crush deve ser maior de idade';
+  }
+  return result;
 };
 
-const validateRate = (rate, res) => {
-  if (rate !== undefined && Number.isInteger(rate)) {
-    if (rate <= 5 && rate > 0) {
-      return true;
-    }
-    return res
-      .status(400)
-      .send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+const validateRate = (rate) => {
+  if (rate === undefined) {
+    return message;
   }
-  return res.status(400).send({
-    message,
-  });
+  if (rate > 5 || rate < 1) {
+    return 'O campo "rate" deve ser um inteiro de 1 à 5';
+  }
 };
 
-const validationToken = (header, token, nameToken, res) => {
-  if (token !== undefined) {
-      if (token !== '99999999') {
-        return true;
-      }
-      return res.status(401).send({
-        message: 'Token inválido',
-      });   
+const validationToken = (authorizarion) => {
+  console.log(authorizarion);
+  let result;
+  if (!authorizarion) {
+    result = 'Token não encontrado';
+  } else if (authorizarion.length < 16) {
+    result = 'Token inválido';
   }
-  return res.status(401).json({
-    message: 'Token não encontrado',
-  });
+  return result;
 };
 
-const validateDataObject = (date, res) => {
-  if (date !== undefined) {
-    return true;
+const validateDataObject = (date) => {
+  let result;
+  if (!date) {
+    result = message;
+  } else {
+    result = validateDate(date.datedAt) || validateRate(date.rate);
   }
-  return res.status(400).send({
-    message,
-  });
+  return result;
+};
+
+const validateFilds = (filds) => {
+  const { authorization, name, age, date } = filds;
+  // valida data
+  const toDate = validateDataObject(date);
+  if (toDate) return { status: 400, message: toDate };
+
+  // Valida o token
+  const allowed = validationToken(authorization);
+  if (allowed) return { status: 401, message: allowed };
+
+  // Valida o nome
+  const toName = validateName(name);
+  if (toName) return { status: 400, message: toName };
+
+  // Valida idade
+  const toAge = validateAge(age);
+  if (toAge) return { status: 400, message: toAge };
+
+  return undefined;
 };
 
 module.exports = {
-  validateName,
-  validateDate,
-  validateAge,
-  validateRate,
-  validationToken,
-  validateDataObject,
+  validateFilds,
 };
