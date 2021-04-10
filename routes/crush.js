@@ -10,19 +10,29 @@ app.use(bodyParser.json());
 const SUCCESS = 200;
 const ERROR = 404;
 
+app.get('/search', hasToken, (request, response) => {
+  const { q: query } = request.query;
+  console.log(crushData);
+  const data = crushData.filter(({ name }) => name.toLowerCase().includes(query.toLowerCase()));
+  response.status(SUCCESS).send(data);
+});
+
 app
   .route('/')
-    .get(async (_request, response) => {
-      await response.status(SUCCESS).send(crushData);
+    .get((_request, response) => {
+      response.status(SUCCESS).send(crushData);
     })
-    .post(hasToken, isValidName, isValidAge, isValidDate, async (request, response) => {
+    .post(
+      hasToken, isValidName, isValidAge, isValidDate,
+      async (request, response) => {
       const { name, age, date } = request.body;
       const id = crushData.length + 1;
       const newCrush = { id, name, age, date };
       const newData = [...crushData, newCrush];
       await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData));
       response.status(201).send(newCrush);
-    });
+      },
+    );
 
 app
   .route('/:id')
@@ -46,7 +56,16 @@ app
         const oldData = crushData.filter(({ id: crushId }) => id !== +crushId);
         const newData = [...oldData, newCrush];
         await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData));
-        response.status(200).send(newCrush);
+        response.status(SUCCESS).send(newCrush);
+      },
+    )
+    .delete(
+      hasToken,
+      async (request, response) => {
+        const id = parseInt(request.params.id, 10);
+        const newData = crushData.filter(({ id: crushId }) => id !== +crushId);
+        await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData));
+        response.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
       },
     );
 

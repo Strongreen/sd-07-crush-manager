@@ -8,7 +8,6 @@ const FAIL = 400;
 
 const isRateValid = (rate = -1) => {
  const rateInteger = parseInt(rate, 10);
- console.log(rate);
  return (rateInteger > 0 && rateInteger <= 5);
 };
 const isDatedAtValid = (datedAt = '111') => {
