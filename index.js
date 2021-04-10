@@ -23,8 +23,6 @@ app.get(CRUSH, crushControllers.getCrush);
 app.get(
   `${CRUSH}/search`,
   validatedToken,
-  validatedNameAge,
-  validatedDate,
   crushControllers.searchCrush,
 );
 app.get(`${CRUSH}/:id`, crushControllers.getCrushById);
@@ -39,8 +37,6 @@ app.put(
 app.delete(
   `${CRUSH}/:id`,
   validatedToken,
-  validatedNameAge,
-  validatedDate,
   crushControllers.deleteCrush,
 );
 app.post('/login', loginControllers.getLogin);
