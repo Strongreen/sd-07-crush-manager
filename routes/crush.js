@@ -24,4 +24,24 @@ app.get('/:id', async (req, res) => {
     res.status(200).send(filteredCrush);    
 });
 
+app.post('/', async (req, res) => {
+    const result = await readCrushFile();
+    const size = result.length;
+    result[size] = {
+        name: req.body.name,
+        age: req.body.age,
+        id: parseInt(`${size + 1}`, 10),
+        date: { dateAt: req.body.datedAt,
+            rate: req.body.rate,
+        },
+    };
+
+    try {
+        await fs.writeFile(path.resolve(__dirname, '.', '../crush.json', JSON.stringify(result)));
+        res.status(201).send({ message: 'Salvo com sucesso' });
+    } catch (error) {
+        throw new Error(error);        
+    }    
+});
+
 module.exports = app;
