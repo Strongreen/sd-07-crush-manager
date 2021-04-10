@@ -38,7 +38,6 @@ const validateRate = (rate) => {
 };
 
 const validationToken = (authorizarion) => {
-  console.log(authorizarion);
   let result;
   if (!authorizarion) {
     result = 'Token não encontrado';
@@ -81,4 +80,5 @@ const validateFilds = (filds) => {
 
 module.exports = {
   validateFilds,
+  validationToken,
 };

@@ -9,7 +9,7 @@ const sucess = 200;
 const notFound = 404;
 const mandatory = 400;
 
-const { validateFilds } = validation;
+const { validateFilds, validationToken } = validation;
 
 const validatePass = (pass) => {
   if (pass !== undefined) {
@@ -104,8 +104,19 @@ app.post('/crush', async (req, res) => {
 //   res.status(sucess).send();
 // });
 
-app.delete('/crush/:id', (req, res) => {
-  res.status(sucess).send();
+app.delete('/crush/:id', async (req, res) => {
+  const { id } = req.params;
+  const { authorization } = req.headers;
+  const dataCrush = await crushFile();
+
+  const isOk = validationToken(authorization);
+
+  if (isOk) return res.status(401).send({ message: isOk });
+
+  const newData = JSON.parse(dataCrush).filter((act) => act.id !== id);
+
+  await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData));
+  res.status(200).send({ message: 'Crush deletado com sucesso' });
 });
 
 module.exports = app;
