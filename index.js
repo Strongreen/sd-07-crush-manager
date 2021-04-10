@@ -129,6 +129,16 @@ app.get('/crush', async (_request, response) => {
   return response.status(SUCCESS).send(crushList);
 });
 
+// 7 ----- Crie o endpoint GET /crush/search?q=searchTerm ------
+app.get('/crush/search', validateTokenMiddleware, async (request, response) => {
+  const { q } = request.query;
+  const crushList = await fileReader();
+  const filtered = crushList.filter((char) => char.name.includes(q));
+  if (!q || q === '') return response.status(SUCCESS).json(crushList);
+  // if (!filtered) return response.status(SUCCESS).json([]);
+  return response.status(SUCCESS).json(filtered);
+});
+
 // 2 --------- Crie o endpoint GET /crush/:id ---------
 app.get('/crush/:id', async (request, response) => {
   const userID = await fileReader();
@@ -175,9 +185,9 @@ app.use(validateNameMiddleware, validateAgeMiddleware,
 validateDateMiddleware, validateRateMiddleware);
 app.post('/crush', async (request, response) => {
   const { name, age, date } = request.body;
-  const nextCrush = await fileReader();
-  const crush = {
-    id: nextCrush.length + 1,
+  const crushList = await fileReader();
+  const newCrush = {
+    id: crushList.length + 1,
     name,
     age: parseInt(age, 0),
     date: {
@@ -185,5 +195,7 @@ app.post('/crush', async (request, response) => {
       rate: date.rate,
     },
   };
-  return response.status(201).json(crush);
+  const newCrushList = [...crushList, newCrush];
+  await fileWriter(newCrushList);
+  return response.status(201).json(newCrush);
 });
