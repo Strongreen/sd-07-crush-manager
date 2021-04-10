@@ -61,7 +61,21 @@ const deleteCrush = async (req, res) => {
       .filter((currCrush) => (currCrush.id !== Number(id)));
 
     await writeFile(resolve(__dirname, '..', crushFile), JSON.stringify(newCrushList, null, 2));
-    return res.status(200).json({ message: 'Crush deletado com sucesso' });
+    return res.status(200).send({ message: 'Crush deletado com sucesso' });
+  } catch (error) { throw new Error(error); }
+};
+
+const searchCrush = async (req, res) => {
+  const { q } = req.query;
+
+  try {
+    const listCrush = await allCrush();
+    const filterCrush = listCrush.filter(({ name }) => name
+    .toLowerCase()
+    .includes(q.toLowerCase()));
+    if (filterCrush) {
+      return res.status(200).json(filterCrush);
+    } 
   } catch (error) { throw new Error(error); }
 };
 
@@ -71,4 +85,5 @@ module.exports = {
   addCrush,
   updateCrush,
   deleteCrush,
+  searchCrush,
 };

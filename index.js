@@ -13,29 +13,36 @@ const loginControllers = require('./Controllers/indexLogin');
 const app = express();
 const SUCCESS = 200;
 const PORT = '3000';
-const CRUSH_ID = '/crush/:id';
+const CRUSH = '/crush';
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 app.use(bodyParser.json());
-app.get('/crush', crushControllers.getCrush);
-app.post('/crush', validatedToken, validatedNameAge, validatedDate, crushControllers.addCrush);
-app.get(CRUSH_ID, crushControllers.getCrushById);
+app.get(CRUSH, crushControllers.getCrush);
+app.post(CRUSH, validatedToken, validatedNameAge, validatedDate, crushControllers.addCrush);
+app.get(`${CRUSH}/:id`, crushControllers.getCrushById);
 app.post('/login', loginControllers.getLogin);
 app.put(
-  CRUSH_ID,
+  `${CRUSH}/:id`,
   validatedToken,
   validatedNameAge,
   validatedDate,
   crushControllers.updateCrush,
 );
 app.delete(
-  CRUSH_ID,
+  `${CRUSH}/:id`,
   validatedToken,
   validatedNameAge,
   validatedDate,
   crushControllers.deleteCrush,
+);
+app.get(
+  `${CRUSH}/search`,
+  validatedToken,
+  validatedNameAge,
+  validatedDate,
+  crushControllers.searchCrush,
 );
 app.listen(PORT, () => {
   console.log('Online');
