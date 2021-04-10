@@ -8,7 +8,8 @@ const {
   dateAuth2,
   emailAuth,
 } = require('./validateFunctions.js');
-const crushReq = require('./getCrush');
+const crushGet = require('./getCrush');
+const crushPost = require('./postCrush');
 
 const app = express();
 app.use(express.json());
@@ -23,7 +24,8 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.use('/crush', crushReq);
+app.use('/crush', crushGet);
+app.use('/crush', crushPost);
 
 app.post('/login', emailAuth, (req, res) => {
   const { password } = req.body;
@@ -40,25 +42,6 @@ app.post('/login', emailAuth, (req, res) => {
   return res.status(SUCCESS).json({
     token: '7mqaVRXJSp886CGr',
   });
-});
-
-app.post('/crush', tokenAuth, nameAuth, ageAuth, dateAuth, dateAuth2, async (req, res) => {
-  const { name, age, date } = req.body;
-  const crushs = await fs.readFile(crushFile);
-  const crushsJson = JSON.parse(crushs);
-  const size = crushsJson.length;
-  crushsJson[size] = {
-    id: `${size + 1}`,
-    name,
-    age,
-    date,
-  };
-  try {
-    await fs.writeFile(crushFile, JSON.stringify(crushsJson));
-    res.status(201).json({ id: Number(`${size + 1}`), name, age, date });
-  } catch (error) {
-    throw new Error(error);
-  }
 });
 
 app.put(
