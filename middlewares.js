@@ -1,4 +1,4 @@
-const { isValidEmail, isValidPassword } = require('./services/loginService');
+const { isValidEmail, isValidPassword, isValidToken } = require('./services/loginService');
 
 exports.validateEmailMiddleware = (req, res, next) => {
     const emailErrorCode400 = { message: 'O campo "email" é obrigatório' };
@@ -15,6 +15,15 @@ exports.validatePasswordMiddleware = (req, res, next) => {
     const { password } = req.body;
     if (!password || password === '') return res.status(400).send(passwordNotFoundError);
     if (!isValidPassword(password)) return res.status(400).send(invalidPasswordError);
+    next();
+};
+
+exports.validateTokenMiddleware = (req, res, next) => {
+    const tokenNotFoundError = { message: 'Token não encontrado' };
+    const invalidTokenError = { message: 'Token inválido' };
+    const { token } = req.headers;
+    if (!token) return res.status(401).send(tokenNotFoundError);
+    if (!isValidToken(token)) return res.status(401).send(invalidTokenError);
     next();
 };
 

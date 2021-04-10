@@ -16,8 +16,14 @@ function isValidPassword(password) {
     return true;
 }
 
+function isValidToken(token) {
+  if (token.length !== 16) return false;
+  return true;
+}
+
 module.exports = {
   generateToken,
   isValidEmail,
   isValidPassword,
+  isValidToken,
 };

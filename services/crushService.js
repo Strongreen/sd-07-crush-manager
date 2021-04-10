@@ -9,16 +9,33 @@ function getAllCrushs() {
 }
 
 async function getCrushById(id) {
-    const crushs = await getAllCrushs();
-    const crush = crushs[id - 1];
-    return crush;
+  const crushs = await getAllCrushs();
+  const crush = crushs[id - 1];
+  return crush;
+}
+
+async function deleteCrushById(id) {
+  const crushs = await getAllCrushs();
+  const newCrushList = crushs.filter((crush) => crush.id !== Number(id));
+  try {
+    fs.promises.writeFile(
+      `${__dirname}/../crush.json`,
+      JSON.stringify(newCrushList),
+      'utf8',
+    );
+  } catch (error) {
+    console.error(error.message);
+  }
 }
 
 /* 
-  function setCrushs(index, newCrush) {
-    data[index] = newCrush;
-    fs.promises
-      .writeFile(data, JSON.stringify(data), 'utf8')
+function setCrushs(newCrush) {
+    const crushs = await getAllCrushs();
+    crush = newCrush;
+    crush[id] = crushs.length + 1;
+    crushs.push(crush);
+    return fs.promises
+      .writeFile(`${__dirname}/../crush.json`, JSON.stringify(data), 'utf8')
       .then(() => {
         console.log('Crush adicionado com sucesso!');
       })
@@ -30,4 +47,5 @@ async function getCrushById(id) {
 module.exports = {
   getAllCrushs,
   getCrushById,
+  deleteCrushById,
 };
