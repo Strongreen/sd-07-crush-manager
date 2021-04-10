@@ -24,16 +24,30 @@ app
       response.status(201).send(newCrush);
     });
 
-app.get('/:id', async (request, response) => {
-  const { id } = request.params;
-  const crush = await crushData.find(({ id: crushId }) => +id === +crushId);
+app
+  .route('/:id')
+    .get(async (request, response) => {
+      const id = parseInt(request.params.id, 10);
+      const crush = await crushData.find(({ id: crushId }) => id === +crushId);
 
-  if (!crush) {
-    const message = { message: 'Crush não encontrado' };
-    response.status(ERROR).send(message);
-  } else {
-    response.status(SUCCESS).send(crush);
-  }
-});
+      if (!crush) {
+        const message = { message: 'Crush não encontrado' };
+        response.status(ERROR).send(message);
+      } else {
+        response.status(SUCCESS).send(crush);
+      }
+    })
+    .put(
+      hasToken, isValidName, isValidAge, isValidDate,
+      async (request, response) => {
+        const { name, age, date } = request.body;
+        const id = parseInt(request.params.id, 10);
+        const newCrush = { id, name, age, date };
+        const oldData = crushData.filter(({ id: crushId }) => id !== +crushId);
+        const newData = [...oldData, newCrush];
+        await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData));
+        response.status(200).send(newCrush);
+      },
+    );
 
 module.exports = app;
