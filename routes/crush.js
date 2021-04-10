@@ -4,7 +4,7 @@ const crushes = require('../crush.json');
 const app = express();
 
 app.get('/', (request, response) => {
-  if (crushes.length < 1) {
+  if (crushes.length <= 0) {
     response.status(200).send([]);
   }
   response.status(200).send(crushes);

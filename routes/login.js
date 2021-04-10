@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const express = require('express');
-const loginEmailCheck = require('../middlewares/loginEmailCheck');
-const loginPassCheck = require('../middlewares/loginPassCheck');
+const loginEmailCheck = require('../middlewares/login/loginEmailCheck');
+const loginPassCheck = require('../middlewares/login/loginPassCheck');
 
 const app = express();
 app.use(loginEmailCheck);
