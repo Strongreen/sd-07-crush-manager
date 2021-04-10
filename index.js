@@ -8,6 +8,7 @@ app.use(bodyParser.json());
 
 const SUCCESS = 200;
 const PORT = '3000';
+const crushIdPath = '/crush/:id';
 
 // const testChush = {
 //   name: 'Zendaya Maree',
@@ -28,7 +29,7 @@ app.get('/crush', (req, res) => {
   });
 });
 
-app.get('/crush/:id', (req, res) => {
+app.get(crushIdPath, (req, res) => {
   const { id } = req.params;
   fs.readFile('./crush.json', 'utf8', (err, dataTXT) => {
     const data = JSON.parse(dataTXT);
@@ -166,7 +167,7 @@ app.post('/crush', (req, res) => {
     }); // consertar id
 });
 
-app.put('/crush/:id', (req, res) => {
+app.put(crushIdPath, (req, res) => {
   const { authorization } = req.headers;
   const { id } = req.params;
   const { name, age, date } = req.body;
@@ -181,6 +182,16 @@ app.put('/crush/:id', (req, res) => {
       age,
       id: Number(id),
       date: { datedAt: date.datedAt, rate: date.rate },
+    });
+});
+
+app.delete(crushIdPath, (req, res) => {
+  const { authorization } = req.headers;
+  tokenValidation(authorization, res);
+  console.log('Tudo ok, deletado');
+  res.status(200)
+    .json({
+      message: 'Crush deletado com sucesso',
     });
 });
 
