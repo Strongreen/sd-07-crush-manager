@@ -25,9 +25,9 @@ const fileReader = async () => {
 };
 
 // ---------- Função para escrever no arquivo --------
-// const fileWriter = async (newUser) => {
-//   await fs.writeFile(data, JSON.stringify(newUser)); 
-// };
+const fileWriter = async (dataUpdated) => {
+  await fs.writeFile(data, JSON.stringify(dataUpdated)); 
+};
 
 // ----------- Função que valida email ---------------
 // https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
@@ -158,9 +158,21 @@ app.post('/login', (request, response) => {
   return response.status(SUCCESS).json({ token });
 });
 
-// 4 ---------- Crie o endpoint POST /crush ---------------
-app.use(validateTokenMiddleware, validateNameMiddleware, 
-validateAgeMiddleware, validateDateMiddleware, validateRateMiddleware);
+// 6 ---------- Crie o endpoint DELETE /crush/:id -----------
+app.use(validateTokenMiddleware);
+app.delete('/crush/:id', async (request, response) => {
+  const { id } = request.params;
+  const crushList = await fileReader();
+  const newCrushList = crushList.filter(
+    (crushId) => crushId.id !== Number(id),
+    );
+    await fileWriter(newCrushList);
+    return response.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
+  });
+
+// 4 ---------- Crie o endpoint POST /crush ------------------
+app.use(validateNameMiddleware, validateAgeMiddleware, 
+validateDateMiddleware, validateRateMiddleware);
 app.post('/crush', async (request, response) => {
   const { name, age, date } = request.body;
   const nextCrush = await fileReader();
