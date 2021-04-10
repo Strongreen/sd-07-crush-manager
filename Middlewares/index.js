@@ -22,24 +22,22 @@ const validatedNameAge = (req, res, next) => {
   next();
 };
 
-// eslint-disable-next-line sonarjs/cognitive-complexity
+const err = {
+  dateM: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
+  formatM: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"',
+  rateM: 'O campo "rate" deve ser um inteiro de 1 à 5',
+};
+const formatDate = /^(0?[1-9]|[12][0-9]|3[01])[/-](0?[1-9]|1[012])[/-]\d{4}$/;
+const isInvalidDate = (date) => !date || !date.datedAt || (!date.rate && date.rate !== 0);
+
 const validatedDate = (req, res, next) => {
   const { date } = req.body;
-  
-  const formatDate = /^(0?[1-9]|[12][0-9]|3[01])[/-](0?[1-9]|1[012])[/-]\d{4}$/;
 
-  const isInvalidDate = () => !date || !date.datedAt || (!date.rate && date.rate !== 0);
-  if (isInvalidDate()) {
-    return res.status(400).json({
-      message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
-  }
+  if (isInvalidDate(date)) { return res.status(400).json({ message: err.dateM }); }
+
   const { datedAt, rate } = date;
-  if (!formatDate.test(datedAt)) {
-    return res.status(400).json({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
-  }  
-  if (rate < 1 || rate > 5) { 
-    return res.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' }); 
-  }
+  if (!formatDate.test(datedAt)) { return res.status(400).json({ message: err.formatM }); }  
+  if (rate < 1 || rate > 5) { return res.status(400).json({ message: err.rateM }); }
   next();
 };
 
