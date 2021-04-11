@@ -62,7 +62,7 @@ router.put('/:id', async (req, res, next) => {
     throwError(!validateNameSize(name), 'O "name" deve ter pelo menos 3 caracteres');
     throwError(!age, 'O campo "age" é obrigatório');
     throwError(!validateAge(age), 'O crush deve ser maior de idade');
-    throwError(!date || !date.datedAt || !date.rate, 
+    throwError(!date || !date.datedAt || date.rate === undefined, 
       'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
     throwError(!validateDate(date.datedAt), 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"');
     throwError(!validateRate(date.rate), 'O campo "rate" deve ser um inteiro de 1 à 5');
