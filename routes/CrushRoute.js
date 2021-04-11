@@ -4,7 +4,7 @@ class CrushRoute {
   constructor(app) {
     app
       .route('/crush')
-      .get(CrushController.buscarTodos)
+      .get(CrushController.getAllCrushs)
       .post(CrushController.adicionar)
       .put(CrushController.editar)
       .delete(CrushController.deletar);

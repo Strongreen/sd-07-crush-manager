@@ -1,14 +1,14 @@
-const Crush = require('../crush.json');
+const CrushFile = require('../crush.json');
 /* const fs = require("fs"); */
-
+const Crush = JSON.parse(CrushFile);
 class CrushController {
-  static async buscarTodos(req, res) {
+  static async getAllCrushs(req, res) {
     console.log('[CRUSH CONTROLLER] : CHAMOU O MÉTODO BUSCAR TODOS');
     try {
       res.json(await Crush.find({}));
     } catch (error) {
       console.log(`[CRUSH CONTROLLER] : buscarTodos => ${error}`);
-      res.status(500).send('Erro ao buscar crushs!');
+      res.status(404).send('Erro ao buscar crushs!');
     }
   }
 
