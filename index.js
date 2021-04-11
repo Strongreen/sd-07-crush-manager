@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const crush = require('./crush.json');
+const fs = require('fs');
 
 const app = express();
 app.use(bodyParser.json());
@@ -13,8 +13,9 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.get('/crush', (_request, response) => {
-  response.status(SUCCESS).send(crush);
+app.get('/crush', (_request, response) => { 
+  const crushs = fs.readFileSync('./crush.json');
+  response.status(SUCCESS).send(crushs);
 });
 
 app.listen(PORT, () => { console.log('Online'); });
