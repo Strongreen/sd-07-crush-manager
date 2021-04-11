@@ -1,28 +1,14 @@
-const CrushFile = require('../crush.json');
-/* const fs = require("fs"); */
-const Crush = JSON.parse(CrushFile);
+const { readCrushFile } = require('../model/CrushModel');
+
 class CrushController {
   static async getAllCrushs(req, res) {
-    console.log('[CRUSH CONTROLLER] : CHAMOU O MÉTODO BUSCAR TODOS');
+    console.log('[CRUSH CONTROLLER] : CHAMOU O MÉTODO BUSCAR CRUSHS');
     try {
-      res.json(await Crush.find({}));
-    } catch (error) {
+      const result = await readCrushFile();
+      return res.status(200).json(result);
+      } catch (error) {
       console.log(`[CRUSH CONTROLLER] : buscarTodos => ${error}`);
-      res.status(404).send('Erro ao buscar crushs!');
-    }
-  }
-
-  static async adicionar(req, res) {
-    try {
-      const NovoCrush = req.body;
-      console.log(
-        `${'[CRUSH CONTROLLER] : CHAMOU O MÉTODO ADICIONAR'
-          + '\n PARÂMETRO: '}${ 
-          JSON.stringify(NovoCrush)}`,
-      );
-      res.status(201).json(await Crush.create(NovoCrush));
-    } catch (error) {
-      res.status(500).send('Erro ao inserir novo crush!');
+       res.status(500).send('Erro ao buscar crushs!');
     }
   }
 }
