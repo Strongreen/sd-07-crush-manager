@@ -6,6 +6,11 @@ const login = require('./routers/login');
 const { 
   emailMiddleware,
   passwordMiddleware,
+  ageMiddleware,
+  dateMiddleware,
+  nameMiddleware,
+  rateMiddleware,
+  authMiddleware,
 } = require('./middlewares');
 
 const app = express();
@@ -18,6 +23,13 @@ const PORT = '3000';
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
+
+app.post('/crush',
+  ageMiddleware,
+  dateMiddleware,
+  nameMiddleware,
+  rateMiddleware,
+  authMiddleware);
 
 app.post('/login', emailMiddleware, passwordMiddleware);
 

@@ -1,12 +1,16 @@
-const ranToken = (length = 8) => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+const path = require('path');
+const fs = require('fs').promises;
+const crypto = require('crypto');
 
-  let str = '';
-  for (let i = 0; i < length; i += 1) {
-      str += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
+const generateToken = () => crypto.randomBytes(8).toString('hex');
 
-  return str;
-};
+const writeCrushFile = async (content) => (
+  fs.writeFile(
+    path.resolve(__dirname, '..', 'crush.json'),
+    JSON.stringify(content),
+    (err) => {
+      if (err) throw err;
+    },
+  ));
 
-module.export = ranToken;
+module.exports = { generateToken, writeCrushFile };
