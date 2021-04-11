@@ -1,6 +1,9 @@
 const routes = require('express').Router();
 const { readCrushes, writeCrushes } = require('../services/functions');
 
+const auth = require('../middlewares/auth');
+const { crushValidation, dateValidation } = require('../middlewares/crushValidation');
+
 routes.get('/', async (req, res) => {
   const crushes = await readCrushes();
   if (!crushes.length) res.status(200).send([]);
@@ -15,9 +18,19 @@ routes.get('/:id', async (req, res) => {
   res.status(200).send(foundCrush);
 });
 
+routes.use(auth);
+routes.use(crushValidation);
+routes.use(dateValidation);
+
 routes.post('/', async (req, res) => {
-  const crush = req.body;
+  const { name, age, date } = req.body;
   const crushes = await readCrushes();
+  const crush = {
+    name,
+    age,
+    id: crushes.length + 1,
+    date,
+  };
   crushes.push(crush);
   writeCrushes(crushes);
   res.status(200).send(crushes);
