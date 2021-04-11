@@ -30,6 +30,13 @@ const updateCrush = async (newCrush, id) => {
   return newJson.find((elem) => +elem.id === +id);
 };
 
+const deleteCrush = async (id) => {
+  const jsonCrush = await readCrushJson();
+  const newJson = jsonCrush.filter((elem) => +elem.id !== +id);
+
+  await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newJson));
+};
+
 const checkPassword = (pass) => {
   const LENGTH_MIN = 6;
   const passStr = pass.toString();
@@ -54,4 +61,5 @@ module.exports = {
   throwError,
   writeCrush,
   updateCrush,
+  deleteCrush,
 };

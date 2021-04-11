@@ -5,7 +5,7 @@ const {
   validateAge,
   validateDate,
   validateRate } = require('../middlewares/utils');
-const { readCrushJson, throwError, writeCrush, updateCrush } = require('./util');
+const { readCrushJson, throwError, writeCrush, updateCrush, deleteCrush } = require('./util');
 
 const router = express.Router();
 
@@ -70,6 +70,16 @@ router.put('/:id', async (req, res, next) => {
     res.status(SUCCESS).send(respCrush);
   } catch (error) {
     return next({ status: BAD_REQUEST, resp: error.message });
+  }
+});
+
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await deleteCrush(id);
+    res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
+  } catch (error) {
+    return next();
   }
 });
 
