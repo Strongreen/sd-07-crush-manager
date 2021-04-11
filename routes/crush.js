@@ -10,6 +10,18 @@ routes.get('/', async (req, res) => {
   res.status(200).send(crushes);
 });
 
+routes.get('/search', auth, async (req, res) => {
+  try {
+    const { q } = req.query;
+    const crushes = await readCrushes();
+    if (!q || q === '') return res.status(201).send(crushes);
+    const search = crushes.filter((crush) => (crush.name).toLowerCase().includes(q.toLowerCase()));
+    return res.status(200).send(search);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+});
+
 routes.get('/:id', async (req, res) => {
   const crushes = await readCrushes();
   const { id } = req.params;
