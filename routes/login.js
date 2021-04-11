@@ -7,7 +7,8 @@ const token = crypto.randomBytes(8).toString('hex');
 
 router.post('/', (req, res) => {
   const { email, password } = req.body;
-  const emailval = /\S+@\S+\.\S+/.test(email);
+   // https://gist.github.com/dreamstarter/9231254
+  const emailval = /^([A-Za-z0-9_\-.+])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,})$/.test(email);
   if (!email) return res.status(400).json({ message: 'O campo "email" é obrigatório' });
   if (!emailval) {
     return res.status(400).json({ 
