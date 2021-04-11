@@ -31,6 +31,13 @@ app.post('/crush',
   dateMiddleware,
   rateMiddleware);
 
+  app.put('/crush/:id',
+  authMiddleware,
+  ageMiddleware,
+  nameMiddleware,
+  dateMiddleware,
+  rateMiddleware);
+
 app.post('/login', emailMiddleware, passwordMiddleware);
 
 app.use('/crush', crush);

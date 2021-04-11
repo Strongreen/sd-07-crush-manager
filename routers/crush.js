@@ -44,4 +44,15 @@ router.post('/', async (req, res) => {
   res.status(201).json(newCrush);
 });
 
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, age, date } = req.body;
+  const crushData = await dataCrush();
+  const newCrush = { id: Number(id), name, age, date };
+  const filterCrush = JSON.parse(crushData).filter((crush) => crush.id !== Number(id));
+  const newCrushData = [...filterCrush, newCrush];
+  await writeCrushFile(newCrushData);
+  res.status(200).json(newCrush);
+});
+
 module.exports = router;
