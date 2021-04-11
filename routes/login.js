@@ -16,16 +16,16 @@ function validationEmail(email) {
 router.post('/', (req, res) => {
     const { email, password } = req.body;
     if (!email) {
-      return res.status(400).json({ message: 'O campo "email" é obrigatório' }); 
-    } if (!validationEmail(email)) {
-    return res.status(400).json({ 
-    message: 'O "email" deve ter o formato "email@email.com"', 
+      return res.status(400).send({ message: 'O campo "email" é obrigatório' }); 
+    } if (!password) {
+    return res.status(400).send({ 
+    message: 'O campo "password" é obrigatório', 
     }); 
 }
-    if (!password) {
-        return res.status(400).json({ message: 'O campo "password" é obrigatório' }); 
-    } if (validationPassword(password)) {
-        return res.status(400).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' }); 
+    if (validationPassword(password)) {
+        return res.status(400).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' }); 
+    } if (!validationEmail(email)) {
+        return res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' }); 
     }
     const tokenvalidation = crypto.randomBytes(8).toString('hex');
     return res.status(200).send({ tokenvalidation });
