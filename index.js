@@ -5,25 +5,62 @@ const app = express();
 
 app.use(express.json());
 
+const token = { token: '7mqaVRXJSp886CGr' };
+
 const SUCCESS = 200;
+const CREATED = 201;
 const BAD_REQUEST = 400;
-// const UNAUTHORIZED = 401;
+const UNAUTHORIZED = 401;
 const NOT_FOUND = 404;
 const PORT = 3000;
+const rota = '/crush/:id';
+
+// MIDDLEWARE DE AUTHORIZATION
+const checkToken = (req, res, next) => {
+  const { authorization } = req.headers;
+
+  if (!authorization) {
+    return res.status(UNAUTHORIZED).json({ message: 'Token não encontrado' });
+  }
+  if (authorization !== token.token) {
+    return res.status(UNAUTHORIZED).json({ message: 'Token inválido' });
+  }
+  next();
+};
+
+// MIDDLEWARE DE ERRO
+const errorMiddleware = (err, req, res, _next) => {
+  res.status(BAD_REQUEST).json({
+    message: err.message,
+  });
+};
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
+// FUNÇÕES PARA LER E ESCREVER NO ARQUIVO crush.json
 const getData = () => JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
-const token = { token: '7mqaVRXJSp886CGr' };
+const writeFile = async (content) => fs.writeFileSync('./crush.json', content);
 
+// REQUISITO #1: retornar todos os crushes cadastrados
 app.get('/crush', (_req, res) => {
     res.status(SUCCESS).json(getData());
 });
 
-app.get('/crush/:id', (req, res) => {
+// REQUISITO #7: pesquisa por crushes
+// com necessidade de autenticação
+app.get('/crush/search', checkToken, (req, res) => {
+  const { q } = req.query;
+  const crushes = getData();
+  if (!q) res.status(SUCCESS).json(crushes);
+  const foundedCrushes = crushes.filter((crush) => crush.name.includes(q));
+  res.status(SUCCESS).json(foundedCrushes);
+});
+
+// REQUISITO #2: retornar um crush cadastrado
+app.get(rota, (req, res) => {
   const { id: reqId } = req.params;
   const crushes = getData();
   const message = { message: 'Crush não encontrado' };
@@ -34,8 +71,8 @@ app.get('/crush/:id', (req, res) => {
   return res.status(NOT_FOUND).json(message);
 });
 
+// FUNCÕES DE VERIFICAÇÃO DE DADOS
 function verifyEmail(email) {
-  // const emailRegex = /^([a-zA-Z0-9_-]+)@mail\.com$/gm;
   const emailRegex = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+$/;
   return emailRegex.test(email);
 }
@@ -45,6 +82,12 @@ function verifyPassword(password) {
   return passwordRegex.test(password);
 }
 
+function verifyDateAt(date) {
+  const dateRegex = /^(0[1-9]|1\d|2\d|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}$/;
+  return dateRegex.test(date);
+}
+
+// REQUISITO #3: retornar token se usuário for válido
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const emailIsValid = verifyEmail(email);
@@ -64,6 +107,97 @@ app.post('/login', (req, res) => {
   }
   res.status(SUCCESS).json(token);
 });
+
+// abaixo requisitos com necessidade de autenticação
+app.use(checkToken);
+
+// FUNÇÕES DE VALIDAÇÃO DOS REQUISITOS #4 #5
+function nameIsValid(name) {
+  if (!name) {
+    throw new Error('O campo "name" é obrigatório');
+  } else if (name.length < 3) {
+    throw new Error('O "name" deve ter pelo menos 3 caracteres');
+  }
+}
+function ageIsValid(age) {
+  if (!age) {
+    throw new Error('O campo "age" é obrigatório');
+  } else if (age < 18) {
+    throw new Error('O crush deve ser maior de idade');
+  }
+}
+function dateIsValid(date) {
+  if (!date || !date.datedAt || date.rate === undefined) {
+    throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
+  }
+}
+
+function rateIsValid(date) {
+  if (date.rate < 1 || date.rate > 5) {
+    throw new Error('O campo "rate" deve ser um inteiro de 1 à 5');
+  }
+}
+
+function dateAtIsValid(date) {
+  const dateAtTestResult = verifyDateAt(date.datedAt);
+
+  if (!dateAtTestResult) {
+    throw new Error('O campo "datedAt" deve ter o formato "dd/mm/aaaa"');
+  }
+}
+
+function newCrushIsValid(reqCrush) {
+  nameIsValid(reqCrush.name);
+  ageIsValid(reqCrush.age);
+  dateIsValid(reqCrush.date);
+  rateIsValid(reqCrush.date);
+  dateAtIsValid(reqCrush.date);
+}
+
+// REQUISITO #4: criar novo crush
+app.post('/crush', async (req, res) => {
+  const reqCrush = req.body;
+  const { name, age, date } = req.body;
+ 
+  newCrushIsValid(reqCrush);
+
+  const crushes = getData();
+  const addedCrush = { name, age, id: crushes.length + 1, date };
+  const newCrush = crushes.concat(addedCrush);
+
+  await writeFile(JSON.stringify(newCrush));
+
+  res.status(CREATED).json(addedCrush);
+});
+
+// REQUISITO #5: atualizar crush
+app.put(rota, async (req, res) => {
+  const reqCrush = req.body;
+  const { name, age, date } = req.body;
+  
+  newCrushIsValid(reqCrush);
+
+  const { id } = req.params;
+  const crushes = getData();
+  const updatedCrush = ({ name, age, id: +id, date });
+  crushes[id - 1] = updatedCrush;
+  await writeFile(JSON.stringify(crushes));
+
+  res.status(SUCCESS).json(updatedCrush);
+});
+
+// REQUISITO #6: deletar crush
+app.delete(rota, async (req, res) => {
+  const { id } = req.params;
+  const filteredCrushes = getData().filter((crush) => crush.id !== +id);
+
+  await writeFile(JSON.stringify(filteredCrushes));
+
+  res.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
+});
+
+// para tratamento de erros
+app.use(errorMiddleware);
 
 app.listen(PORT, () => {
   console.log(`App rodando na porta ${PORT}`);
