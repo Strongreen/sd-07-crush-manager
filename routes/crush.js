@@ -34,7 +34,7 @@ routes.use(auth);
 routes.use(crushValidation);
 routes.use(dateValidation);
 
-routes.post('/', async (req, res) => {
+routes.post('/', auth, async (req, res) => {
   const crushes = await readCrushes();
   const crush = {
     id: crushes.length + 1,
