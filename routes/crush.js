@@ -1,15 +1,17 @@
 const fs = require('fs').promises;
+const path = require('path');
 const express = require('express');
 
-const app = express();
+const router = express.Router();
 
 const readCrushFile = async () => {
-  const content = await fs.readFile((`${__dirname}/../crush.json`));
+  const content = await fs.readFile(path.resolve(__dirname, '..', 'crush.json'));
   return JSON.parse(content.toString('utf-8'));
 };
-app.get('/', async (req, res) => {
+
+router.get('/', async (req, res) => {
   const result = await readCrushFile();
   res.status(200).send(result);
 });
 
-module.exports = app;
+module.exports = router;
