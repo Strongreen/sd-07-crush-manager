@@ -1,6 +1,7 @@
 const express = require('express');
 const err = require('./middlewares/errMiddlewares');
 const crush = require('./routes/crush');
+const login = require('./routes/login');
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.get('/', (_request, response) => {
 });
 
 app.use('/crush', crush);
+
+app.use('/login', login);
 
 app.use(err);
 
