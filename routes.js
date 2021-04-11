@@ -6,6 +6,7 @@ const {
     getAllCrushsController,
     getCrushByIdController,
     createCrushController,
+    updateCrushController,
     deleteCrushByIdController,
 } = require('./controllers/crushController');
 
@@ -37,6 +38,14 @@ route.post(CRUSH,
   validateDateMiddleware,
   validateRateMiddleware,
   createCrushController);
+
+route.put(CRUSH_ID,
+  validateAuthorizationMiddleware,
+  validateNameMiddleware,
+  validateAgeMiddleware,
+  validateDateMiddleware,
+  validateRateMiddleware,
+  updateCrushController);
 
 route.delete(CRUSH_ID, validateAuthorizationMiddleware, deleteCrushByIdController);
 

@@ -59,7 +59,7 @@ exports.validateDateMiddleware = (req, res, next) => {
   };
   const invalidDateFormatError = { message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' };
   const { date } = req.body;
-  if (date === undefined || !date.datedAt || date.datedAt === '') {
+  if (date === undefined || date.datedAt === undefined || date.datedAt === '') {
     return res.status(400).send(dateNotFoundOrSomeIsEmpty);
   }
   if (!isValidDate(date.datedAt)) return res.status(400).send(invalidDateFormatError);
@@ -75,7 +75,7 @@ exports.validateRateMiddleware = (req, res, next) => {
   };
   const { date } = req.body;
 
-  if (!date || !date.rate || String(date.rate) === '') {
+  if (date.rate === undefined || String(date.rate) === '') {
     return res.status(400).send(dateNotFoundOrSomeIsEmpty);
   }
   if (!isRateInRange(date.rate)) return res.status(400).send(invalidRateRangeError);

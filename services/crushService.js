@@ -14,10 +14,10 @@ async function getCrushById(id) {
   return crush;
 }
 
-async function setCrushs(newCrush) {
+async function setCrush(newCrush, isUpdate, id) {
   const crushs = await getAllCrushs();
   const crush = newCrush;
-  crush.id = crushs.length + 1;
+  crush.id = isUpdate ? Number(id) : crushs.length + 1;
   crushs.push(crush);
   try {
     fs.promises.writeFile(
@@ -61,14 +61,14 @@ function isValidDate(date) {
 }
 
 function isRateInRange(rate) {
-  if (rate >= 1 && rate <= 5) return true;
+  if (Number(rate) >= 1 && Number(rate) <= 5) return true;
   return false;
 }
 
 module.exports = {
   getAllCrushs,
   getCrushById,
-  setCrushs,
+  setCrush,
   deleteCrushById,
   isValidName,
   isOverEighteen,

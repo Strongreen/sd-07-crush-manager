@@ -2,7 +2,7 @@ const {
     getAllCrushs,
     getCrushById,
     deleteCrushById,
-    setCrushs } = require('../services/crushService');
+    setCrush } = require('../services/crushService');
 
 exports.getAllCrushsController = async (_req, res) => {
     const crushs = await getAllCrushs();
@@ -19,8 +19,17 @@ exports.getCrushByIdController = async (req, res) => {
 
 exports.createCrushController = async (req, res) => {
     const crush = req.body;
-    await setCrushs(crush);
+    await setCrush(crush);
     return res.status(201).send(crush);
+};
+
+exports.updateCrushController = async (req, res) => {
+    const crush = req.body;
+    const isUpdate = true;
+    const { id } = req.params;
+    await deleteCrushById(id);
+    await setCrush(crush, isUpdate, id);
+    return res.status(200).send(crush);
 };
 
 exports.deleteCrushByIdController = async (req, res) => {
