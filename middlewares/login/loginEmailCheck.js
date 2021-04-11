@@ -9,8 +9,11 @@ app.use(bodyParser.json());
 
 app.post('/', (request, response, next) => {
   const { email } = request.body;
- 
-  // Validation Email and password
+  if (typeof email === 'undefined' || email.toString() === '') {
+    response.status(400).send({
+      message: 'O campo "email" é obrigatório',
+    });
+  }
   const validateEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (validateEmail.test(email)) {
     next();
@@ -18,7 +21,7 @@ app.post('/', (request, response, next) => {
     response.status(400).send({
       message: 'O "email" deve ter o formato "email@email.com"',
     });
-} 
+  } 
 });
 
 module.exports = app;

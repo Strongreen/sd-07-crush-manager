@@ -9,14 +9,19 @@ app.use(bodyParser.json());
 
 app.post('/', (request, response, next) => {
   const { password } = request.body;
-    if (password.toString().length > 5) {
-      // Confirmation and middleware exit
-      next();
-    } else {
-      response.status(400).send({
-        message: 'A "senha" deve ter pelo menos 6 caracteres',
-      });
-    }
+  if (typeof password === 'undefined' || password.toString() === '') {
+    response.status(400).send({
+      message: 'O campo "password" é obrigatório',
+    });
+  }
+  if (password.toString().length > 5) {
+    // Confirmation and middleware exit
+    next();
+  } else {
+    response.status(400).send({
+      message: 'A "senha" deve ter pelo menos 6 caracteres',
+    });
+  }
 });
 
 module.exports = app;

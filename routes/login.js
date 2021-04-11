@@ -9,7 +9,7 @@ app.use(loginPassCheck);
 
 app.post('/', (request, response) => {
   response.status(200).send({
-    token: crypto.randomBytes(16).toString('hex'),
+    token: crypto.randomBytes(8).toString('hex'),
   });
 });
 
