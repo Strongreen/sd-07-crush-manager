@@ -37,6 +37,14 @@ const deleteCrush = async (id) => {
   await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newJson));
 };
 
+const findByName = async (nameCrush) => {
+  const jsonCrush = await readCrushJson();
+
+  const newJson = jsonCrush.filter((elem) => elem.name.includes(nameCrush));
+
+  return newJson;
+};
+
 const checkPassword = (pass) => {
   const LENGTH_MIN = 6;
   const passStr = pass.toString();
@@ -62,4 +70,5 @@ module.exports = {
   writeCrush,
   updateCrush,
   deleteCrush,
+  findByName,
 };

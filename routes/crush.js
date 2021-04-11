@@ -5,7 +5,14 @@ const {
   validateAge,
   validateDate,
   validateRate } = require('../middlewares/utils');
-const { readCrushJson, throwError, writeCrush, updateCrush, deleteCrush } = require('./util');
+const { 
+  readCrushJson,
+  throwError,
+  writeCrush,
+  updateCrush,
+  deleteCrush,
+  findByName,
+} = require('./util');
 
 const router = express.Router();
 
@@ -21,6 +28,16 @@ router.get('/', async (_req, res, next) => {
   } catch (error) {
     return next({ status: NOT_FOUND, resp: error.message });
   }  
+});
+
+router.get('/search', authToken, async (req, res, next) => {
+  try {
+    const { q } = req.query;
+    const result = await findByName(q);
+    res.status(SUCCESS).send(result);
+  } catch (error) {
+    return next();
+  }
 });
 
 router.get('/:id', async (req, res, next) => {
