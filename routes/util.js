@@ -5,6 +5,17 @@ const readCrushJson = async () => {
   return JSON.parse(file.toString('utf-8'));
 };
 
+const writeCrush = async (newCrush) => {
+  const NEXT = 1;
+  const jsonCrush = await readCrushJson();
+  const crushWithID = { id: jsonCrush.length + NEXT, ...newCrush };
+  jsonCrush.push(crushWithID);
+
+  await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(jsonCrush));
+
+  return crushWithID;
+};
+
 const checkPassword = (pass) => {
   const LENGTH_MIN = 6;
   const passStr = pass.toString();
@@ -27,4 +38,5 @@ module.exports = {
   checkPassword,
   checkEmail,
   throwError,
+  writeCrush,
 };
