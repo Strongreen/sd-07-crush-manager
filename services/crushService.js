@@ -44,6 +44,14 @@ async function deleteCrushById(id) {
   }
 }
 
+async function searchCrushsByName(searchTerm) {
+  const crushs = await getAllCrushs();
+  const searchResult = crushs.filter(
+    (crush) => String(crush.name).toLowerCase().includes(String(searchTerm).toLocaleLowerCase()),
+    );
+  return searchResult;
+}
+
 function isValidName(name) {
   if (name.length <= 3) return false;
   return true;
@@ -70,6 +78,7 @@ module.exports = {
   getCrushById,
   setCrush,
   deleteCrushById,
+  searchCrushsByName,
   isValidName,
   isOverEighteen,
   isValidDate,

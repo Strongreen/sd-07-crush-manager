@@ -8,6 +8,7 @@ const {
     createCrushController,
     updateCrushController,
     deleteCrushByIdController,
+    searchCrushsByNameController,
 } = require('./controllers/crushController');
 
 const { getTokenController } = require('./controllers/loginController');
@@ -15,6 +16,7 @@ const { getTokenController } = require('./controllers/loginController');
 const middlewares = require('./middlewares');
 
 const CRUSH_ID = '/crush/:id';
+const CRUSH_SEARCH = '/crush/search';
 const CRUSH = '/crush';
 const LOGIN = '/login';
 
@@ -28,6 +30,8 @@ const {
     validateRateMiddleware } = middlewares;
 
 route.get(CRUSH, getAllCrushsController);
+
+route.get(CRUSH_SEARCH, validateAuthorizationMiddleware, searchCrushsByNameController);
 
 route.get(CRUSH_ID, getCrushByIdController);
 

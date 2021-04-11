@@ -2,7 +2,8 @@ const {
     getAllCrushs,
     getCrushById,
     deleteCrushById,
-    setCrush } = require('../services/crushService');
+    setCrush,
+    searchCrushsByName } = require('../services/crushService');
 
 exports.getAllCrushsController = async (_req, res) => {
     const crushs = await getAllCrushs();
@@ -36,4 +37,10 @@ exports.deleteCrushByIdController = async (req, res) => {
     const { id } = req.params;
     await deleteCrushById(id);
     return res.status(200).send({ message: 'Crush deletado com sucesso' });
+};
+
+exports.searchCrushsByNameController = async (req, res) => {
+    const { q: searchTerm } = req.query;
+    const searchResult = await searchCrushsByName(searchTerm);
+    return res.status(200).send(searchResult);
 };
