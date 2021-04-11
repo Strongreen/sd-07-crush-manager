@@ -9,7 +9,7 @@ router.post('/', (req, res) => {
   const { email, password } = req.body;
   const emailval = /\S+@\S+\.\S+/.test(email);
   if (!email) return res.status(400).json({ message: 'O campo "email" é obrigatório' });
-  if (!emailval(email)) {
+  if (!emailval) {
     return res.status(400).json({ 
          message: 'O "email" deve ter o formato "email@email.com"' }); 
    }
