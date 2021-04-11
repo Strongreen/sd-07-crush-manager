@@ -25,11 +25,11 @@ app.get('/', (_request, response) => {
 });
 
 app.post('/crush',
+  authMiddleware,
   ageMiddleware,
-  dateMiddleware,
   nameMiddleware,
-  rateMiddleware,
-  authMiddleware);
+  dateMiddleware,
+  rateMiddleware);
 
 app.post('/login', emailMiddleware, passwordMiddleware);
 
