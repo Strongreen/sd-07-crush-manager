@@ -4,22 +4,23 @@ const crushes = require('../crush.json');
 const app = express();
 
 app.get('/', (request, response) => {
-  if (crushes.length <= 0) {
-    response.status(200).send([]);
+  if (crushes.length > 0) {
+    response.status(200).send(crushes);
   }
-  response.status(200).send(crushes);
+  response.status(200).send([]);
 });
 
 app.get('/:id', (request, response) => {
   const { id: idpedido } = request.params;
-  let output = crushes.find((crush) => parseInt(crush.id, 10) === idpedido);
-  if (output != null) {
-    response.status(200).send(output);
-  }
-  output = {
+  crushes.forEach((crush) => {
+    if (parseInt(crush.id, 10) === parseInt(idpedido, 10)) {
+      response.status(200).send(crush);
+    }
+  });
+  
+  response.status(404).send({
     message: 'Crush não encontrado',
-  };
-  response.status(404).send(output);
+  });
 });
 
 module.exports = app;
