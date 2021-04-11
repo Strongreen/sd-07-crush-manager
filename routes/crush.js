@@ -39,15 +39,15 @@ router.use(authToken);
 
 router.post('/', async (req, res, next) => {
   try {
-    const { name, age, date: { datedAt, rate } } = req.body;
+    const { name, age, date } = req.body;
     throwError(!name, 'O campo "name" é obrigatório');
     throwError(!validateNameSize(name), 'O "name" deve ter pelo menos 3 caracteres');
     throwError(!age, 'O campo "age" é obrigatório');
     throwError(!validateAge(age), 'O crush deve ser maior de idade');
-    throwError(!datedAt || !rate, 
+    throwError(!date || !date.datedAt || !date.rate, 
       'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
-    throwError(!validateDate(datedAt), 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"');
-    throwError(!validateRate(rate), 'O campo "rate" deve ser um inteiro de 1 à 5');
+    throwError(!validateDate(date.datedAt), 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"');
+    throwError(!validateRate(date.rate), 'O campo "rate" deve ser um inteiro de 1 à 5');
     const respCrush = await writeCrush(req.body);
     res.status(CREATED).send(respCrush);
   } catch (error) {
