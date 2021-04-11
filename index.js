@@ -17,6 +17,9 @@ const dateMissed = {
   message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios', 
 };
 const dateRegex = /([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i;
+const crushRoute = '/crush';
+const crushIdRoute = '/crush/:id';
+const errorMessage = 'Infelizmente ocorreu um erro...';
 
 const loginExistsMiddleware = (req, res, next) => {
   const { password, email } = req.body;
@@ -104,15 +107,25 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.get('/crush', (_req, res) => {
+app.get(
+  '/crush/search',
+  validateTokenMiddleware,
+  async (req, res) => {
+    const { q } = req.query;
+    const response = JSON.parse(await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8'));
+    res.status(200).send(response.filter((element) => element.name.includes(q))); 
+},
+);
+
+app.get(crushRoute, (_req, res) => {
   fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8')
   .then((result) => res.status(200).send(JSON.parse(result)))
   .catch((_err) => console.log('arquivo crush.json não encontrado'));
 });
 
 app.get('/crush/:id', async (req, res) => {
-  const response = await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8');
-  const crush = JSON.parse(response).find(
+  const response = JSON.parse(await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8'));
+  const crush = response.find(
     (element) => parseInt(req.params.id, 10) === element.id,
   );
   return crush
@@ -130,25 +143,25 @@ app.post('/login', loginExistsMiddleware, loginValidMiddleware, (req, res) => {
 });
 
 app.post(
-  '/crush',
+  crushRoute,
   validateTokenMiddleware,
   validateCrushExistsMiddleware,
   validateDateMiddleware,
   validateRateMiddleware,
   validateCrushMiddleware,
   async (req, res) => {
-    const response = await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8');
-    req.body.id = JSON.parse(response).length + 1;
-    JSON.parse(response).push(req.body);
+    const response = JSON.parse(await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8'));
+    req.body.id = response.length + 1;
+    response.push(req.body);
     fs.promises
-      .writeFile(`${__dirname}/crush.json`, JSON.stringify(JSON.parse(response)))
+      .writeFile(`${__dirname}/crush.json`, JSON.stringify(response))
       .then(() => res.status(201).send(req.body))
-      .catch(() => console.log('Opa, deu ruim'));
+      .catch(() => console.log(errorMessage));
   },
 );
 
 app.put(
-  '/crush/:id',
+  crushIdRoute,
   validateTokenMiddleware,
   validateCrushExistsMiddleware,
   validateDateMiddleware,
@@ -165,12 +178,12 @@ app.put(
     fs.promises
       .writeFile(`${__dirname}/crush.json`, JSON.stringify(newObject))
       .then(() => res.status(200).send(req.body))
-      .catch(() => console.log('Opa, deu ruim'));
+      .catch(() => console.log(errorMessage));
   },
 );
 
 app.delete(
-  '/crush/:id',
+  crushIdRoute,
   validateTokenMiddleware,
   async (req, res) => {
     const response = JSON.parse(await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8'));
@@ -183,7 +196,7 @@ app.delete(
     fs.promises
       .writeFile(`${__dirname}/crush.json`, JSON.stringify(response))
       .then(() => res.status(200).send({ message: 'Crush deletado com sucesso' }))
-      .catch(() => console.log('Opa, deu ruim'));
+      .catch(() => console.log(errorMessage));
   },
 );
 
