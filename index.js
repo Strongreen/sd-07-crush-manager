@@ -38,6 +38,8 @@ app.post('/crush',
   dateMiddleware,
   rateMiddleware);
 
+  app.delete('/crush/:id', authMiddleware);
+
 app.post('/login', emailMiddleware, passwordMiddleware);
 
 app.use('/crush', crush);

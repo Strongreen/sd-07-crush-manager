@@ -55,4 +55,12 @@ router.put('/:id', async (req, res) => {
   res.status(200).json(newCrush);
 });
 
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  const crushData = await dataCrush();
+  const filterCrush = JSON.parse(crushData).filter((crush) => crush.id !== Number(id));
+  await writeCrushFile(filterCrush);
+  res.status(200).json({ message: 'Crush deletado com sucesso' });
+});
+
 module.exports = router;
