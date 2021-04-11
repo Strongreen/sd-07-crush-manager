@@ -1,6 +1,5 @@
 const express = require('express');
 const fs = require('fs');
-const data = require('../crush.json');
 
 const app = express();
 const SUCCESS = 200;
