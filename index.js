@@ -13,7 +13,7 @@ const PORT = '3000';
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
-
+app.use(express.json());
 app.use('/crush', crush);
 
 app.listen(PORT, () => { console.log('Online'); });
