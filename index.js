@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
+const crypto = require('crypto');
 
 const app = express();
 app.use(express.json());
@@ -41,4 +42,31 @@ app.get('/crush/:id', async (req, res) => {
 
 app.listen(PORT, () => {
   console.log('Online');
+});
+
+// Requisito 3
+// Token generator
+// https://stackoverflow.com/questions/8855687/secure-random-token-in-node-js
+  const loginValidate = (email, password) => {
+    const regexEmail = new RegExp(/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+$/);
+    const emailIsValid = regexEmail.test(email);
+    if (!email) return 'O campo "email" é obrigatório';
+    if (!emailIsValid) return 'O "email" deve ter o formato "email@email.com"';
+    if (!password) return 'O campo "password" é obrigatório';
+    password.toString();
+    if (password.length < 6) return 'A "senha" deve ter pelo menos 6 caracteres';
+    return false;
+  };
+
+app.post('/login', (req, res) => {
+  const setRandonToken = () => crypto.randomBytes(8).toString('hex');
+  const { email, password } = req.body;
+  const validate = loginValidate(email, password);
+  try {
+    if (validate) return res.status(400).send({ message: validate });
+    const token = setRandonToken();
+    return res.status(200).send({ token });
+  } catch (error) {
+    console.log(error);
+  }
 });
