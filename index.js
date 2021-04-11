@@ -1,8 +1,8 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+const routes = require('./routes');
+const middlewares = require('./middlewares');
 
 const app = express();
-app.use(bodyParser.json());
 
 const SUCCESS = 200;
 const PORT = '3000';
@@ -11,5 +11,12 @@ const PORT = '3000';
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
+
+app.use(express.json());
+app.use('/crush/search', routes.search);
+app.use('/crush', routes.crush);
+app.use('/log', routes.login);
+
+app.use(middlewares.errorMiddleware);
 
 app.listen(PORT, () => { console.log('Online'); });
