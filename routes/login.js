@@ -3,30 +3,22 @@ const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
 
-function validationEmail(email) {
-    // Referencia Luise Rios
-  const emailval = /\S+@\S+\.\S+/;
-  return emailval.test(email);
-}
-
-function validationPassword(password) {
-  return password.toString().length < 6;
-}
+const token = crypto.randomBytes(8).toString('hex');
 
 router.post('/', (req, res) => {
   const { email, password } = req.body;
+  const emailval = /\S+@\S+\.\S+/.test(email);
   if (!email) return res.status(400).json({ message: 'O campo "email" é obrigatório' });
-  if (!validationEmail(email)) {
+  if (!emailval(email)) {
     return res.status(400).json({ 
          message: 'O "email" deve ter o formato "email@email.com"' }); 
    }
   if (!password) return res.status(400).json({ message: 'O campo "password" é obrigatório' });
-  if (validationPassword(password)) {
+  if (password.length < 6) {
  return res.status(400).json({
        message: 'A "senha" deve ter pelo menos 6 caracteres' }); 
 }
 
-  const token = crypto.randomBytes(8).toString('hex');
   return res.status(200).send({ token });
 });
 
