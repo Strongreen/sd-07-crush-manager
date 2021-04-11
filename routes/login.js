@@ -3,15 +3,15 @@ const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
 
-function token() {
-    return crypto.randomBytes(8).toString('hex');
-  }
+const tokenGen = () => crypto.randomBytes(8).toString('hex');
 
-router.post('/', async (req, res, next) => {
+router.post('/', (req, res, next) => {
     const { email, password } = req.body;
+
     const validator = /^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i.test(email);
-    if (!email) return res.status(400).json({ message: 'O campo "email" é obrigatório' }); 
-    if (!validator) {
+    if (!email) res.status(400).json({ message: 'O campo "email" é obrigatório' }); 
+    
+    else if (!validator) {
  return res.status(400).json({ 
     message: 'O "email" deve ter o formato "email@email.com"', 
     }); 
@@ -20,8 +20,8 @@ router.post('/', async (req, res, next) => {
     if (!password.length <= 6) {
         return res.status(400).json({ message: 'A "senha" deve ter pelo menos 6 caracteres' }); 
     }
-    const tokenValid = token();
-    res.status(200).json({ tokenValid });
+
+    res.status(200).json({ token: tokenGen() });
 
     next();
 });
