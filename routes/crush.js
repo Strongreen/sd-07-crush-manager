@@ -23,17 +23,14 @@ routes.use(crushValidation);
 routes.use(dateValidation);
 
 routes.post('/', async (req, res) => {
-  const { name, age, date } = req.body;
   const crushes = await readCrushes();
   const crush = {
-    name,
-    age,
     id: crushes.length + 1,
-    date,
+    ...req.body,
   };
   crushes.push(crush);
   writeCrushes(crushes);
-  res.status(200).send(crushes);
+  res.status(201).send(crush);
 });
 
 module.exports = routes;

@@ -25,10 +25,9 @@ const crushValidation = (req, res, next) => {
 
 const dateValidation = (req, res, next) => {
   const { date } = req.body;
-  const { datedAt, rate } = date;
   if (checkDate(date)) return res.status(400).send({ message: error.dateMissing });
-  if (!dateRegex.test(datedAt)) return res.status(400).send({ message: error.datedInvalid });
-  if (rate < 1 || rate > 5) return res.status(400).send({ message: error.rateInvalid });
+  if (!dateRegex.test(date.datedAt)) return res.status(400).send({ message: error.datedInvalid });
+  if (date.rate < 1 || date.rate > 5) return res.status(400).send({ message: error.rateInvalid });
   next();
 };
 
