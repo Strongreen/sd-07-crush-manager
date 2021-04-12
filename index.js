@@ -9,8 +9,6 @@ const crushFile = './crush.json';
 const validatorEmail = /^\S+@\S+\.\S+$/;
 const validatorDate = /^(0?[1-9]|[12][0-9]|3[01])[/](0?[1-9]|1[012])[/]\d{4}$/;
 
-const crushFile = './crush.json';
-
 const app = express();
 app.use(bodyParser.json());
 
