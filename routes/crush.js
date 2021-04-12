@@ -2,7 +2,7 @@ const routes = require('express').Router();
 const { readCrushes, writeCrushes } = require('../services/functions');
 
 const auth = require('../middlewares/auth');
-const { crushValidation, dateValidation } = require('../middlewares/crushValidation');
+const { crushValidation, dateValidation } = require('../middlewares/validation');
 
 routes.get('/', async (req, res) => {
   try {
@@ -56,14 +56,36 @@ routes.use(crushValidation);
 routes.use(dateValidation);
 
 routes.post('/', auth, async (req, res) => {
-  const crushes = await readCrushes();
-  const crush = {
-    id: crushes.length + 1,
-    ...req.body,
-  };
-  crushes.push(crush);
-  writeCrushes(crushes);
-  res.status(201).send(crush);
+  try {
+    const crushes = await readCrushes();
+    const crush = {
+      id: crushes.length + 1,
+      ...req.body,
+    };
+    crushes.push(crush);
+    writeCrushes(crushes);
+    res.status(201).send(crush);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+});
+
+routes.put('/:id', async (req, res) => {
+  try {
+    const crushes = await readCrushes();
+    const { id } = req.params;
+    const putCrush = {
+      id: parseInt(id, 10),
+      ...req.body,
+    };
+    // Lógica de map com template literals do estudante Carlos Souza
+    // https://github.com/tryber/sd-07-crush-manager/pull/54/files#diff-866b6d1633485047e63893b9c07e9f9fd38a8cfd40bc5d08b3ea3e0527dce346
+    const edtCrushes = crushes.map((crush) => (crush.id === parseInt(id, 10) ? putCrush : crush));
+    writeCrushes(edtCrushes);
+    return res.status(200).send(putCrush);
+  } catch (error) {
+    return res.status(500).send(error);
+  }
 });
 
 module.exports = routes;
