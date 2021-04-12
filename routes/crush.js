@@ -81,4 +81,20 @@ app.put('/:id',
         throw new Error(error);        
     }    
 });
+
+app.delete('/:id', 
+    middlewares.tokenMiddleware,
+    async (req, res) => {
+    const allCrushes = await readData();
+    const { id } = req.params;
+    const index = id - 1;
+    allCrushes.splice(index, 1);
+    
+    try {
+        await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(allCrushes));           
+        res.status(200).json({ message: 'Crush deletado com sucesso' });
+    } catch (error) {
+        throw new Error(error);        
+    }    
+});
 module.exports = app;
