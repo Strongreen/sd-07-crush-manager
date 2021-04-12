@@ -14,5 +14,6 @@ app.get('/', (_request, response) => {
 });
 
 app.use('/crush', crushs);
+app.use('/login', crushs);
 
 app.listen(PORT, () => { console.log('Online'); });
