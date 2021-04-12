@@ -101,11 +101,33 @@ app.post('/', authMiddleware, emptyOrUdefinedMiddleware, validateNewCrush,
     date: { 
       datedAt: req.body.date.datedAt,
       rate: req.body.date.rate,
-  } };
+  } }; 
+  const newId = crushes.length + 1;
   crushes.push(newCrush);
   try {
     await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushes));
-    res.status(201).send({ id: 1, ...newCrush });
+    res.status(201).send({ id: newId, ...newCrush });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+});
+
+app.put('/:id', authMiddleware, emptyOrUdefinedMiddleware, validateNewCrush,
+async (req, res) => {
+  const crushes = await readCrushes();
+  const { id } = req.params;
+  const newCrush = {
+    id: Number(id),
+    name: req.body.name,
+    age: req.body.age,
+    date: { 
+      datedAt: req.body.date.datedAt,
+      rate: req.body.date.rate,
+  } };
+  crushes[id - 1] = newCrush;
+  try {
+    await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushes));
+    res.status(200).send({ newCrush });
   } catch (error) {
     throw new Error(error.message);
   }
