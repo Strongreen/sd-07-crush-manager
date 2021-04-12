@@ -1,15 +1,16 @@
-const crushInfo = require('../../crush.json'); 
+const fs = require('fs');
+const data = require('../../crush.json');
 
 const SUCCESS = 200;
 const FAIL = 500;
 
 const getCrushes = async (req, res) => {
   try {
-    const results = await crushInfo;
-    res.status(SUCCESS).json(results);
+    const resulte = await fs.promises.readFile(data);
+    return res.status(SUCCESS).send(resulte);
   } catch (error) {
     console.error(error);
-    res.status(FAIL).json({ menssage: error.menssage });
+    return res.status(FAIL).send({ menssage: error.menssage });
   }
 };
 
