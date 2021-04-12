@@ -108,7 +108,7 @@ app.post('/', authMiddleware, emptyOrUdefinedMiddleware, validateNewCrush,
   crushes.push(newCrush);
   try {
     await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushes));
-    res.status(201).send({ newCrush });
+    res.status(201).send(newCrush);
   } catch (error) {
     throw new Error(error.message);
   }
