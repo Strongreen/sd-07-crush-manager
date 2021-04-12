@@ -6,8 +6,8 @@ const app = express();
 app.use(bodyParser.json());
 
 const SUCCESS = 200;
-/* const FAIL = 400;
-const FAIL_SERVER = 500; */
+const FAIL = 404;
+/* const FAIL_SERVER = 500; */
 const PORT = '3000';
 
 // não remova esse endpoint, e para o avaliador funcionar
@@ -26,5 +26,15 @@ app.get('/crush', (_req, res) => {
   }
     res.status(200).send(data);
 });
+
+app.get('/crush/:id', (req, res) => {
+  const data2 = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+  console.log(data2);
+  const { id } = req.params;
+  const crushId = parseInt(id, data2.length);
+  const crushFind = data2.find((crush) => crush.id === crushId);
+  if (crushFind) res.status(SUCCESS).send(crushFind);
+    return res.status(FAIL).send({ message: 'Crush não encontrado' });
+  });
 
 app.listen(PORT, () => { console.log('O Pai ta ON na Porta 3000'); });
