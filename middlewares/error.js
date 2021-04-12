@@ -1,11 +1,11 @@
   const errorMiddleware = (err, _req, res, _next) => {
     if (err.status) {
-        res.status(err.status).send({
+        return res.status(err.status).send({
             error: err.message,
         });
     }
 
-    res.status(500).send({
+    return res.status(500).send({
         error: err.message,
     });
 };
