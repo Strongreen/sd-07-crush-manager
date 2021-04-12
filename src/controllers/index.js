@@ -1,4 +1,5 @@
 const fs = require('fs');
+// const cryptoRandomString = require('crypto-random-string');
 
 const SUCCESS = 200;
 const FAIL = 500;
@@ -27,4 +28,18 @@ const getCrushById = async (req, res) => {
   }
 };
 
-module.exports = { getCrushes, getCrushById };
+const login = async (req, res) => {
+  try {
+   // if (emailValidado === true && passwordValidado === true) {
+
+      // cryptoRandomString disponivel em: www.npmjs.com/package/crypto-random-string
+      // const token = cryptoRandomString({ length: 16 });
+      const token = '7mqaVRXJSp886CGr';
+      return res.status(SUCCESS).send({ token });
+    // }
+  } catch (error) {
+    return res.status(FAIL).send({ menssage: error.menssage });
+  }
+};
+
+module.exports = { getCrushes, getCrushById, login };
