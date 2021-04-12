@@ -10,26 +10,32 @@ const {
 } = require('../middlewares');
 
 const dataFile = ('./crush.json');
-const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
 
 const app = express();
 app.use(express.json());
 
-app.get('/crush', (_req, res) => {
-  if (data.length > 0) {
-    res.status(200).send(data);
-  } else {
-    res.status(200).send([]);
+app.get('/crush', async (_req, res) => {
+  try {
+    const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
+    res.status(200).json(data);
+  } catch (error) {
+    res.status(200).json([]);
   }
 });
 
-app.get('/crush/:id', (req, res) => {
-  const { id } = req.params;
-  const artist = data.find((e) => e.id === parseInt(id, 10));
-  if (!artist) {
+app.get('/crush/:id', async (req, res) => {
+  try {
+    const data = JSON.parse(fs.readFileSync(dataFile, 'utf8'));
+    const { id } = req.params;
+    const artist = data.find((e) => e.id === parseInt(id, 10));
+    if (artist) {
+      res.status(200).json(artist);
+    } else {
+      throw new Error();
+    }
+  } catch (error) {
     res.status(404).json({ message: 'Crush não encontrado' });
   }
-  res.status(200).json(artist);
 });
 
 app.post('/login', (req, res) => {
