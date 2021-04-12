@@ -13,6 +13,23 @@ app.get('/', async (_req, res) => {
   res.status(200).send(crushes);
 });
 
+const tokenValidation = (token) => token.length === 16;
+const authMiddleware = (req, res, next) => {
+  if (req.headers.authorization) {
+    const { authorization } = req.headers;
+    if (tokenValidation(authorization)) next();
+    else res.status(401).send({ message: 'Token inválido' });
+  } else {
+    res.status(401).send({ message: 'Token não encontrado' });
+  }
+};
+
+app.get('/search', authMiddleware, async (req, res) => {
+  const crushes = await readCrushes();
+  const filteredByName = crushes.filter((crush) => crush.name.includes(req.query.q));
+  res.status(200).send(filteredByName);
+});
+
 app.get('/:id', async (req, res) => {
   const crushes = await readCrushes();
   const { id } = req.params;
@@ -27,20 +44,9 @@ app.get('/:id', async (req, res) => {
   res.status(200).send(crushById);
 });
 
-const tokenValidation = (token) => token.length === 16;
-
 const emptyOrUdefined = (value) => {
   if (value === undefined || value === '') return true;
   return false;
-};
-const authMiddleware = (req, res, next) => {
-  if (req.headers.authorization) {
-    const { authorization } = req.headers;
-    if (tokenValidation(authorization)) next();
-    else res.status(401).send({ message: 'Token inválido' });
-  } else {
-    res.status(401).send({ message: 'Token não encontrado' });
-  }
 };
 
 const emptyDate = (date) => {
