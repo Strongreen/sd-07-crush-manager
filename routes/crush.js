@@ -3,37 +3,46 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const crushData = require('../crush.json');
 const { hasToken, isValidName, isValidAge, isValidDate } = require('../middlewares');
+const { read } = require('../services');
 
-const app = express();
+const router = express.Router();
 
-app.use(bodyParser.json());
+router.use(bodyParser.json());
 const SUCCESS = 200;
 const ERROR = 404;
 
-app.get('/search', hasToken, (request, response) => {
-  const { q: query } = request.query;
-  const data = crushData.filter(({ name }) => name.toLowerCase().includes(query.toLowerCase()));
-  response.status(SUCCESS).send(data);
-});
-
-app
+router
   .route('/')
-    .get((_request, response) => {
-      response.status(SUCCESS).send(crushData);
+    .get(async (_request, response) => {
+        const currentData = await read('../crush.json');
+        const dataParse = JSON.parse(currentData);
+        console.log(dataParse);
+        response.status(SUCCESS).send(dataParse);
+        // response.status(SUCCESS).send(crushData);
     })
     .post(
       hasToken, isValidName, isValidAge, isValidDate,
       async (request, response) => {
-      const { name, age, date } = request.body;
-      const id = crushData.length + 1;
-      const newCrush = { id, name, age, date };
-      const newData = [...crushData, newCrush];
-      await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData));
-      response.status(201).send(newCrush);
+        const { name, age, date } = request.body;
+        const id = crushData.length + 1;
+        const newCrush = { id, name, age, date };
+        const currentData = JSON.parse(read('../crush.json'));
+        const newData = [...currentData, newCrush];
+        await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData));
+        response.status(201).send(newCrush);
       },
     );
 
-app
+router.get('/search', hasToken, async (request, response) => {
+  const { q: query } = request.query;
+  // const currentData = await read('../crush.json');
+  // const data = JSON.parse(currentData)
+  //  .filter(({ name }) => name.toLowerCase().includes(query.toLowerCase()));
+  const data = crushData.filter(({ name }) => name.toLowerCase().includes(query.toLowerCase()));
+  response.status(SUCCESS).send(data);
+});
+
+router
   .route('/:id')
     .get(async (request, response) => {
       const id = parseInt(request.params.id, 10);
@@ -68,4 +77,4 @@ app
       },
     );
 
-module.exports = app;
+module.exports = router;

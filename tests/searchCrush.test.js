@@ -147,6 +147,7 @@ describe('7 - Crie o endpoint GET /crush/search?q=searchTerm', () => {
           .get(`${url}/crush`)
           .expect('status', 200)
           .then((responseGet) => {
+            console.log(url)
             const { json } = responseGet;
             expect(json).toEqual([]);
           });
