@@ -78,7 +78,7 @@ function verifyEmail(email) {
 }
 
 function verifyPassword(password) {
-  const passwordRegex = /^\d{6}$/gm;
+  const passwordRegex = /^\d{6,}$/;
   return passwordRegex.test(password);
 }
 
@@ -155,11 +155,15 @@ function newCrushIsValid(reqCrush) {
 }
 
 // REQUISITO #4: criar novo crush
-app.post('/crush', async (req, res) => {
+app.post('/crush', async (req, res, next) => {
   const reqCrush = req.body;
   const { name, age, date } = req.body;
  
-  newCrushIsValid(reqCrush);
+  try {
+    newCrushIsValid(reqCrush);
+  } catch (error) {
+    next(error);
+  }
 
   const crushes = await getData();
   const addedCrush = { id: crushes.length + 1, name, age, date };
@@ -171,12 +175,15 @@ app.post('/crush', async (req, res) => {
 });
 
 // REQUISITO #5: atualizar crush
-app.put(rota, async (req, res) => {
+app.put(rota, async (req, res, next) => {
   const reqCrush = req.body;
   const { name, age, date } = req.body;
   
-  newCrushIsValid(reqCrush);
-
+  try {
+    newCrushIsValid(reqCrush);
+  } catch (error) {
+    next(error);
+  }
   const { id } = req.params;
   const crushes = await getData();
   const updatedCrush = { name, age, id: +id, date };
