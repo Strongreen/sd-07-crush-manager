@@ -1,5 +1,4 @@
 const express = require('express');
-const { setup } = require('frisby');
 const fs = require('fs');
 
 const message = require('./messages.json');
@@ -9,8 +8,10 @@ app.use(express.json());
 
 const SUCCESS = 200;
 const PORT = 3000;
+const CRUSH = './crush.json';
+const ROUTECRUSHID = '/crush/:id';
 
-const router = express.Router();
+// const router = express.Router();
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
@@ -33,16 +34,16 @@ app.get('/', (_request, response) => {
 
 // Req1
 app.get('/crush', (req, res) => {
-  const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
-  return res.status(200).send(data);
+  const data = JSON.parse(fs.readFileSync(CRUSH, 'utf8'));
+  return res.status(SUCCESS).send(data);
 });
 
 // req 2
-app.get('/crush/:id', (req, res) => {
+app.get(ROUTECRUSHID, (req, res) => {
   const { id } = req.params;
-  const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+  const data = JSON.parse(fs.readFileSync(CRUSH, 'utf8'));
   const filtered = data.find((d) => d.id === parseInt(id, 10));
-  if (filtered) return res.status(200).send(filtered);
+  if (filtered) return res.status(SUCCESS).send(filtered);
   return res.status(404).send(message.error.crushNotFound);
 });
 
@@ -65,7 +66,7 @@ app.post('/login', (req, res) => {
   if (!password) return res.status(400).send(message.error.mustPassword);
   if (!di.test(password)) return res.status(400).send(message.error.formatPassword);
   req.headers.authorization = token(16);
-  return res.status(200).send({ token: req.headers.authorization });
+  return res.status(SUCCESS).send({ token: req.headers.authorization });
 });
 
 const authMiddleware = (req, res, next) => {
@@ -84,7 +85,7 @@ app.post('/crush', async (req, res) => {
   const { name, age, date } = req.body;
   const minName = /\w{3}/;
   const minAge = 18;
-  const formDate = /^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/;
+  const formDate = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/;
   const formRate = /^([0-5]{1})$/;
 
   if (!name) return res.status(400).send(message.error.noName);
@@ -95,7 +96,7 @@ app.post('/crush', async (req, res) => {
   if (!formDate.test(date.datedAt)) return res.status(400).send(message.error.formatDate);
   if (!formRate.test(date.rate)) return res.status(400).send(message.error.formatRate);
 
-  const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+  const data = JSON.parse(fs.readFileSync(CRUSH, 'utf8'));
   const size = data.length;
   data[size] = {
     id: size + 1,
@@ -105,7 +106,7 @@ app.post('/crush', async (req, res) => {
   };
 
   try {
-    await fs.promises.writeFile('./crush.json', JSON.stringify(data, null, 2));
+    await fs.promises.writeFile(CRUSH, JSON.stringify(data, null, 2));
     res.status(201).send(data[size]);
   } catch (error) {
     throw new Error(error);
@@ -113,56 +114,58 @@ app.post('/crush', async (req, res) => {
 });
 
 // req5
-app.put('/crush/:id', async (req, res) => {
+app.put(ROUTECRUSHID, async (req, res) => {
   const { id } = req.params;
   const { name, age, date } = req.body;
   
   const minName = /\w{3}/;
   const minAge = 18;
-  const formDate = /^(?:(?:31(\/|-|\.)(?:0?[13578]|1[02]))\1|(?:(?:29|30)(\/|-|\.)(?:0?[13-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$/;
+  const formDate = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/;
   const formRate = /^([1-5]{1})$/;
 
   if (!name) return res.status(400).send(message.error.noName);
   if (!minName.test(name)) return res.status(400).send(message.error.minLengtName);
   if (!age) return res.status(400).send(message.error.noAge);
   if (age < minAge) return res.status(400).send(message.error.mustAboveAge);
-  if (date && date.rate && !formRate.test(date.rate)) return res.status(400).send(message.error.formatRate);
-  if (date && date.datedAt && !formDate.test(date.datedAt)) return res.status(400).send(message.error.formatDate);
-  if (!date || (date && (!date.datedAt || !date.rate))) return res.status(400).send(message.error.mustDate);
+  if (date && date.rate && !formRate.test(date.rate)) {
+    return res.status(400).send(message.error.formatRate);
+  }
+  if (date && date.datedAt && !formDate.test(date.datedAt)) {
+    return res.status(400).send(message.error.formatDate);
+  }
+  if (!date || (date && (!date.datedAt || !date.rate))) {
+    return res.status(400).send(message.error.mustDate);
+  }
   // if (!date.datedAt || !date.rate) return res.status(400).send(message.error.mustDate);
 
-  const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+  const data = JSON.parse(fs.readFileSync(CRUSH, 'utf8'));
   if (name) data[id - 1].name = name;
   if (age) data[id - 1].age = age;
   if (date) data[id - 1].date = date;
 
   try {
-    await fs.promises.writeFile('./crush.json', JSON.stringify(data, null, 2));
-    res.status(200).send(data[id - 1]);
+    await fs.promises.writeFile(CRUSH, JSON.stringify(data, null, 2));
+    res.status(SUCCESS).send(data[id - 1]);
   } catch (error) {
     throw new Error(error);
   }
 });
 
 // req6
-app.delete('/crush/:id', async (req, res, next) => {
+app.delete(ROUTECRUSHID, async (req, res, next) => {
   const { id } = req.params;
-  const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+  const data = JSON.parse(fs.readFileSync(CRUSH, 'utf8'));
 
   const find = data.find((d) => d.id === parseInt(id, 10));
   const index = data.indexOf(find);
-  // console.log('filter', find);
-  // console.log('index', index);
   if (index !== -1) data.splice(index, 1);
   if (index === -1) {
-    return res.status(404).send(crushNotFound);
+    return res.status(404).send(message.error.crushNotFound);
   }
 
   try {
-    await fs.promises.writeFile('./crush.json', JSON.stringify(data, null, 2));
-    res.status(200).send({
-      message: 'Crush deletado com sucesso',
-    });
+    await fs.promises.writeFile(CRUSH, JSON.stringify(data, null, 2));
+    res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
   } catch (error) {
     throw new Error(error);
   }
@@ -177,6 +180,6 @@ const errorMiddleware = (err, req, res, next) => {
   next();
 };
 
-// app.use(errorMiddleware); 
+app.use(errorMiddleware); 
 
 app.listen(PORT, () => { console.log(`Online ${PORT}`); });
