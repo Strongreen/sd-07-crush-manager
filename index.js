@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const crush = require('./routes/crush');
+const fs = require('fs');
 
 const app = express();
 app.use(bodyParser.json());
@@ -14,11 +14,17 @@ const PORT = '3000';
 app.get('/', (_req, res) => {
   res.status(SUCCESS).send(
     {
-      message: 'Para saber se voce logou mesmo meu chapa!',
+      message: 'Só para voce saber amigo, ta logado; server ok',
     },
   );
 });
 
-app.use('/crush', crush);
+app.get('/crush', (_req, res) => {
+  const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+  if (data.length === 0) {
+    return res.status(200).send([]);
+  }
+    res.status(200).send(data);
+});
 
-app.listen(PORT, () => { console.log('O Pai ta on na Porta 3000'); });
+app.listen(PORT, () => { console.log('O Pai ta ON na Porta 3000'); });
