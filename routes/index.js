@@ -5,11 +5,11 @@ const middlewares = require('../middlewares/index');
 
 const myToken = randtoken.generate(16);
 
-const routes = express();
+const route = express();
 
 const FILE = 'crush.json';
 
-routes.get('/crush', (req, res) => {
+route.get('/crush', (req, res) => {
     const file = fs.readFileSync(FILE);
     const dataCrush = file.toString('utf-8');    
     const crushData = JSON.parse(dataCrush);
@@ -20,7 +20,7 @@ routes.get('/crush', (req, res) => {
     res.status(200).send([]);
 });
 
-routes.get('/crush/:id', async (req, res) => {
+route.get('/crush/:id', async (req, res) => {
   const { id } = req.params;
   const file = fs.readFileSync(FILE);
   const stringData = file.toString('utf-8');
@@ -39,22 +39,22 @@ routes.get('/crush/:id', async (req, res) => {
   res.status(200).send(filterCrush);
 });
 
-routes.post('/login', middlewares.validationMiddleware);
+route.post('/login', middlewares.validationMiddleware);
 
-routes.post('/login', (req, res) => {
+route.post('/login', (req, res) => {
   res.status(200).send({
     token: myToken,
   });
 });
 
-routes.use(middlewares.validDateFieldMiddleware);
-routes.use(middlewares.testNameFieldMiddleware);
-routes.use(middlewares.tokenCheckMiddleware);
-routes.use(middlewares.tolkenTestFormat);
-routes.use(middlewares.validAgeField);
-routes.use(middlewares.validDataMiddleware);
+route.use(middlewares.validDateFieldMiddleware);
+route.use(middlewares.testNameFieldMiddleware);
+route.use(middlewares.tokenCheckMiddleware);
+route.use(middlewares.tolkenTestFormat);
+route.use(middlewares.validAgeField);
+route.use(middlewares.validDataMiddleware);
 
-routes.post('/crush', (req, res) => {
+route.post('/crush', (req, res) => {
   const { name, age, date } = req.body;
  
   const file = fs.readFileSync(FILE);
@@ -62,13 +62,31 @@ routes.post('/crush', (req, res) => {
   const data = JSON.parse(stringData);
 
   const id = data.length + 1;
-  const latCrush = { id, name, age, date };
-  const lastFile = [...data, latCrush];
+  const lastCrush = { id, name, age, date };
+  const lastFile = [...data, lastCrush];
 
-fs.writeFileSync(FILE, JSON.stringify(lastFile));
-res.status(201).send({ id, name, age, date });
+  fs.writeFileSync(FILE, JSON.stringify(lastFile));
+  res.status(201).send({ id, name, age, date });
 });
 
-routes.use(middlewares.errorMiddleware);
+route.put('/crush/:id', (req, res) => {
+  const { id } = req.params;
+  const { name, age, date } = req.body;
 
-module.exports = routes;
+  const file = fs.readFileSync(FILE);
+  const stringData = file.toString('utf-8');
+  const data = JSON.parse(stringData);
+
+  const filterCrush = data.findIndex((crush) => crush.id === Number(id));
+
+  if (!filterCrush || filterCrush === 0) return res.status(404).send({ message: 'Crush não encontrado' });
+  res.status(201).send({ id, name, age, date });
+  // const crushedited = { name, age, id: Number(id), date };
+  // data.splice(filterCrush, 1, crushedited);
+  // fs.writeFileSync(file, JSON.stringify(data, null, 2));
+  // res.status(200).send(filterCrush);
+});
+
+route.use(middlewares.errorMiddleware);
+
+module.exports = route;
