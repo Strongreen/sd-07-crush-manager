@@ -28,4 +28,13 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+router.post('/', async (req, res) => {
+  const newCrush = req.body;
+  const data = await readCrushes();
+
+  data.push(newCrush);
+  fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));
+  res.status(201).send(newCrush);
+});
+
 module.exports = router;

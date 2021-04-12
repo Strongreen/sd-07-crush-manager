@@ -3,7 +3,7 @@ const { tokenGenerator, validation } = require('../middlewares');
 
 const { emailValidation } = validation;
 
-const passwordTooShort = 'O "password" deve ter pelo menos 6 caracteres';
+const passwordTooShort = 'A "senha" deve ter pelo menos 6 caracteres';
 
 const router = express.Router();
 const SUCCESS = 200;
