@@ -1,16 +1,23 @@
 const express = require('express');
-const fs = require('fs');
+const utils = require('../utils/utils');
 
 const app = express();
 const SUCCESS = 200;
-
-async function getCrushs() {
-  const crushs = await fs.promises.readFile(`${__dirname}/../crush.json`);  
-  return JSON.parse(crushs.toString('utf-8'));
-}
+const NOTFOUND = 400;
 
 app.get('/', async (_request, response) => {
-  response.status(SUCCESS).send(await getCrushs());
+  response.status(SUCCESS).send(await utils.getCrushs());
+});
+
+app.get('/:id', async (request, response) => {
+  const { id } = request.params;  
+  const crush = await utils.getCrushById(id);
+  
+  if (crush) return response.status(SUCCESS).send(crush); 
+
+  return response.status(NOTFOUND).send({
+    message: 'Crush não encontrado',
+  });
 });
 
 module.exports = app;
