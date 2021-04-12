@@ -28,15 +28,25 @@ const getCrushById = async (req, res) => {
   }
 };
 
+const validacao = (data) => {
+  const { email, password } = data.value;
+
+};
+
 const login = async (req, res) => {
   try {
-   // if (emailValidado === true && passwordValidado === true) {
+    const data = {
+      email: req.body.email,
+      password: req.body.password,
+    };
+    validacao(data);
 
+    if (emailValido === true && passwordValido === true) {
       // cryptoRandomString disponivel em: www.npmjs.com/package/crypto-random-string
       // const token = cryptoRandomString({ length: 16 });
       const token = '7mqaVRXJSp886CGr';
       return res.status(SUCCESS).send({ token });
-    // }
+    }
   } catch (error) {
     return res.status(FAIL).send({ menssage: error.menssage });
   }
