@@ -1,0 +1,17 @@
+{ "error": {
+    "crushNotFound": { "message": "Crush não encontrado"},
+    "mustEmail": { "message": "O campo \"email\" é obrigatório"},
+    "mustPassword": { "message": "O campo \"password\" é obrigatório"},
+    "formatEmail": { "message": "O \"email\" deve ter o formato \"email@email.com\""},
+    "formatPassword": { "message": "A \"senha\" deve ter pelo menos 6 caracteres"},
+    "noToken": { "message": "Token não encontrado"},
+    "invalidToken": { "message": "Token inválido"},
+    "noName": { "message": "O campo \"name\" é obrigatório"},
+    "minLengtName": { "message": "O \"name\" deve ter pelo menos 3 caracteres"},
+    "noAge": { "message": "O campo \"age\" é obrigatório"},
+    "mustAboveAge": { "message": "O crush deve ser maior de idade"},
+    "formatDate": { "message": "O campo \"datedAt\" deve ter o formato \"dd/mm/aaaa\""},
+    "formatRate": { "message": "O campo \"rate\" deve ser um inteiro de 1 à 5"},
+    "mustDate": { "message": "O campo \"date\" é obrigatório e \"datedAt\" e \"rate\" não podem ser vazios"}
+  }
+}
