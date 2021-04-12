@@ -6,23 +6,22 @@ const { validateToken, validateDate, validateAge, validateName } = require('../m
 const router = express.Router();
 
 router.get('/', (_req, res) => {
-    if (data.length === 0) res.status(200).json([]);
+    if (data.length === 0) return res.status(200).json([]);
 
-    res.status(200).json(data);
+    return res.status(200).json(data);
 });
 
 router.get('/:id', (req, res) => {
     const { id } = req.params;
     if (data[id - 1] === undefined) {
- res.status(404).json({
+        return res.status(404).json({
         message: 'Crush não encontrado',
       });
 }
-    res.status(200).send(data[id - 1]);
+    return res.status(200).send(data[id - 1]);
 });
 
 router.post('/', validateToken, validateDate, validateAge, validateName, async (req, res, next) => {
-    console.log('linha 24');
     const size = data.length;
     data[size] = {
         id: `${size + 1}`,
@@ -33,7 +32,7 @@ router.post('/', validateToken, validateDate, validateAge, validateName, async (
 
     try {
         await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));
-        res.status(201).json(data[size]);
+        return res.status(201).json(data[size]);
     } catch (error) {
         console.log(error);
         next(error);
@@ -54,7 +53,7 @@ router.put('/:id',
 
     try {
         await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));
-        res.status(200).json(data[id - 1]);
+        return res.status(200).json(data[id - 1]);
     } catch (error) {
         console.log(error);
         next(error);
@@ -68,7 +67,7 @@ router.delete('/:id', validateToken, async (req, res, next) => {
 
     try {
         await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));
-        res.status(200).json({ message: 'Crush deletado com sucesso' });
+        return res.status(200).json({ message: 'Crush deletado com sucesso' });
     } catch (error) {
         console.log(error);
         next(error);

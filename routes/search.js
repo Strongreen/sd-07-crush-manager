@@ -8,7 +8,7 @@ router.get('/', validateToken, async (req, res, next) => {
     try {
         const dataSearch = await fs.promises.readFile('./crush.json');
         const result = JSON.parse(dataSearch).filter((crush) => crush.name.includes(req.query.q));
-        res.json(result).status(200);
+        return res.json(result).status(200);
     } catch (error) {
         console.log(error);
         next(error);
