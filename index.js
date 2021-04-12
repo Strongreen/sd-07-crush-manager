@@ -15,7 +15,7 @@ app.get('/', (_request, response) => {
 app.use(express.json());
 app.use('/crush/search', routes.search);
 app.use('/crush', routes.crush);
-app.use('/log', routes.login);
+app.use('/login', routes.login);
 
 app.use(middlewares.errorMiddleware);
 
