@@ -56,5 +56,38 @@ app.post('/',
         throw new Error(error);        
     }    
 });
+app.put('/:id', 
+    middlewares.tokenMiddleware,
+    middlewares.validateNameMiddleware,
+    middlewares.validateAgeMiddleware,
+    middlewares.validateDateMiddleware,
+    middlewares.validateRegexDateMiddleware,
+    async (req, res) => {
+    const allCrushes = await readData();
+    const { id } = req.params;
+    allCrushes[id - 1] = {
+        name: req.body.name,
+        age: req.body.age,
+        id: parseInt(id, 10),       
+        date: { datedAt: req.body.date.datedAt,
+            rate: req.body.date.rate,
+        },
+    };
 
+    crushEdited = {
+        name: req.body.name,
+        age: req.body.age,
+        id: parseInt(id, 10),       
+        date: { datedAt: req.body.date.datedAt,
+            rate: req.body.date.rate,
+        },
+    }
+
+    try {
+        await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(allCrushes));           
+        res.status(200).json(crushEdited);
+    } catch (error) {
+        throw new Error(error);        
+    }    
+});
 module.exports = app;
