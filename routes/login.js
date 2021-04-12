@@ -26,7 +26,7 @@ const validatePass = (password) => {
 
 app.post('/', (req, res) => {
   const { email, password } = req.body;
-
+  // console.log(req.headers);
   try {
     validateEmail(email);
     validatePass(password);
