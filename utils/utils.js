@@ -12,8 +12,7 @@ function validateEmail(email) {
   return regexEmail.test(email);
 }
 
-function validatePassword(password) {
-  console.log('tamanho: ', password.length);
+function validatePassword(password) {  
   if (password.length < minimumPasswordLength) return false;
   return true; 
 }
