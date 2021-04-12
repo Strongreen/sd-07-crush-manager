@@ -7,7 +7,7 @@ app.use(bodyParser.json());
 
 app.post('/', (request, response, next) => {
   const { name } = request.body;
-  if (name == null) {
+  if (typeof name === 'undefined') {
     response.status(400).send({
       message: 'O campo "name" é obrigatório',
     });

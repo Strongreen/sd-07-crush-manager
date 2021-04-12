@@ -7,7 +7,7 @@ app.use(bodyParser.json());
 
 app.post('/', (request, response, next) => {
   const { age } = request.body;
-  if (age == null) {
+  if (typeof age === 'undefined') {
     response.status(400).send({
       message: 'O campo "age" é obrigatório',
     });
