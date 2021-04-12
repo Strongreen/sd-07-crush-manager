@@ -95,18 +95,20 @@ const validateNewCrush = (req, res, next) => {
 app.post('/', authMiddleware, emptyOrUdefinedMiddleware, validateNewCrush,
  async (req, res) => {
   const crushes = await readCrushes();
+  const newId = crushes.length + 1;
   const newCrush = {
+    id: newId,
     name: req.body.name,
     age: req.body.age,
     date: { 
       datedAt: req.body.date.datedAt,
       rate: req.body.date.rate,
   } }; 
-  const newId = crushes.length + 1;
+  
   crushes.push(newCrush);
   try {
     await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushes));
-    res.status(201).send({ id: newId, ...newCrush });
+    res.status(201).send({ newCrush });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -116,7 +118,7 @@ app.put('/:id', authMiddleware, emptyOrUdefinedMiddleware, validateNewCrush,
 async (req, res) => {
   const crushes = await readCrushes();
   const { id } = req.params;
-  const newCrush = {
+  const editedCrush = {
     id: Number(id),
     name: req.body.name,
     age: req.body.age,
@@ -124,10 +126,25 @@ async (req, res) => {
       datedAt: req.body.date.datedAt,
       rate: req.body.date.rate,
   } };
-  crushes[id - 1] = newCrush;
+  crushes[id - 1] = editedCrush;
   try {
     await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushes));
-    res.status(200).send({ newCrush });
+    res.status(200).send({ editedCrush });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+});
+
+app.delete('/:id', authMiddleware,
+async (req, res) => {
+  const crushes = await readCrushes();
+  const { id } = req.params;
+  const index = Number(id) - 1;
+  crushes.splice(index, 1);
+  
+  try {
+    await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushes));
+    res.status(200).send({ message: 'Crush deletado com sucesso' });
   } catch (error) {
     throw new Error(error.message);
   }
