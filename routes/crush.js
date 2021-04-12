@@ -15,6 +15,20 @@ const readData = async () => {
     return data;
 };
 
+app.get('/search', 
+    middlewares.tokenMiddleware,    
+    async (req, res) => {
+    const { q } = req.query;
+    const allCrushes = await readCrushFile();
+    const crushFitered = allCrushes.filter((crush) => crush.name.includes(q));
+    try {
+        if (!q || q === '') return res.status(200).send(allCrushes);
+        return res.status(200).send(crushFitered);
+    } catch (error) {
+        throw new Error(error);        
+    }    
+});
+
 app.get('/', async (_req, res) => {
     const result = await readCrushFile();
     res.status(200).send(result);
