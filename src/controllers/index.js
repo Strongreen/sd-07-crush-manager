@@ -13,4 +13,17 @@ const getCrushes = async (req, res) => {
   }
 };
 
-module.exports = { getCrushes };
+const getCrushById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const crushes = await fs.promises.readFile(`${__dirname}/../../crush.json`, 'utf-8');
+    const arrayOfCrushes = JSON.parse(crushes);
+    const currCrush = arrayOfCrushes.find((index) => index.id === id);
+    currCrush ? res.status(SUCCESS).send(JSON.parse(currCrush)) : res.status(FAIL).send({ "message": 'Crush não encontrado' });
+
+  } catch (error) {
+    return res.status(FAIL).send({ menssage: error.menssage });
+  }
+};
+
+module.exports = { getCrushes, getCrushById };
