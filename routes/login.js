@@ -1,11 +1,10 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const emailValidator = require('email-validator');
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(express.json());
 
 const tokenGenerator = () => crypto.randomBytes(8).toString('hex');
 const passwordValidator = (password) => password.length >= 6;
