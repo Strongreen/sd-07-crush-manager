@@ -5,6 +5,7 @@ const tokenValidateMiddleware = require('../middlewares/tokenValidate');
 // const data = require('../crush.json');
 
 const app = express();
+const crushPath = './crush.json';
 
 const readingFile = async () => {
   const file = await fs.promises.readFile(`${__dirname}/../crush.json`);
@@ -51,7 +52,7 @@ app.post('/', tokenValidateMiddleware, async (req, res) => {
   };
   try {
     validateAttributes(name, age, date);
-    await fs.promises.writeFile('./crush.json', JSON.stringify(data));
+    await fs.promises.writeFile(crushPath, JSON.stringify(data));
     res.status(201).json(data[size]);
   } catch (error) {
     res.status(400).json({
@@ -59,5 +60,38 @@ app.post('/', tokenValidateMiddleware, async (req, res) => {
     });
   }
   });
+
+app.put('/:id', tokenValidateMiddleware, async (req, res) => {
+  const { name, date, age } = req.body;
+  const { id } = req.params;
+  const data = await readingFile();
+  data[id - 1] = {
+    id,
+    name,
+    age,
+    date,
+};
+  try {
+    validateAttributes(name, age, date);
+    await fs.promises.writeFile(crushPath, JSON.stringify(data));
+    res.status(200).json({ id: Number(id), name, age, date });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.delete('/:id', tokenValidateMiddleware, async (req, res) => {
+  const { id } = req.params;
+  const data = await readingFile();
+  const index = id - 1;
+  data.splice(index, 1);
+
+  try {
+    await fs.promises.writeFile(crushPath, JSON.stringify(data));
+    res.status(200).json({ message: 'Crush deletado com sucesso' });
+  } catch (error) {
+    res.status(400).json({ message: 'Algo deu errado' });
+  }
+});
 
 module.exports = app;
