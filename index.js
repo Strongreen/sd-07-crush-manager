@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const crushs = require('./routes/crushs');
+const crush = require('./routes/crush');
 
 const app = express();
 app.use(bodyParser.json());
@@ -19,6 +19,6 @@ app.get('/', (_req, res) => {
   );
 });
 
-app.use('/crushs', crushs);
+app.use('/crush', crush);
 
 app.listen(PORT, () => { console.log('O Pai ta on na Porta 3000'); });
