@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const crushRoutes = require('./routes/crush');
+const errorMiddleware = require('./middlewares/error');
 
 const app = express();
 app.use(bodyParser.json());
@@ -14,5 +15,7 @@ app.get('/', (_request, response) => {
 });
 
 app.use('/crush', crushRoutes);
+
+app.use(errorMiddleware);
 
 app.listen(PORT, () => { console.log('Online'); });
