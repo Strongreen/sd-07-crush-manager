@@ -19,10 +19,13 @@ function validatePassword(password) {
 
 function generateToken() {
   let result = '';
-  for (let i = 1; i <= 8; i += 1) {
-    result += (Math.floor(Math.random() * 256)).toString(16);    
-  }
-  
+
+  while (result.length < 16) {
+    result = '';
+    for (let i = 1; i <= 8; i += 1) {
+      result += (Math.floor(Math.random() * 256)).toString(16);    
+    }  
+  }  
   return result;
 }
 

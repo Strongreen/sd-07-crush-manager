@@ -34,7 +34,7 @@ app.post('/', (request, response) => {
   if (!password) return res.send(passwordRequired);
   if (!utils.validatePassword(password)) return res.send(passwordInvalid);
 
-  const token = utils.generateToken();
+  const token = utils.generateToken();  
 
   return response.status(SUCCESS).send({
     token: `${token}`,
