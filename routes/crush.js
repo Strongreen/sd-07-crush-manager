@@ -4,7 +4,11 @@ const crush = require('../crush.json');
 const router = express.Router();
 
 router.get('/', (_req, res) => {
-  res.status(200).send(crush);
+  if (crush.length > 0) {
+    res.status(200).send(crush);
+  } else {
+    res.status(200).send({});
+  }
 });
 
 router.get('/:id', (req, res) => {
