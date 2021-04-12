@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const fs = require('fs');
 
 const message = require('./messages.json');
@@ -33,16 +32,11 @@ app.get('/', (_request, response) => {
 
 // Req1
 app.get('/crush', (req, res) => {
-  // const array = JSON.parse(data);
   const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
   return res.status(200).send(data);
 });
 
 // req 2
-const test = (filterResult) => {
-  if (filterResult.length) return true;
-} 
-
 app.get('/crush/:id', (req, res) => {
   const { id } = req.params;
   const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
