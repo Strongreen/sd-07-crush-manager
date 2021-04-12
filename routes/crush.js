@@ -126,10 +126,10 @@ async (req, res) => {
       datedAt: req.body.date.datedAt,
       rate: req.body.date.rate,
   } };
-  crushes[id - 1] = editedCrush;
+  crushes[Number(id) - 1] = editedCrush;
   try {
     await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushes));
-    res.status(200).send({ editedCrush });
+    res.status(200).send(editedCrush);
   } catch (error) {
     throw new Error(error.message);
   }
