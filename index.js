@@ -12,6 +12,7 @@ const PORT = '3000';
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
+
 app.use(express.json());
 
 app.post(
@@ -22,8 +23,6 @@ app.post(
   res.status(200).json({ token: '7mqaVRXJSp886CGr' });
 },
 );
-
-app.use(middlewares.logMiddware);
 
 app.use('/crush', crush);
 app.listen(PORT, () => { console.log('Online'); });
