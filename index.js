@@ -161,17 +161,16 @@ app.post('/crush', async (req, res, next) => {
  
   try {
     newCrushIsValid(reqCrush);
+    const crushes = await getData();
+    const addedCrush = { id: crushes.length + 1, name, age, date };
+    const newCrush = crushes.concat(addedCrush);
+  
+    await writeFile(JSON.stringify(newCrush));
+  
+    res.status(201).json(addedCrush);
   } catch (error) {
     next(error);
   }
-
-  const crushes = await getData();
-  const addedCrush = { id: crushes.length + 1, name, age, date };
-  const newCrush = crushes.concat(addedCrush);
-
-  await writeFile(JSON.stringify(newCrush));
-
-  res.status(201).json(addedCrush);
 });
 
 // REQUISITO #5: atualizar crush
@@ -181,16 +180,16 @@ app.put(rota, async (req, res, next) => {
   
   try {
     newCrushIsValid(reqCrush);
+    const { id } = req.params;
+    const crushes = await getData();
+    const updatedCrush = { name, age, id: +id, date };
+    crushes[id - 1] = updatedCrush;
+    await writeFile(JSON.stringify(crushes));
+  
+    res.status(200).json(updatedCrush);
   } catch (error) {
     next(error);
   }
-  const { id } = req.params;
-  const crushes = await getData();
-  const updatedCrush = { name, age, id: +id, date };
-  crushes[id - 1] = updatedCrush;
-  await writeFile(JSON.stringify(crushes));
-
-  res.status(200).json(updatedCrush);
 });
 
 // REQUISITO #6: deletar crush
