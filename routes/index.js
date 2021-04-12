@@ -79,7 +79,9 @@ route.put('/crush/:id', (req, res) => {
 
   const filterCrush = data.findIndex((crush) => crush.id === Number(id));
 
-  if (!filterCrush || filterCrush === 0) return res.status(404).send({ message: 'Crush não encontrado' });
+  if (!filterCrush || filterCrush === 0) { 
+    return res.status(404).send({ message: 'Crush não encontrado' }); 
+  }
   res.status(201).send({ id, name, age, date });
   // const crushedited = { name, age, id: Number(id), date };
   // data.splice(filterCrush, 1, crushedited);
