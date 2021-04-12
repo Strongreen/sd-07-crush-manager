@@ -18,9 +18,9 @@ const getCrushById = async (req, res) => {
     const { id } = req.params;
     const crushes = await fs.promises.readFile(`${__dirname}/../../crush.json`, 'utf-8');
     const arrayOfCrushes = JSON.parse(crushes);
-    const currCrush = arrayOfCrushes.find((index) => index.id === id);
-    currCrush ? res.status(SUCCESS).send(JSON.parse(currCrush)) : res.status(FAIL).send({ "message": 'Crush não encontrado' });
-
+    const currCrush = arrayOfCrushes.find((index) => index.id === parseInt(id, 10));
+    if (!currCrush) return res.status(FAIL).send({ message: 'Crush não encontrado' });
+    return res.status(SUCCESS).send(currCrush);
   } catch (error) {
     return res.status(FAIL).send({ menssage: error.menssage });
   }
