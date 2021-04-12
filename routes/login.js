@@ -1,9 +1,9 @@
 const express = require('express');
 
-const Login = express.Router();
+const router = express.Router();
 
 const OK = 200;
-const FAIL = 404;
+const FAIL = 400;
 const token = '7mqaVRXJSp886CGr';
 
 const validateEmail = (mail) => {
@@ -14,7 +14,7 @@ const validateEmail = (mail) => {
 const validatePassword = (password) => {
   const minLength = 6;
   const passwordString = password.toString();
-  return passwordString.length < minLength;
+  return passwordString.length >= minLength;
 };
 
 const throwError = (check, message) => {
@@ -23,7 +23,7 @@ const throwError = (check, message) => {
   }
 };
 
-Login.post('/', async (req, res, next) => {
+router.post('/', async (req, res, next) => {
   try {
     const { email, password } = req.body;
     throwError(!email, 'O campo "email" é obrigatório');
@@ -36,4 +36,4 @@ Login.post('/', async (req, res, next) => {
   }
 });
 
-module.exports = Login;
+module.exports = router;
