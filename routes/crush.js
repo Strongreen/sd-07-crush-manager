@@ -73,16 +73,7 @@ app.put('/:id',
             rate: req.body.date.rate,
         },
     };
-
-    crushEdited = {
-        name: req.body.name,
-        age: req.body.age,
-        id: parseInt(id, 10),       
-        date: { datedAt: req.body.date.datedAt,
-            rate: req.body.date.rate,
-        },
-    }
-
+    const crushEdited = allCrushes[id - 1];
     try {
         await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(allCrushes));           
         res.status(200).json(crushEdited);
