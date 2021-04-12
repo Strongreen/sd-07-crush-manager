@@ -101,11 +101,12 @@ app.post('/', authMiddleware, emptyOrUdefinedMiddleware, validateNewCrush,
     date: { 
       datedAt: req.body.date.datedAt,
       rate: req.body.date.rate,
-  } };
+  } }; 
+  const newId = crushes.length + 1;
   crushes.push(newCrush);
   try {
     await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushes));
-    res.status(201).send({ id: 1, ...newCrush });
+    res.status(201).send({ id: newId, ...newCrush });
   } catch (error) {
     throw new Error(error.message);
   }
