@@ -3,6 +3,8 @@ const { tokenGenerator, validation } = require('../middlewares');
 
 const { emailValidation } = validation;
 
+const passwordTooShort = 'O "password" deve ter pelo menos 6 caracteres';
+
 const router = express.Router();
 const SUCCESS = 200;
 const BAD_REQUEST = 400;
@@ -23,7 +25,7 @@ router.post('/', async (req, res) => {
     return res.status(BAD_REQUEST).json({ message: 'O campo "password" é obrigatório' });
   }
   if (body.password.length < 6) {
-    return res.status(BAD_REQUEST).json({ message: 'O "password" deve ter pelo menos 6 caracteres' });
+    return res.status(BAD_REQUEST).json({ message: passwordTooShort });
   }
   return res.status(SUCCESS).json({ token: tokenGenerator() });
 });
