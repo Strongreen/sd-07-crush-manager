@@ -14,11 +14,9 @@ const ERROR = 404;
 router
   .route('/')
     .get(async (_request, response) => {
-        const currentData = await read('../crush.json');
+        const currentData = await read(`${__dirname}/../crush.json`);
         const dataParse = JSON.parse(currentData);
-        console.log(dataParse);
         response.status(SUCCESS).send(dataParse);
-        // response.status(SUCCESS).send(crushData);
     })
     .post(
       hasToken, isValidName, isValidAge, isValidDate,
@@ -35,10 +33,9 @@ router
 
 router.get('/search', hasToken, async (request, response) => {
   const { q: query } = request.query;
-  // const currentData = await read('../crush.json');
-  // const data = JSON.parse(currentData)
-  //  .filter(({ name }) => name.toLowerCase().includes(query.toLowerCase()));
-  const data = crushData.filter(({ name }) => name.toLowerCase().includes(query.toLowerCase()));
+  const currentData = await read(`${__dirname}/../crush.json`);
+  const data = JSON.parse(currentData)
+    .filter(({ name }) => name.toLowerCase().includes(query.toLowerCase()));
   response.status(SUCCESS).send(data);
 });
 

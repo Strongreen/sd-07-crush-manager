@@ -2,6 +2,7 @@ const fs = require('fs');
 
 function read(filePath) {
   try {
+    // const data = fs.readFileSync(`${__dirname}/../${filePath}`, 'utf8');
     const data = fs.readFileSync(filePath, 'utf8');
     return data;
   } catch (err) {
