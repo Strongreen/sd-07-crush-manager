@@ -24,7 +24,7 @@ router
         const { name, age, date } = request.body;
         const id = crushData.length + 1;
         const newCrush = { id, name, age, date };
-        const currentData = JSON.parse(read('../crush.json'));
+        const currentData = JSON.parse(read(`${__dirname}/../crush.json`));
         const newData = [...currentData, newCrush];
         await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData));
         response.status(201).send(newCrush);
