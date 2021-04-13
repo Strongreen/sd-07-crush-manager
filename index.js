@@ -134,7 +134,7 @@ app.post('/crush', validateName, validateAge, validateDate, validateDatedAt, val
   
   await writeCrush(JSON.stringify(addCrush));
 
-  res.status(201).json(crush);
+  res.status(201).send(crush);
 });
 
 app.put(pointById, validateName, validateAge, validateDate, validateDatedAt, validateRate,
@@ -147,8 +147,7 @@ app.put(pointById, validateName, validateAge, validateDate, validateDatedAt, val
   crushById.age = age;
   crushById.date = date;
   await writeCrush(JSON.stringify(crushs));
-
-  res.status(SUCCESS).json(crushs[id - 1]);
+  res.status(SUCCESS).send(crushs[id - 1]);
 });
 
 app.delete(pointById, async (req, res) => {
@@ -156,7 +155,7 @@ app.delete(pointById, async (req, res) => {
   const crushs = JSON.parse(await fs.promises.readFile(point, 'utf8'));
   const crushFilterById = crushs.filter((crush) => crush.id !== +id);
   await writeCrush(JSON.stringify(crushFilterById));
-  res.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
+  res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
 });
 
 app.listen(PORT, () => {
