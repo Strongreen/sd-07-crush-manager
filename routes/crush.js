@@ -8,6 +8,14 @@ const postHeaderAgeCheck = require('../middlewares/crush/postHeaderAgeCheck');
 const postHeaderDateUndefinedCheck = require('../middlewares/crush/postHeaderDateUndefinedCheck');
 const postHeaderDateValuesCheck = require('../middlewares/crush/postHeaderDateValuesCheck');
 
+const putAuthToken = require('../middlewares/crush/putAuthTokenCheck');
+const putHeaderNameCheck = require('../middlewares/crush/putHeaderNameCheck');
+const putHeaderAgeCheck = require('../middlewares/crush/putHeaderAgeCheck');
+const putHeaderDateUndefinedCheck = require('../middlewares/crush/putHeaderDateUndefinedCheck');
+const putHeaderDateValuesCheck = require('../middlewares/crush/putHeaderDateValuesCheck');
+
+const deleteAuthToken = require('../middlewares/crush/deleteAuthTokenCheck');
+
 const jsonPath = path.join(__dirname, '..', 'crush.json');
 
 const app = express();
@@ -18,6 +26,14 @@ app.use(postHeaderNameCheck);
 app.use(postHeaderAgeCheck);
 app.use(postHeaderDateUndefinedCheck);
 app.use(postHeaderDateValuesCheck);
+
+app.use(putAuthToken);
+app.use(putHeaderNameCheck);
+app.use(putHeaderAgeCheck);
+app.use(putHeaderDateUndefinedCheck);
+app.use(putHeaderDateValuesCheck);
+
+app.use(deleteAuthToken);
 
 app.get('/', async (request, response) => {
   const crushes = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
@@ -60,4 +76,24 @@ app.post('/', async (request, response) => {
   await fs.writeFile(jsonPath, JSON.stringify(outputCrushes), 'utf8');
   return response.status(201).send(outputCrushes[outputCrushes.length - 1]);
 });
+
+app.put('/:id', async (request, response) => {
+  const { id: idpedido } = request.params;
+  const { name, date, age } = request.body;
+  const crush = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
+  crush[idpedido - 1].name = name;
+  crush[idpedido - 1].date = date;
+  crush[idpedido - 1].age = age;
+  await fs.writeFile(jsonPath, JSON.stringify(crush), 'utf8');
+  return response.status(200).send(crush[idpedido - 1]);
+});
+
+app.delete('/:id', async (request, response) => {
+  const { id: idpedido } = request.params;
+  const crush = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
+  crush.filter((element) => element.id !== parseInt(idpedido, 10));
+  await fs.writeFile(jsonPath, JSON.stringify(crush), 'utf8');
+  return response.status(200).send({ message: 'Crush deletado com sucesso' });
+});
+
 module.exports = app;
