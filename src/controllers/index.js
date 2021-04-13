@@ -28,28 +28,30 @@ const getCrushById = async (req, res) => {
   }
 };
 
-const validacao = (data) => {
-  const { email, password } = data.value;
-
+const geradorDeToken = () => {
+  const token = '7mqaVRXJSp886CGr';
+  return token;
 };
 
+/*
 const login = async (req, res) => {
   try {
-    const data = {
-      email: req.body.email,
-      password: req.body.password,
-    };
-    validacao(data);
+    const { email, password } = req.body;
+    const token = geradorDeToken();
 
-    if (emailValido === true && passwordValido === true) {
-      // cryptoRandomString disponivel em: www.npmjs.com/package/crypto-random-string
-      // const token = cryptoRandomString({ length: 16 });
-      const token = '7mqaVRXJSp886CGr';
-      return res.status(SUCCESS).send({ token });
+    if (email === null) {
+      res.status(400).send({
+        message: 'O campo email é obrigatório',
+      });
     }
-  } catch (error) {
-    return res.status(FAIL).send({ menssage: error.menssage });
-  }
+    if (password.length() < 6) {
+      res.status(400).send({
+        message: 'O campo "password" é obrigatório',
+      });
+    }
+    return res.status(SUCCESS).send({ token });
+  } catch (error) { return res.status(FAIL).send({ menssage: error.menssage }); }
 };
+*/
 
 module.exports = { getCrushes, getCrushById, login };
