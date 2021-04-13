@@ -80,16 +80,12 @@ route.put(`${PATH}/:id`, middlewareValidation, (req, res) => {
 
 route.delete(`${PATH}/:id`, middlewareValidation, (req, res) => {
   const { id } = req.params;
-
   const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
   const data = JSON.parse(file);
-
   if (!data) {
     res.status(401).send([]);
   }
-
   const notDeleted = data.filter((item) => item.id !== Number(id));
-
   if (notDeleted.length < data.length) {
     fs.writeFileSync(FILE, JSON.stringify(notDeleted));
     res.status(200).send({ message: 'Crush deletado com sucesso' });
