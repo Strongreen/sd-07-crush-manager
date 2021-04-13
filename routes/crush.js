@@ -18,24 +18,24 @@ const deleteAuthToken = require('../middlewares/crush/deleteAuthTokenCheck');
 
 const jsonPath = path.join(__dirname, '..', 'crush.json');
 
-const app = express();
+const route = express.Router();
 
-app.use(bodyParser.json());
-app.use(authToken);
-app.use(postHeaderNameCheck);
-app.use(postHeaderAgeCheck);
-app.use(postHeaderDateUndefinedCheck);
-app.use(postHeaderDateValuesCheck);
+route.use(bodyParser.json());
+route.use(authToken);
+route.use(postHeaderNameCheck);
+route.use(postHeaderAgeCheck);
+route.use(postHeaderDateUndefinedCheck);
+route.use(postHeaderDateValuesCheck);
 
-app.use(putAuthToken);
-app.use(putHeaderNameCheck);
-app.use(putHeaderAgeCheck);
-app.use(putHeaderDateUndefinedCheck);
-app.use(putHeaderDateValuesCheck);
+route.use(putAuthToken);
+route.use(putHeaderNameCheck);
+route.use(putHeaderAgeCheck);
+route.use(putHeaderDateUndefinedCheck);
+route.use(putHeaderDateValuesCheck);
 
-app.use(deleteAuthToken);
+route.use(deleteAuthToken);
 
-app.get('/', async (request, response) => {
+route.get('/', async (request, response) => {
   const crushes = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
   if (crushes.length >= 1) {
     return response.status(200).send(crushes);
@@ -43,7 +43,7 @@ app.get('/', async (request, response) => {
   return response.status(200).send([]);
 });
 
-app.get('/:id', async (request, response) => {
+route.get('/:id', async (request, response) => {
   const { id: idpedido } = request.params;
   const crushes = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
   crushes.forEach((crushe) => {
@@ -56,7 +56,12 @@ app.get('/:id', async (request, response) => {
   });
 });
 
-app.post('/', async (request, response) => {
+route.get('/search?q=', (request, response) => {
+  const { q } = request.params;
+  return response.status(200).send(q);
+});
+
+route.post('/', async (request, response) => {
   const { name, date, age } = request.body;
   let outputCrushes = [];
   try {
@@ -77,7 +82,7 @@ app.post('/', async (request, response) => {
   return response.status(201).send(outputCrushes[outputCrushes.length - 1]);
 });
 
-app.put('/:id', async (request, response) => {
+route.put('/:id', async (request, response) => {
   const { id: idpedido } = request.params;
   const { name, date, age } = request.body;
   const crush = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
@@ -88,7 +93,7 @@ app.put('/:id', async (request, response) => {
   return response.status(200).send(crush[idpedido - 1]);
 });
 
-app.delete('/:id', async (request, response) => {
+route.delete('/:id', async (request, response) => {
   console.log('');
   const { id: idpedido } = request.params;
   const crush = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
@@ -97,4 +102,4 @@ app.delete('/:id', async (request, response) => {
   return response.status(200).send({ message: 'Crush deletado com sucesso' });
 });
 
-module.exports = app;
+module.exports = route;
