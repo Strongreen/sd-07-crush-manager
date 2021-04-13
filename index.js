@@ -43,15 +43,57 @@ app.get('/crush/:id', (req, res) => {
 });
 
 /* Requisito 3 */
+function validEmail(email) {
+  const reGex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (email === '') {
+    return {
+      error: true,
+      message: 'O campo "email" é obrigatório',
+    };
+  }
+
+  if (!reGex.test(email)) {
+    return {
+      error: true,
+      message: 'O "email" deve ter o formato "email@email.com"',
+    };
+  }
+
+  return { error: false };
+}
+
+function validPass(password) {
+  if (password === '') {
+    return {
+      error: true,
+      message: 'O campo "password" é obrigatório',
+    };
+  }
+  if (String(password).length < 6) {
+    return {
+      error: true,
+      message: 'O "password" deve ter pelo menos 6 caracteres',
+    };
+  }
+  return { error: false };
+}
+
 app.post('/login', (req, res) => {
   const token = crypto.randomBytes(8).toString('hex');
-  const reGex = /\S+@\S+\.\S+/;
-  const { email } = req.body;
-  const { password } = req.body;
-
-  if (email !== '' && reGex.test(email)
-  && password !== '' && password.length >= 6) {
-      return res.send({ token });
+  const { email, password } = req.body;
+  try {
+    const validEmailResult = validEmail(email);
+    if (validEmailResult.error) {
+      return res.status(FAIL).json({ message: validEmailResult.message });
+    }
+    const validPasswordResult = validPass(password);
+    if (validPasswordResult.error) {
+      return res.status(FAIL).json({ message: validPasswordResult.message });
+    }
+    return res.status(SUCCESS).json({ token });
+  } catch (error) {
+    res.status(INTERNAL_ERROR).send({ message: 'ta zuado o role' });
   }
 });
 
