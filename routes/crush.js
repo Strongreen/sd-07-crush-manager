@@ -33,6 +33,17 @@ router.get('/:id', (req, res) => {
 });
 
 router.use(tokenMiddleware);
+
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+  const idCrushDeleted = parseInt(id, 10);
+  const crush = readFileCrush();
+  const documentCrush = crush.filter((crushId) => crushId.id !== idCrushDeleted);
+  
+  fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(documentCrush, null, 2));
+  return res.status(200).json({ message: 'Crush deletado com sucesso' });
+});
+
 router.use(dataCrushMiddleware);
 
 router.post('/', async (req, res) => {
