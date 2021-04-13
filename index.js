@@ -2,14 +2,16 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const crypto = require('crypto');
-const dataArr = require('./crush.json');
+/* const dataArr = require('./crush.json'); */
 
 const app = express();
 app.use(bodyParser.json());
 
 const SUCCESS = 200;
-const FAIL = 404;
-const POST_SUCCESS = 201;
+const FAIL = 400;
+const FAIL_2 = 404;
+
+/* const POST_SUCCESS = 201; */
 const INTERNAL_ERROR = 500;
 const PORT = '3000';
 
@@ -39,14 +41,14 @@ app.get('/crush/:id', (req, res) => {
   const crushId = parseInt(id, 10);
   const crushFind = data2.find((crush) => crush.id === crushId);
   if (crushFind) res.status(SUCCESS).send(crushFind);
-  return res.status(FAIL).send({ message: 'Crush não encontrado' });
+  return res.status(FAIL_2).send({ message: 'Crush não encontrado' });
 });
 
 /* Requisito 3 */
 function validEmail(email) {
   const reGex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (email === '') {
+  if (!email) {
     return {
       error: true,
       message: 'O campo "email" é obrigatório',
@@ -64,7 +66,7 @@ function validEmail(email) {
 }
 
 function validPass(password) {
-  if (password === '') {
+  if (!password) {
     return {
       error: true,
       message: 'O campo "password" é obrigatório',
@@ -73,7 +75,7 @@ function validPass(password) {
   if (String(password).length < 6) {
     return {
       error: true,
-      message: 'O "password" deve ter pelo menos 6 caracteres',
+      message: 'A "senha" deve ter pelo menos 6 caracteres',
     };
   }
   return { error: false };
@@ -98,7 +100,7 @@ app.post('/login', (req, res) => {
 });
 
 /* Requisito 4 */
-app.post('/crush', async (req, res) => {
+/* app.post('/crush', async (req, res) => {
   const crushLength = dataArr.length;
   dataArr[crushLength] = {
     name: req.body.name,
@@ -115,6 +117,6 @@ app.post('/crush', async (req, res) => {
   } catch (error) {
     res.status(INTERNAL_ERROR).send({ message: 'ta zuado o role' });
   }
-});
+}); */
 
 app.listen(PORT, () => { console.log('O Pai ta ON na Porta 3000'); });
