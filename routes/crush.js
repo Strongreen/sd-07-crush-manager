@@ -19,6 +19,17 @@ router.get('/', async (_req, res) => {
   }
 });
 
+router.get('/search', tokenMiddleware, (req, res) => {
+  const { q } = req.query;
+  const dataCrush = readFileCrush();
+
+  if (!q) return res.status(200).json(dataCrush);
+
+  const nameSearched = dataCrush.filter((crush) => crush.name.includes(q));
+
+  return res.status(200).json(nameSearched);
+});
+
 router.get('/:id', (req, res) => {
   const dataCrush = JSON.parse(fs.readFileSync(`${__dirname}/../crush.json`));
   const { id } = req.params;
