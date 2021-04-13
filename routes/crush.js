@@ -2,6 +2,7 @@ const express = require('express');
 const rescue = require('express-rescue');
 const fs = require('fs').promises;
 const crush = require('../crush.json');
+const { dataCrushMiddleware, tokenMiddleware } = require('../middlewares');
 
 const router = express.Router();
 
@@ -26,5 +27,21 @@ router.get('/:id', (req, res) => {
     });
   }
 });
+
+router.use(tokenMiddleware);
+router.use(dataCrushMiddleware);
+
+router.post('/', rescue(async (req, res) => {
+  const { name, age, date } = req.body;
+  const newCrushObject = { id: crush.length + 1, name, age, date };
+  const crushDocument = [...crush, newCrushObject];
+
+  try {
+    await fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(crushDocument));
+    return res.status(201).send(newCrushObject);
+  } catch (error) {
+    return error;
+  }
+}));
 
 module.exports = router;
