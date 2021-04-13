@@ -22,7 +22,7 @@ router.post('/crush',
     },
   };
   try {
-        await fs.writeFile((`${__dirname}/../../crush.json`), JSON.stringify(crushList));
+        await fs.writeFile((`${__dirname}/../../crush.json`), JSON.stringify(crushList, null, 2));
         return res.status(201).send(crushList[size]);
   } catch (error) {
     return res.status(400).json({

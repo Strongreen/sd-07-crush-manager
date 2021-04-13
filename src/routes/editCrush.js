@@ -21,7 +21,7 @@ router.put('/crush/:id',
     },
   };
   try {
-        await fs.writeFile((`${__dirname}/../../crush.json`), JSON.stringify(crushList));
+        await fs.writeFile((`${__dirname}/../../crush.json`), JSON.stringify(crushList, null, 2));
         return res.status(200).send(crushList[id - 1]);
   } catch (error) {
     return res.status(400).json({
