@@ -1,5 +1,7 @@
 const express = require('express');
+const rescue = require('express-rescue');
 const fs = require('fs');
+const dataFile = require('../crush.json');
 
 const app = express();
 
@@ -21,5 +23,26 @@ app.get('/:id', async (req, res) => {
 
   res.status(200).send(crushById);
 });
+
+app.post('/', rescue(async (req, res) => {
+  const { name, age, date } = req.body;
+  const size = dataFile.length;
+  dataFile[size] = {
+    id: parseInt(`${size + 1}`, 10),
+    name: `${name}`,
+    age: parseInt(`${age}`, 10),
+    date: {
+      datedAt: `${date.datedAt}`,
+      rate: parseInt(`${date.rate}`, 10),
+    },
+  };
+
+  try {
+    await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(dataFile));
+    res.status(201).send(dataFile[size]);
+  } catch (error) {
+    throw new Error(error);
+  }
+}));
 
 module.exports = app;
