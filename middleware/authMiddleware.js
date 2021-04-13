@@ -1,3 +1,16 @@
+const logMiddleware = (req, _res, next) => {
+  console.log(`${req.method}: ${req.path}`);
+  next();
+};
+
+const errorMiddleware = (err, req, res, next) => {
+  if (err.status) {
+    res.status(err.status).json({ error: err.message });
+  }
+  res.status(500).json({ error: err.message });
+  next();
+};
+
 const authMiddleware = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization) {
@@ -12,7 +25,7 @@ const authMiddleware = (req, res, next) => {
 const dateMiddleware = (req, res, next) => {
   const { date } = req.body;
   const dateRegex = /^[0-9]{2}[/]{1}[0-9]{2}[/]{1}[0-9]{4}$/g;
-  
+
   if (!date || !date.datedAt || date.rate === undefined) {
     return res.status(400).json(
       {
@@ -52,4 +65,6 @@ module.exports = {
   dateMiddleware,
   nameAgeMiddleware,
   rateMiddleware,
+  logMiddleware,
+  errorMiddleware,
 };
