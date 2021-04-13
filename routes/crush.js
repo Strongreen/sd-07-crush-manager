@@ -20,7 +20,7 @@ app.use(postHeaderDateUndefinedCheck);
 app.use(postHeaderDateValuesCheck);
 
 app.get('/', async (request, response) => {
-  const crushes = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
+  let crushes = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
   if (crushes.length >= 1) {
     return response.status(200).send(crushes);
   }
@@ -51,13 +51,13 @@ app.post('/', async (request, response) => {
   const newCrush = {
     name,
     age,
-    id: index,
+    id: index + 1,
     date: {
       datedAt: date.datedAt,
       rate: date.rate },
   };
   outputCrushes.push(newCrush);
-  fs.writeFile(path.join(__dirname, '..', 'crush.json'), outputCrushes, 'utf8');
+  await fs.writeFile(jsonPath, JSON.stringify(outputCrushes), 'utf8');
   return response.status(201).send(outputCrushes[outputCrushes.length - 1]);
 });
 module.exports = app;
