@@ -1,20 +1,19 @@
 const express = require('express');
 const utils = require('../utils/utils');
+const middleware = require('../middlewares/validateToken');
 
-const app = express();
+const router = express.Router();
 
 const SUCCESS = 200;
+const CREATED = 201;
 const BAD_REQUEST = 400;
 const NOT_FOUND = 404;
 
-const emailRequired = { message: 'O campo "email" é obrigatório' };
-const emailInvalid = { message: 'O "email" deve ter o formato "email@email.com"' };
-const passwordRequired = { message: 'O campo "password" é obrigatório' };
-const passwordInvalid = { message: 'A "senha" deve ter pelo menos 6 caracteres' };
+router.get('/crush', async (_request, response) => response
+  .status(SUCCESS)
+  .send(await utils.getCrushs()));
 
-app.get('/', async (_request, response) => response.status(SUCCESS).send(await utils.getCrushs()));
-
-app.get('/:id', async (request, response) => {
+router.get('/crush/:id', async (request, response) => {
   const { id } = request.params;  
   const crush = await utils.getCrushById(id);
   
@@ -25,20 +24,40 @@ app.get('/:id', async (request, response) => {
   });
 });
 
-app.post('/', (request, response) => {
+router.post('/login', (request, response) => {
   const { email, password } = request.body;  
   const res = response.status(BAD_REQUEST);
 
-  if (!email) return res.send(emailRequired);
-  if (!utils.validateEmail(email)) return res.send(emailInvalid);
-  if (!password) return res.send(passwordRequired);
-  if (!utils.validatePassword(password)) return res.send(passwordInvalid);
+  try {
+    utils.isvalidateEmail(email);
+    utils.isvalidatePassword(password);
+    
+    const token = utils.generateToken();  
 
-  const token = utils.generateToken();  
-
-  return response.status(SUCCESS).send({
-    token: `${token}`,
-  });
+    response.status(SUCCESS).send({
+      token: `${token}`,
+    });
+  } catch (error) {
+    res.send(error.message);
+  }  
+});
+router.post('/crush', middleware.validateTokenMiddleware, async (request, response) => {
+  const dataCrushs = await utils.getCrushs();
+  const position = dataCrushs.length;
+  const { name, age, date } = request.body;  
+  const res = response.status(BAD_REQUEST);
+  try {        
+    utils.isValidateName(name);
+    utils.isValidateAge(age);    
+    utils.isValidateDate(date); 
+    utils.isValidateRate(date);
+    const objCrush = { name, age, id: position + 1, date };
+    dataCrushs[position] = objCrush;
+    await utils.saveData(dataCrushs);
+    response.status(CREATED).send(objCrush);
+  } catch (error) {    
+    res.send(error.message);
+  }  
 });
 
-module.exports = app;
+module.exports = router;
