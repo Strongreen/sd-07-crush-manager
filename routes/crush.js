@@ -73,7 +73,7 @@ router.put('/crush/:id', validateTokenMiddleware, async (request, response) => {
       const objCrush = { name, age, id, date };
       dataCrushs[crushIndex] = objCrush;
       await utils.saveData(dataCrushs);          
-      response.status(CREATED).send(objCrush);
+      response.status(SUCCESS).send(objCrush);
     } catch (error) {    
       response.status(BAD_REQUEST).json({ message: error.message });
     }
