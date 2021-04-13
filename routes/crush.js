@@ -8,20 +8,12 @@ const router = express.Router();
 router.get('/', rescue(async (_req, res) => {
   try {
     const responseCrush = await fs.readFile(`${__dirname}/../crush.json`);
-    res.status(200).send(responseCrush);
+    const responseCrushJSON = JSON.parse(responseCrush.toString('utf-8'));
+    res.status(200).send(responseCrushJSON);
   } catch (error) {
     return error;
   }
 }));
-
-// router.post('/', rescue(async (_req, res) => {
-//   try {
-//     const responseCrush = await fs.readFile(`${__dirname}/../crush.json`);
-//     res.status(200).send(responseCrush);
-//   } catch (error) {
-//     return error;
-//   }
-// }));
 
 router.get('/:id', (req, res) => {
   const { id } = req.params;
