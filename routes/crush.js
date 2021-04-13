@@ -1,7 +1,9 @@
 const fs = require('fs');
 const express = require('express');
 const middlewares = require('../middlewares');
+const midd = require('../helpers');
 
+const useMidd = midd();
 const FILE = './crush.json';
 const router = express.Router();
 
@@ -32,14 +34,7 @@ router.get('/crush/:id', (req, res) => {
   return res.status(200).json(filterCrush);
 });
 
-router.post('/crush',
- middlewares.tokennNot,
-  middlewares.tokenInvalido,
-   middlewares.tokenName,
-   middlewares.tokenAge,
-   middlewares.tokenDate,
-   middlewares.tokenDateObr, 
-   (req, res) => {
+router.post('/crush', useMidd, (req, res) => {
   const { name, age, date } = req.body;
 
   const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });

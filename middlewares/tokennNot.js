@@ -1,4 +1,4 @@
-const tokenIsvalid = (req, res, next) => {
+const tokennNot = (req, res, next) => {
     const { authorization } = req.headers;
     if (authorization) {
         next();
@@ -9,4 +9,4 @@ const tokenIsvalid = (req, res, next) => {
     }
 };
 
-module.exports = tokenIsvalid;
+module.exports = tokennNot;
