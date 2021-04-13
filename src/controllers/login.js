@@ -1,11 +1,10 @@
 const express = require('express');
 const crypto = require('crypto');
-const bodyParser = require('body-parser');
 const validations = require('../validations');
 
 const router = express.Router();
 
-router.use(bodyParser.json());
+router.use(express.json());
 
 const {
   emailValidate,

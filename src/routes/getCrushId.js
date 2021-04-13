@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const dataCrush = require('../crush.json');
+const dataCrush = require('../../crush.json');
 
 router.get('/crush/:id', (req, res) => {
   const { id: reqId } = req.params;
