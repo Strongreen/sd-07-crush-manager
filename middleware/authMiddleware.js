@@ -12,8 +12,7 @@ const authMiddleware = (req, res, next) => {
 const dateMiddleware = (req, res, next) => {
   const { date } = req.body;
   const dateRegex = /^[0-9]{2}[/]{1}[0-9]{2}[/]{1}[0-9]{4}$/g;
-  // dateRegex.test(date.datedAt);
-  // console.log(dateRegex.test(date.datedAt));
+  
   if (!date || !date.datedAt || date.rate === undefined) {
     return res.status(400).json(
       {
@@ -24,14 +23,12 @@ const dateMiddleware = (req, res, next) => {
   if (!dateRegex.test(date.datedAt)) {
     return res.status(400).json({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
   }
-  // const { datedAt, rate } = date;
 
   next();
 };
 
 const rateMiddleware = (req, res, next) => {
   const { date } = req.body;
-  // console.log(date);
   if (date.rate < 1 || date.rate > 5) {
     return res.status(400).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }

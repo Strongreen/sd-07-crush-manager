@@ -20,13 +20,16 @@ app.get('/', (req, res) => {
 });
 
 app.use(authMiddleware);
+
 app.delete('/:id', (req, res) => {
   const { id } = req.params;
   const crush = fileCrush();
+  // https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/parseInt
   const newCrush = crush.filter((crushId) => crushId.id !== parseInt(id, 10));
   fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(newCrush, null, 2));
   return res.status(200).json({ message: 'Crush deletado com sucesso' });
 });
+
 app.use(nameAgeMiddleware);
 app.use(dateMiddleware);
 app.use(rateMiddleware);
@@ -44,6 +47,8 @@ app.put('/:id', (req, res) => {
   const crusher = fileCrush();
   const editCrush = { id: parseInt(id, 10), ...req.body };
   const crushI = crusher
+    // https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/parseInt
+    // lógica do map do Carlos Souza Turma 07
     .map((idCrush) => (idCrush.id === parseInt(id, 10) ? editCrush : idCrush));
 
   fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(crushI, null, 2));
