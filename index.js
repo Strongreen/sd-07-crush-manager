@@ -12,8 +12,7 @@ const PORT = '3000';
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
-  console.log('');
-  return response.status(SUCCESS).send();
+  response.status(SUCCESS).send();
 });
 
 app.use('/crush', crushRoutes);

@@ -16,6 +16,8 @@ const putHeaderDateValuesCheck = require('../middlewares/crush/putHeaderDateValu
 
 const deleteAuthToken = require('../middlewares/crush/deleteAuthTokenCheck');
 
+const searchTokenCheck = require('../middlewares/crush/getAuthTokenSearch');
+
 const jsonPath = path.join(__dirname, '..', 'crush.json');
 
 const route = express.Router();
@@ -35,6 +37,8 @@ route.use(putHeaderDateValuesCheck);
 
 route.use(deleteAuthToken);
 
+route.use(searchTokenCheck);
+
 route.get('/', async (request, response) => {
   const crushes = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
   if (crushes.length >= 1) {
@@ -43,9 +47,16 @@ route.get('/', async (request, response) => {
   return response.status(200).send([]);
 });
 
-route.get('/search', (request, response) => {
+route.get('/search', async (request, response) => {
   const { q } = request.query;
-  return response.status(200).send(q);
+  const crushes = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
+  if (typeof q === 'undefined' || q === null || q === '') {
+    return response.status(200).send(crushes);
+  }
+  const output = crushes.filter((element) => 
+    element.name.toLowerCase().includes(q.toLowerCase())
+    || element.name.toLowerCase() === q.toLowerCase());
+  return response.status(200).send(output);
 });
 
 route.get('/:id', async (request, response) => {
