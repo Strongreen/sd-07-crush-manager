@@ -2,6 +2,7 @@ const express = require('express');
 const rescue = require('express-rescue');
 const fs = require('fs');
 const dataFile = require('../crush.json');
+const middleware = require('../middlewares');
 
 const app = express();
 
@@ -23,6 +24,11 @@ app.get('/:id', async (req, res) => {
 
   res.status(200).send(crushById);
 });
+
+app.use(middleware.authorizationMiddleware);
+app.use(middleware.nameMiddleware);
+app.use(middleware.ageMiddleware);
+app.use(middleware.dateMiddleware);
 
 app.post('/', rescue(async (req, res) => {
   const { name, age, date } = req.body;

@@ -18,10 +18,10 @@ app.get('/', (_request, response) => {
 
 app.use('/login', login);
 
-app.use(middleware.authorizationMiddleware);
-app.use(middleware.nameMiddleware);
-app.use(middleware.ageMiddleware);
-app.use(middleware.dateMiddleware);
+// app.use(middleware.authorizationMiddleware);
+// app.use(middleware.nameMiddleware);
+// app.use(middleware.ageMiddleware);
+// app.use(middleware.dateMiddleware);
 
 app.use('/crush', crush);
 
