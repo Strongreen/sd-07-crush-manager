@@ -3,6 +3,7 @@ const fs = require('fs');
 const randtoken = require('rand-token');
 const useMiddleware = require('../helpers/index');
 const emailPasswordValidation = require('../middlewares/validations');
+const middlewares = require('../middlewares/index');
 
 const myToken = randtoken.generate(16);
 
@@ -78,15 +79,23 @@ route.put(`${PATH}/:id`, middlewareValidation, (req, res) => {
   res.status(200).send({ id: Number(id), name, age, date });
 });
 
-route.delete(`${PATH}/:id`, middlewareValidation, (req, res) => {
+route.use(middlewares.tokenCheckMiddleware);
+route.use(middlewares.tolkenTestFormat);
+
+route.delete(`${PATH}/:id`, (req, res) => {
   const { id } = req.params;
   const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
   const data = JSON.parse(file);
-
+  if (!data) {
+    res.status(401).send([]);
+  }
   const notDeleted = data.filter((item) => item.id !== Number(id));
- 
-  fs.writeFileSync(FILE, JSON.stringify(notDeleted));
-  res.status(200).send({ message: 'Crush deletado com sucesso' });
+  if (notDeleted.length < data.length) {
+    fs.writeFileSync(FILE, JSON.stringify(notDeleted));
+    res.status(200).send({ message: 'Crush deletado com sucesso' });
+  } else {
+    res.status(401).send({ message: 'crush não cadastrado' });
+  }
 });
 
 module.exports = route;
