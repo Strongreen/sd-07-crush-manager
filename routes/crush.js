@@ -73,9 +73,9 @@ router.delete(pathName, (req, res) => {
 
   const filterEd = data.filter((item) => item.id !== Number(id));
   fs.writeFileSync(FILE, JSON.stringify(filterEd));
-  
+
   res.status(200).send({ message: 'Crush deletado com sucesso' });
 });
 
- router.use(middlewares.errorMiddlewares);
+router.use(middlewares.errorMiddlewares);
 module.exports = router;
