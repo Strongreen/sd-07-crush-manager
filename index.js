@@ -6,9 +6,9 @@ const crushLogin = require('./routes/crushLogin');
 
 const app = express();
 app.use(bodyParser.json());
-app.use('/crush', crush);
 app.use('/crush', crushId);
 app.use('/login', crushLogin);
+app.use('/crush', crush);
 
 const SUCCESS = 200;
 const PORT = '3000';

@@ -1,15 +1,35 @@
-const fs = require('fs');
 const express = require('express');
+const fs = require('fs');
+const {
+  authMiddleware,
+  dateMiddleware,
+  nameAgeMiddleware,
+  rateMiddleware,
+} = require('../middleware/authMiddleware');
 
 const app = express();
 
-app.get('/', (req, res) => {
-  const data = JSON.parse(fs.readFileSync('./crush.json'), 'utf8');
-  res.send(data);
+const fileCrush = () => {
+  const crushJson = fs.readFileSync(`${__dirname}/../crush.json`);
+  return JSON.parse(crushJson.toString('utf-8'));
+};
 
-  if (data) {
-    return res.status(200).send(data);
-  }
+app.get('/', (req, res) => {
+  const data = fileCrush();
+  return res.status(200).send(data);
+});
+
+app.use(authMiddleware);
+app.use(nameAgeMiddleware);
+app.use(dateMiddleware);
+app.use(rateMiddleware);
+
+app.post('/', (req, res) => {
+  const crusher = fileCrush();
+  const newCrush = { id: crusher.length + 1, ...req.body };
+  const newArray = [...crusher, newCrush];
+  console.log(newArray);
+  return res.status(201).send(newCrush);
 });
 
 module.exports = app;
