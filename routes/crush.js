@@ -1,27 +1,58 @@
-const fs = require('fs').promises;
-const path = require('path');
+const fs = require('fs');
 const express = require('express');
+const middlewares = require('../middlewares');
 
+const FILE = './crush.json';
 const router = express.Router();
 
-const readCrushFile = async () => {
-  const content = await fs.readFile(path.resolve(__dirname, '..', 'crush.json'));
-  return JSON.parse(content.toString('utf-8'));
-};
+// const readCrushFile = async () => {
+//   const content = await fs.readFile(path.resolve(__dirname, '..', 'crush.json'));
+//   return JSON.parse(content.toString('utf-8'));
+// };
 
-router.get('/', async (req, res) => {
-  const result = await readCrushFile();
-  res.status(200).send(result);
+router.get('/crush', (req, res) => {
+  const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
+  const data = JSON.parse(file);
+
+  if (data.length !== 0) {
+    res.status(200).send(data);
+  }
+  res.status(200).send([]);
 });
 
-router.get('/:id', async (req, res) => {
-  const result = await readCrushFile();
+router.get('/crush/:id', (req, res) => {
   const { id } = req.params;
-  const filterCrush = result.find((crush) => crush.id === Number(id));
+  const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
+  const data = JSON.parse(file);
+
+  const filterCrush = data.find((crush) => crush.id === Number(id));
   if (!filterCrush) {
     res.status(404).json({ message: 'Crush não encontrado' });
   } 
   return res.status(200).json(filterCrush);
 });
 
+router.post('/crush',
+ middlewares.tokennNot,
+  middlewares.tokenInvalido,
+   middlewares.tokenName,
+   middlewares.tokenAge,
+   middlewares.tokenDate,
+   middlewares.tokenDateObr, 
+   (req, res) => {
+  const { name, age, date } = req.body;
+
+  const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
+  const data = JSON.parse(file);
+
+  const id = data.length + 1;
+  const newCrush = { id, name, age, date };
+  const Itens = [...data, newCrush];
+
+  fs.writeFileSync(FILE, JSON.stringify(Itens));
+
+  res.status(201).send({ id, name, age, date });
+});
+
+ router.use(middlewares.errorMiddlewares);
 module.exports = router;
