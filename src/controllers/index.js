@@ -33,25 +33,13 @@ const geradorDeToken = () => {
   return token;
 };
 
-/*
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
     const token = geradorDeToken();
-
-    if (email === null) {
-      res.status(400).send({
-        message: 'O campo email é obrigatório',
-      });
-    }
-    if (password.length() < 6) {
-      res.status(400).send({
-        message: 'O campo "password" é obrigatório',
-      });
-    }
     return res.status(SUCCESS).send({ token });
-  } catch (error) { return res.status(FAIL).send({ menssage: error.menssage }); }
+  } catch (error) {
+    return res.status(FAIL).send({ menssage: error.menssage });
+  }
 };
-*/
 
 module.exports = { getCrushes, getCrushById, login };
