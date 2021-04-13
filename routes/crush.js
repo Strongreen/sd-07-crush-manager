@@ -61,7 +61,7 @@ router.post('/crush', validateTokenMiddleware, async (request, response) => {
 router.put('/crush/:id', validateTokenMiddleware, async (request, response) => {  
     const { name, age, date } = request.body;
     const { id } = request.params; 
-    
+    const idNew = Number(id);    
     try {    
       utils.isValidateName(name);
       utils.isValidateAge(age);    
@@ -70,7 +70,7 @@ router.put('/crush/:id', validateTokenMiddleware, async (request, response) => {
 
       const dataCrushs = await utils.getCrushs();
       const crushIndex = utils.getByIndexCrush(id, dataCrushs);
-      const objCrush = { name, age, id, date };
+      const objCrush = { name, age, idNew, date };
       dataCrushs[crushIndex] = objCrush;
       await utils.saveData(dataCrushs);          
       response.status(SUCCESS).send(objCrush);
