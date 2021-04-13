@@ -1,31 +1,25 @@
-// const crypto = require('crypto');
+const verifyEmail = (req, res) => {
+  const regexEmail = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/;
 
-// const tokenGenerator = () => crypto.randomBytes(8).toString('hex');
+  if (req.body.length === 0 || req.body.email === undefined) {
+    return res.status(400).send({ message: 'O campo "email" é obrigatório' });
+  }
+  if (!regexEmail.test(req.body.email)) {
+    return res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
+  }
+};
 
-// const loginMiddleware = (req, res, next) => {
-//   const regexEmail = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/;
+const loginMiddleware = (req, res, next) => {
+  verifyEmail(req, res);
 
-//   if (!req.boby.email) return res.status(400).send({
-//     message: 'O campo "email" é obrigatório'
-//   });
-  
-//   if (!regexEmail.test(req.boby.email)) return res.status(400).send({
-//     message: 'O "email" deve ter o formato "email@email.com"'
-//   });
+  if (!req.body.password) {
+    return res.status(400).send({ message: 'O campo "password" é obrigatório' });
+  }
+  if (req.body.password.length < 6) {
+    return res.status(400).send({ message: 'A "senha" deve ter pelo menos 6 caracteres' });
+  }
 
-//   if (!req.boby.password) return res.status(400).send({
-//     message: 'O campo "password" é obrigatório'
-//   });
+  next();
+};
 
-//   if (req.boby.password.length < 6) return res.status(400).send({
-//     message: 'A "senha" deve ter pelo menos 6 caracteres'
-//   });
-
-//   const token = tokenGenerator();
-
-//   res.send({ token });
-
-//   next();
-// };
-
-// module.exports = loginMiddleware;
+module.exports = loginMiddleware;
