@@ -43,22 +43,21 @@ route.get('/', async (request, response) => {
   return response.status(200).send([]);
 });
 
+route.get('/search', (request, response) => {
+  const { q } = request.query;
+  return response.status(200).send(q);
+});
+
 route.get('/:id', async (request, response) => {
   const { id: idpedido } = request.params;
   const crushes = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
-  crushes.forEach((crushe) => {
-    if (parseInt(crushe.id, 10) === parseInt(idpedido, 10)) {
-      return response.status(200).send(crushe);
-    }
-  });
+  const output = crushes.filter((crushe) => parseInt(crushe.id, 10) === parseInt(idpedido, 10));
+  if (output.length > 0) {
+    return response.status(200).send(output[0]);
+  }
   return response.status(404).send({
     message: 'Crush não encontrado',
   });
-});
-
-route.get('/search?q=', (request, response) => {
-  const { q } = request.params;
-  return response.status(200).send(q);
 });
 
 route.post('/', async (request, response) => {
