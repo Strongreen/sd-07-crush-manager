@@ -8,12 +8,12 @@ app.use(bodyParser.json());
 app.post('/', (request, response, next) => {
   const { name } = request.body;
   if (typeof name === 'undefined') {
-    response.status(400).send({
+    return response.status(400).send({
       message: 'O campo "name" é obrigatório',
     });
   }
   if (name.length < 3) {
-    response.status(400).send({
+    return response.status(400).send({
       message: 'O "name" deve ter pelo menos 3 caracteres',
     });
   }

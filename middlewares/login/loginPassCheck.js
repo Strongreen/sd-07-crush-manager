@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 app.post('/', (request, response, next) => {
   const { password } = request.body;
   if (typeof password === 'undefined' || password.toString() === '') {
-    response.status(400).send({
+    return response.status(400).send({
       message: 'O campo "password" é obrigatório',
     });
   }
@@ -18,7 +18,7 @@ app.post('/', (request, response, next) => {
     // Confirmation and middleware exit
     next();
   } else {
-    response.status(400).send({
+    return response.status(400).send({
       message: 'A "senha" deve ter pelo menos 6 caracteres',
     });
   }

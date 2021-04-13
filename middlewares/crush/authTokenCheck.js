@@ -8,12 +8,12 @@ app.use(bodyParser.json());
 app.post('/', (request, response, next) => {
   const authtoken = request.header('Authorization');
   if (authtoken == null) {
-    response.status(401).send({
+    return response.status(401).send({
       message: 'Token não encontrado',
     });
   }
   if (authtoken.length !== 16) {
-    response.status(401).send({
+    return response.status(401).send({
       message: 'Token inválido',
     });
   }

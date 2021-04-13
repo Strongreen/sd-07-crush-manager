@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 app.post('/', (request, response, next) => {
   const { email } = request.body;
   if (typeof email === 'undefined' || email.toString() === '') {
-    response.status(400).send({
+    return response.status(400).send({
       message: 'O campo "email" é obrigatório',
     });
   }
@@ -18,7 +18,7 @@ app.post('/', (request, response, next) => {
   if (validateEmail.test(email)) {
     next();
   } else {
-    response.status(400).send({
+    return response.status(400).send({
       message: 'O "email" deve ter o formato "email@email.com"',
     });
   } 
