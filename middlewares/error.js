@@ -1,10 +1,10 @@
-const errorMiddleware = (err, _req, res, _next) => {
+const errorMiddleware = (err, _req, res, next) => {
     if (err) {
         res.status(500).send({
             error: `You're facing an error ${err.message}`,
         });
     }
-    _next();
+    next();
 };
 
 module.exports = errorMiddleware;

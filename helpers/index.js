@@ -1,9 +1,6 @@
 const express = require('express');
 const middlewares = require('../middlewares/index');
 
-// import all controllers
-// import SessionController from './app/controllers/SessionController';
-
 const route = express.Router();
 
 const useMiddleware = () => {
@@ -13,6 +10,7 @@ const useMiddleware = () => {
     route.use(middlewares.tolkenTestFormat);
     route.use(middlewares.validAgeField);
     route.use(middlewares.validDataMiddleware);
+    return route;
 };
 
 module.exports = useMiddleware;
