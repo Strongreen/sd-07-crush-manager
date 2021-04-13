@@ -20,7 +20,7 @@ app.use(postHeaderDateUndefinedCheck);
 app.use(postHeaderDateValuesCheck);
 
 app.get('/', async (request, response) => {
-  let crushes = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
+  const crushes = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
   if (crushes.length >= 1) {
     return response.status(200).send(crushes);
   }
