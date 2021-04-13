@@ -63,10 +63,10 @@ router.put(pathName, useMidd, (req, res) => {
 
   return res.status(200).send({ id: Number(id), name, age, date });
 });
-router.use(middlewares.tokennNot);
-router.use(middlewares.tokenInvalido);
+// router.use(middlewares.tokennNot);
+// router.use(middlewares.tokenInvalido);
 
-router.delete(pathName, (req, res) => {
+router.delete(pathName, middlewares.tokennNot, middlewares.tokenInvalido, (req, res) => {
   const { id } = req.params;
   const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
   const data = JSON.parse(file);
