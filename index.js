@@ -11,9 +11,8 @@ const SUCCESS = 200;
 const PORT = '3000';
 
 // não remova esse endpoint, e para o avaliador funcionar
-// eslint-disable-next-line arrow-body-style
 app.get('/', (_request, response) => {
-  return response.status(SUCCESS).send();
+  response.status(SUCCESS).send();
 });
 
 app.use('/crush', crushRoutes);

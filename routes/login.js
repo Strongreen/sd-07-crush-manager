@@ -7,8 +7,8 @@ const app = express();
 app.use(loginEmailCheck);
 app.use(loginPassCheck);
 
-// eslint-disable-next-line arrow-body-style
 app.post('/', (request, response) => {
+  console.log('');
   return response.status(200).send({
     token: crypto.randomBytes(8).toString('hex'),
   });
