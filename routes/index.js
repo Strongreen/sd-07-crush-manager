@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const randtoken = require('rand-token');
+
 const useMiddleware = require('../helpers/index');
 
 const myToken = randtoken.generate(16);
