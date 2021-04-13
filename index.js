@@ -1,7 +1,7 @@
 const express = require('express');
+const crushLogin = require('./routes/crushLogin');
 const crush = require('./routes/crush');
 const crushId = require('./routes/crushId');
-const crushLogin = require('./routes/crushLogin');
 
 const app = express();
 app.use(express.json());
