@@ -29,8 +29,8 @@ router.post('/login', (request, response) => {
   const res = response.status(BAD_REQUEST);
 
   try {
-    utils.isvalidateEmail(email);
-    utils.isvalidatePassword(password);
+    utils.isValidateEmail(email);
+    utils.isValidatePassword(password);
     
     const token = utils.generateToken();  
 
