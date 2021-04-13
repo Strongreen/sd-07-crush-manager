@@ -46,7 +46,7 @@ router.post('/crush', useMidd, (req, res) => {
 
   fs.writeFileSync(FILE, JSON.stringify(Itens));
 
-  res.status(201).send({ id, name, age, date });
+  return res.status(201).send({ id, name, age, date });
 });
 
  router.use(middlewares.errorMiddlewares);
