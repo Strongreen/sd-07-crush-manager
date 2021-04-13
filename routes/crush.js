@@ -11,7 +11,7 @@ const router = express.Router();
 //   const content = await fs.readFile(path.resolve(__dirname, '..', 'crush.json'));
 //   return JSON.parse(content.toString('utf-8'));
 // };
-
+const pathName = '/crush/:id';
 router.get('/crush', (req, res) => {
   const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
   const data = JSON.parse(file);
@@ -22,7 +22,7 @@ router.get('/crush', (req, res) => {
   res.status(200).send([]);
 });
 
-router.get('/crush/:id', (req, res) => {
+router.get(pathName, (req, res) => {
   const { id } = req.params;
   const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
   const data = JSON.parse(file);
@@ -47,6 +47,34 @@ router.post('/crush', useMidd, (req, res) => {
   fs.writeFileSync(FILE, JSON.stringify(Itens));
 
   return res.status(201).send({ id, name, age, date });
+});
+
+router.put(pathName, useMidd, (req, res) => {
+  const { id } = req.params;
+  const { name, age, date } = req.body;
+  const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
+  const data = JSON.parse(file);
+  const filterEd = data.filter((item) => item.id !== Number(id));
+  
+  const crushs = { id: Number(id), name, age, date };
+  const crushArray = [...filterEd, crushs];
+
+  fs.writeFileSync(FILE, JSON.stringify(crushArray));
+
+  return res.status(200).send({ id: Number(id), name, age, date });
+});
+router.use(middlewares.tokennNot);
+router.use(middlewares.tokenInvalido);
+
+router.delete(pathName, (req, res) => {
+  const { id } = req.params;
+  const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
+  const data = JSON.parse(file);
+
+  const filterEd = data.filter((item) => item.id !== Number(id));
+  fs.writeFileSync(FILE, JSON.stringify(filterEd));
+  
+  res.status(200).send({ message: 'Crush deletado com sucesso' });
 });
 
  router.use(middlewares.errorMiddlewares);

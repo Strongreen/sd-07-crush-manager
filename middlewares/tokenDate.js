@@ -2,12 +2,18 @@
 const tokenDate = (req, res, next) => {
     const { date } = req.body;
 
-    if (date.rate < 1 || date.rate > 5) {
-        return res.status(400).send({
-            message: 'O campo "rate" deve ser um inteiro de 1 à 5',
+    if (typeof date === 'undefined') {
+        res.status(400).send({
+            message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
+        });    
+    }
+    const { datedAt, rate } = req.body.date;
+    if (typeof datedAt === 'undefined' || typeof rate === 'undefined') {
+        res.status(400).send({
+            message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
         });
     }
-    next();
+     next();
     };
 
 module.exports = tokenDate;
