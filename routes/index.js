@@ -6,6 +6,8 @@ const useMiddleware = require('../helpers/index');
 
 const myToken = randtoken.generate(16);
 
+const middlewareValidation = useMiddleware();
+
 const route = express();
 
 const FILE = 'crush.json';
@@ -26,27 +28,25 @@ route.get('/crush/:id', async (req, res) => {
   const data = JSON.parse(file);
 
   const filterCrush = data.find((crush) => crush.id === Number(id));
-
-  if (!filterCrush || filterCrush === 0) {
-     res.status(404).send(
-        {
-          message: 'Crush não encontrado',
-        },
-    );
-  }
   
-  res.status(200).send(filterCrush);
-});
-
-route.post('/login', middlewares.validationMiddleware);
-
-route.post('/login', (req, res) => {
-  res.status(200).send({
-    token: myToken,
+  if (!filterCrush || filterCrush === 0) {
+    res.status(404).send(
+      {
+        message: 'Crush não encontrado',
+      },
+      );
+    }
+    
+    res.status(200).send(filterCrush);
   });
-});
-
-const middlewareValidation = useMiddleware();
+  
+  route.post('/login', middlewareValidation);
+  
+  route.post('/login', (req, res) => {
+    res.status(200).send({
+      token: myToken,
+    });
+  });
 
 route.post('/crush', middlewareValidation, (req, res) => {
   const { name, age, date } = req.body;
@@ -76,6 +76,26 @@ route.put('/crush/:id', middlewareValidation, (req, res) => {
   
   fs.writeFileSync(FILE, JSON.stringify(lastFile));
   res.status(200).send({ id: Number(id), name, age, date });
+});
+
+route.delete('/crush/:id', middlewareValidation, (req, res) => {
+  const { id } = req.params;
+
+  const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
+  const data = JSON.parse(file);
+
+  if (!data) {
+    res.status(401).send([]);
+  }
+
+  const notDeleted = data.filter((item) => item.id !== Number(id));
+
+  if (notDeleted.length < data.length) {
+    fs.writeFileSync(FILE, JSON.stringify(notDeleted));
+    res.status(200).send({ message: 'Crush deletado com sucesso' });
+  } else {
+    res.status(401).send({ message: 'crush não cadastrado' });
+  }
 });
 
 module.exports = route;
