@@ -59,18 +59,21 @@ router.post('/crush', validateTokenMiddleware, async (request, response) => {
   }  
 });
 
-router.put('/crush/:id', checkObjectCrushMiddleware, async (request, response) => {  
-  const { name, age, date } = request.body;
-  const { id } = request.params;  
+router.put('/crush/:id',
+  validateTokenMiddleware,
+  checkObjectCrushMiddleware, 
+  async (request, response) => {  
+    const { name, age, date } = request.body;
+    const { id } = request.params;  
 
-  const dataCrushs = await utils.getCrushs();
-  const crushIndex = utils.getByIndexCrush(id, dataCrushs);
+    const dataCrushs = await utils.getCrushs();
+    const crushIndex = utils.getByIndexCrush(id, dataCrushs);
 
-  const objCrush = { name, age, id, date };
-  dataCrushs[crushIndex] = objCrush;
-  await utils.saveData(dataCrushs);    
+    const objCrush = { name, age, id, date };
+    dataCrushs[crushIndex] = objCrush;
+    await utils.saveData(dataCrushs);    
 
-  response.status(CREATED).json(objCrush);
+    response.status(CREATED).json(objCrush);
 });
 
 module.exports = router;

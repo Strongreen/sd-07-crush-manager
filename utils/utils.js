@@ -1,5 +1,4 @@
 const fs = require('fs');
-const message = require('../messages/messages');
 
 const minimumNameLength = 3;
 const minimumPasswordLength = 6;
