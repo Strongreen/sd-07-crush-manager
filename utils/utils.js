@@ -21,73 +21,81 @@ async function getCrushById(id) {
   return resultFoundCrush;
 }
 
+async function getCrushByName(data, name) {  
+  const crushObj = data.find((crush) => crush.name === name);  
+  return crushObj;
+}
+
+function getByIndexCrush(id, data) {    
+  const index = data.findIndex((crush) => crush.id === Number(id));    
+  return index;
+}
+
 function isValidateEmail(email) {  
-  if (!email) throw new Error(JSON.stringify(message.emailRequired));
+  if (!email) throw new Error('O campo "email" é obrigatório');
 
   const regexEmail = /\S+@\S+\.\S+/;
 
   if (!regexEmail.test(email)) {
-    throw new Error(JSON.stringify(message.emailInvalid));
+    throw new Error('O "email" deve ter o formato "email@email.com"');
   }
 }
 
 function isValidatePassword(password) { 
-  if (!password) throw new Error(JSON.stringify(message.passwordRequired)); 
+  if (!password) throw new Error('O campo "password" é obrigatório'); 
 
   if (password.length < minimumPasswordLength) {
-    throw new Error(JSON.stringify(message.passwordInvalid));
+    throw new Error('A "senha" deve ter pelo menos 6 caracteres');
   }
 }
 
 function isValidateToken(token) {
-  if (!token) throw new Error(JSON.stringify(message.tokenRiquired)); 
+  if (!token) throw new Error('Token não encontrado'); 
 
   if (token.length < minimumTokenLength) {
-    throw new Error(JSON.stringify(message.tokenInvalid));
+    throw new Error('Token inválido');
   }
 }
 
 function isValidateName(name) {
-  if (!name) throw new Error(JSON.stringify(message.nameRequired)); 
+  if (!name) throw new Error('O campo "name" é obrigatório'); 
 
   if (name.length < minimumNameLength) {
-    throw new Error(JSON.stringify(message.nameInvalid));
+    throw new Error('O "name" deve ter pelo menos 3 caracteres');
   }
 }
 
 function isValidateAge(age) {
-  if (!age) throw new Error(JSON.stringify(message.ageRequired)); 
+  if (!age) throw new Error('O campo "age" é obrigatório'); 
 
   if (age < minimumAgeLength) {    
-    throw new Error(JSON.stringify(message.ageInvalid));
+    throw new Error('O crush deve ser maior de idade');
   }
 }
 
-function isValidateDate(date) {
-  const { datedAt } = date;
+function isValidateDate(body) {
+  const { date } = body;
 
-  if (!datedAt) {
-    throw new Error(JSON.stringify(message.dateAndRateRequired));
+  if (!date || !date.datedAt) {
+    throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
   }  
 
   const dateRegex = /^\d\d[/]\d\d[/]\d\d\d\d$/;  
 
-  if (!(dateRegex.test(datedAt))) {
-    throw new Error(JSON.stringify(message.dateInvalid));
+  if (!(dateRegex.test(date.datedAt))) {
+    throw new Error('O campo "datedAt" deve ter o formato "dd/mm/aaaa"');
   }  
 }
 
 function isValidateRate(date) {
   const { rate } = date;
 
-  if (rate <= 0 || rate > 5) {
-    console.log('entrei aqui 1 - 5');
-    throw new Error(JSON.stringify(message.rateInvalid));
+  if (rate <= 0 || rate > 5) {    
+    throw new Error('O campo "rate" deve ser um inteiro de 1 à 5');
   }
 
-  if (!rate) {
-    console.log('entrei aqui rate vazio');
-    throw new Error(JSON.stringify(message.dateAndRateRequired));
+  if (!rate) {    
+    throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
   }
 }
 
@@ -106,6 +114,7 @@ function generateToken() {
 module.exports = { 
   getCrushs,
   getCrushById,
+  getCrushByName,
   isValidateEmail,
   isValidatePassword,
   isValidateToken,
@@ -114,5 +123,6 @@ module.exports = {
   isValidateDate,
   isValidateRate,
   generateToken,
+  getByIndexCrush,
   saveData,
 };

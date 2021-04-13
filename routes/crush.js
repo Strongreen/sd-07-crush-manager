@@ -1,6 +1,7 @@
 const express = require('express');
 const utils = require('../utils/utils');
-const middleware = require('../middlewares/validateToken');
+const validateTokenMiddleware = require('../middlewares/validateToken');
+const checkObjectCrushMiddleware = require('../middlewares/checkObjectCrush');
 
 const router = express.Router();
 
@@ -9,11 +10,11 @@ const CREATED = 201;
 const BAD_REQUEST = 400;
 const NOT_FOUND = 404;
 
-router.get('/crush', async (_request, response) => response
+router.get('/crush', async (_request, response) => response  
   .status(SUCCESS)
   .send(await utils.getCrushs()));
 
-router.get('/crush/:id', async (request, response) => {
+router.get('/crush/:id', async (request, response) => {  
   const { id } = request.params;  
   const crush = await utils.getCrushById(id);
   
@@ -25,8 +26,7 @@ router.get('/crush/:id', async (request, response) => {
 });
 
 router.post('/login', (request, response) => {
-  const { email, password } = request.body;  
-  const res = response.status(BAD_REQUEST);
+  const { email, password } = request.body;    
 
   try {
     utils.isValidateEmail(email);
@@ -38,26 +38,39 @@ router.post('/login', (request, response) => {
       token: `${token}`,
     });
   } catch (error) {
-    res.send(error.message);
+    response.status(BAD_REQUEST).send(error.message);
   }  
 });
-router.post('/crush', middleware.validateTokenMiddleware, async (request, response) => {
+router.post('/crush', validateTokenMiddleware, async (request, response) => {
   const dataCrushs = await utils.getCrushs();
   const position = dataCrushs.length;
   const { name, age, date } = request.body;  
-  const res = response.status(BAD_REQUEST);
-  try {        
+  try {    
     utils.isValidateName(name);
     utils.isValidateAge(age);    
-    utils.isValidateDate(date); 
+    utils.isValidateDate(request.body); 
     utils.isValidateRate(date);
     const objCrush = { name, age, id: position + 1, date };
     dataCrushs[position] = objCrush;
     await utils.saveData(dataCrushs);
     response.status(CREATED).send(objCrush);
   } catch (error) {    
-    res.send(error.message);
+    response.status(BAD_REQUEST).json({ message: error.message });
   }  
+});
+
+router.put('/crush/:id', checkObjectCrushMiddleware, async (request, response) => {  
+  const { name, age, date } = request.body;
+  const { id } = request.params;  
+
+  const dataCrushs = await utils.getCrushs();
+  const crushIndex = utils.getByIndexCrush(id, dataCrushs);
+
+  const objCrush = { name, age, id, date };
+  dataCrushs[crushIndex] = objCrush;
+  await utils.saveData(dataCrushs);    
+
+  response.status(CREATED).json(objCrush);
 });
 
 module.exports = router;

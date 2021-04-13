@@ -7,11 +7,10 @@ const validateTokenMiddleware = (request, response, next) => {
   
   try {
     utils.isValidateToken(authorization);
-
     next();
   } catch (error) {
-    response.status(UNAUTHORIZED).send(error.message);
+    response.status(UNAUTHORIZED).json({ message: error.message });
   }
 };
 
-module.exports = { validateTokenMiddleware };
+module.exports = validateTokenMiddleware;
