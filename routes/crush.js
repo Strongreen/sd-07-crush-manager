@@ -70,7 +70,7 @@ router.put('/crush/:id', validateTokenMiddleware, async (request, response) => {
 
       const dataCrushs = await utils.getCrushs();
       const crushIndex = utils.getByIndexCrush(id, dataCrushs);
-      const objCrush = { name, age, idNew, date };
+      const objCrush = { name, age, id: idNew, date };
       dataCrushs[crushIndex] = objCrush;
       await utils.saveData(dataCrushs);          
       response.status(SUCCESS).send(objCrush);
