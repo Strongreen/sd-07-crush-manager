@@ -4,6 +4,11 @@ const { dataCrushMiddleware, tokenMiddleware } = require('../middlewares');
 
 const router = express.Router();
 
+const readFileCrush = () => {
+  const crushJson = fs.readFileSync(`${__dirname}/../crush.json`);
+  return JSON.parse(crushJson.toString('utf-8'));
+};
+
 router.get('/', async (_req, res) => {
   try {
     const responseCrush = await fs.promises.readFile(`${__dirname}/../crush.json`);
@@ -42,6 +47,19 @@ router.post('/', async (req, res) => {
   } catch (error) {
     return error;
   }
+});
+
+router.put('/:id', (req, res) => {
+  const { id } = req.params;
+  const dataCrush = readFileCrush();
+  const idCrushUpdated = parseInt(id, 10);
+  const updateCrush = { id: idCrushUpdated, ...req.body };
+  // Lógica vista no Plantão de dúvidas trazida pelo Cleber Fontinele
+  const crushDocument = dataCrush
+    .map((CurCrush) => (CurCrush.id === idCrushUpdated ? updateCrush : CurCrush));
+
+  fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(crushDocument, null, 2));
+  return res.status(200).json(updateCrush);
 });
 
 module.exports = router;
