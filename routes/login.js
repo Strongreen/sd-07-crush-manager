@@ -10,7 +10,7 @@ router.post('/', (req, res) => {
   const regexEmail = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/;
 
   if (req.body.length === 0) {
-    return res.status(400).send({ message: 'O campo "email" é obrigatório' })
+    return res.status(400).send({ message: 'O campo "email" é obrigatório' });
   }
   if (!regexEmail.test(req.body.email)) {
     return res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
