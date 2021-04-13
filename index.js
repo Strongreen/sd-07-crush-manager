@@ -49,10 +49,9 @@ app.post('/login', (req, res) => {
   const { email } = req.body;
   const { password } = req.body;
 
-  if (email !== '' && reGex.test(email)) {
-    if (password !== '' && password.length >= 6) {
+  if (email !== '' && reGex.test(email)
+  && password !== '' && password.length >= 6) {
       return res.send({ token });
-    }
   }
 });
 
