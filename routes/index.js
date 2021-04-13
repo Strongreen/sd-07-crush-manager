@@ -1,7 +1,6 @@
 const express = require('express');
 const fs = require('fs');
 const randtoken = require('rand-token');
-const middlewares = require('../middlewares/index');
 const useMiddleware = require('../helpers/index');
 
 const myToken = randtoken.generate(16);
@@ -11,6 +10,8 @@ const middlewareValidation = useMiddleware();
 const route = express();
 
 const FILE = 'crush.json';
+
+const PATH = '/crush';
 
 route.get('/crush', (req, res) => {
     const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
@@ -22,7 +23,7 @@ route.get('/crush', (req, res) => {
     res.status(200).send([]);
 });
 
-route.get('/crush/:id', async (req, res) => {
+route.get(`${PATH}/:id`, async (req, res) => {
   const { id } = req.params;
   const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
   const data = JSON.parse(file);
@@ -40,15 +41,13 @@ route.get('/crush/:id', async (req, res) => {
     res.status(200).send(filterCrush);
   });
   
-  route.post('/login', middlewareValidation);
-  
-  route.post('/login', (req, res) => {
+  route.post('/login', middlewareValidation, (req, res) => {
     res.status(200).send({
       token: myToken,
     });
   });
 
-route.post('/crush', middlewareValidation, (req, res) => {
+route.post(PATH, middlewareValidation, (req, res) => {
   const { name, age, date } = req.body;
   const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
 
@@ -62,7 +61,7 @@ route.post('/crush', middlewareValidation, (req, res) => {
   res.status(201).send({ id, name, age, date });
 });
 
-route.put('/crush/:id', middlewareValidation, (req, res) => {
+route.put(`${PATH}/:id`, middlewareValidation, (req, res) => {
   const { id } = req.params;
   const { name, age, date } = req.body;
 
@@ -78,7 +77,7 @@ route.put('/crush/:id', middlewareValidation, (req, res) => {
   res.status(200).send({ id: Number(id), name, age, date });
 });
 
-route.delete('/crush/:id', middlewareValidation, (req, res) => {
+route.delete(`${PATH}/:id`, middlewareValidation, (req, res) => {
   const { id } = req.params;
 
   const file = fs.readFileSync(FILE, { encoding: 'utf-8', flag: 'r' });
