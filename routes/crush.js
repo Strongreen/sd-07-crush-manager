@@ -1,7 +1,6 @@
 const express = require('express');
 const utils = require('../utils/utils');
 const validateTokenMiddleware = require('../middlewares/validateToken');
-const checkObjectCrushMiddleware = require('../middlewares/checkObjectCrush');
 
 const router = express.Router();
 
@@ -59,21 +58,25 @@ router.post('/crush', validateTokenMiddleware, async (request, response) => {
   }  
 });
 
-router.put('/crush/:id',
-  validateTokenMiddleware,
-  checkObjectCrushMiddleware, 
-  async (request, response) => {  
+router.put('/crush/:id', validateTokenMiddleware, async (request, response) => {  
     const { name, age, date } = request.body;
-    const { id } = request.params;  
+    const { id } = request.params; 
+    
+    try {    
+      utils.isValidateName(name);
+      utils.isValidateAge(age);    
+      utils.isValidateDate(request.body); 
+      utils.isValidateRate(date);
 
-    const dataCrushs = await utils.getCrushs();
-    const crushIndex = utils.getByIndexCrush(id, dataCrushs);
-
-    const objCrush = { name, age, id, date };
-    dataCrushs[crushIndex] = objCrush;
-    await utils.saveData(dataCrushs);    
-
-    response.status(CREATED).json(objCrush);
+      const dataCrushs = await utils.getCrushs();
+      const crushIndex = utils.getByIndexCrush(id, dataCrushs);
+      const objCrush = { name, age, id, date };
+      dataCrushs[crushIndex] = objCrush;
+      await utils.saveData(dataCrushs);          
+      response.status(CREATED).send(objCrush);
+    } catch (error) {    
+      response.status(BAD_REQUEST).json({ message: error.message });
+    }
 });
 
 module.exports = router;

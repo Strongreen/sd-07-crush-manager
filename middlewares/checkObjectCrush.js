@@ -8,7 +8,7 @@ const checkObjectCrushMiddleware = (request, response, next) => {
   try {
     utils.isValidateName(name);
     utils.isValidateAge(age);
-    utils.isValidateDate(date);
+    utils.isValidateDate(request.body);
     utils.isValidateRate(date);
     next();
   } catch (error) {
