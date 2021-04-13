@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/', (req, res) => {
   const regexEmail = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/;
 
-  if (req.body.length === 0) {
+  if (req.body.length === 0 || req.body.email == undefined) {
     return res.status(400).send({ message: 'O campo "email" é obrigatório' });
   }
   if (!regexEmail.test(req.body.email)) {
