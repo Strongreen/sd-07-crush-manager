@@ -89,6 +89,7 @@ app.put('/:id', async (request, response) => {
 });
 
 app.delete('/:id', async (request, response) => {
+  console.log('');
   const { id: idpedido } = request.params;
   const crush = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
   crush.filter((element) => element.id !== parseInt(idpedido, 10));
