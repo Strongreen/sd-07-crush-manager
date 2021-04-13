@@ -14,7 +14,7 @@ const dateMiddleware = (req, res, next) => {
   const dateRegex = /^[0-9]{2}[/]{1}[0-9]{2}[/]{1}[0-9]{4}$/g;
   // dateRegex.test(date.datedAt);
   // console.log(dateRegex.test(date.datedAt));
-  if (!date || !date.datedAt || !date.rate) {
+  if (!date || !date.datedAt || date.rate === undefined) {
     return res.status(400).json(
       {
         message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
