@@ -20,6 +20,7 @@ app.use(controllers.login);
 app.use(routes.createCrush);
 app.use(routes.getAllCrush);
 app.use(routes.getCrushId);
+app.use(routes.editCrush);
 
 const errorMiddleware = (err, req, res, next) => {
   console.log('Console do middleware no index', err);
