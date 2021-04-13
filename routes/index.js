@@ -1,8 +1,8 @@
 const express = require('express');
 const fs = require('fs');
 const randtoken = require('rand-token');
-
 const useMiddleware = require('../helpers/index');
+const emailPasswordValidation = require('../middlewares/validations');
 
 const myToken = randtoken.generate(16);
 
@@ -42,7 +42,7 @@ route.get(`${PATH}/:id`, async (req, res) => {
     res.status(200).send(filterCrush);
   });
   
-  route.post('/login', middlewareValidation, (req, res) => {
+  route.post('/login', emailPasswordValidation, (req, res) => {
     res.status(200).send({
       token: myToken,
     });
