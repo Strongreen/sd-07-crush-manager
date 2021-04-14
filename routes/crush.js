@@ -3,13 +3,7 @@ const utils = require('../utils');
 const middleware = require('../middlewares');
 const middAll = require('../middlewares/middAll');
 
-const {
-  validateEmailMiddleware, 
-  validatePasswordMiddleware,
-  validateTokenMiddleware,
-} = middleware;
-
-const crushRoute = '/crush/:id';
+const { validateTokenMiddleware } = middleware;
 
 const router = express.Router();
 
@@ -17,11 +11,16 @@ const SUCCESS = 200;
 const CREATED = 201;
 const NOT_FOUND = 404;
 
-router.get('/crush', async (_request, response) => response  
+router.get('/', async (_request, response) => response  
   .status(SUCCESS)
   .send(await utils.getCrushs()));
 
-router.get(crushRoute, async (request, response) => {  
+router.get('/search', async (request, response) => {
+  const term = request.query;  
+  response.status(SUCCESS).send({ message: term });
+});
+
+router.get('/:id', async (request, response) => {  
   const { id } = request.params;  
   const crush = await utils.getCrushById(id);
   
@@ -32,12 +31,7 @@ router.get(crushRoute, async (request, response) => {
   });
 });
 
-router.post('/login', validateEmailMiddleware, validatePasswordMiddleware, (request, response) => {
-    const token = utils.generateToken();  
-    response.status(SUCCESS).send({ token: `${token}` }); 
-});
-
-router.post('/crush', middAll(), async (request, response) => {
+router.post('/', middAll(), async (request, response) => {
   const dataCrushs = await utils.getCrushs();
   const position = dataCrushs.length;
   const { name, age, date } = request.body;  
@@ -48,7 +42,7 @@ router.post('/crush', middAll(), async (request, response) => {
   response.status(CREATED).send(objCrush);
 });
 
-router.put(crushRoute, middAll(), async (request, response) => {  
+router.put('/:id', middAll(), async (request, response) => {  
     const { name, age, date } = request.body;
     const { id } = request.params; 
     const idNew = Number(id);   
@@ -62,7 +56,7 @@ router.put(crushRoute, middAll(), async (request, response) => {
     response.status(SUCCESS).send(objCrush);
 });
 
-router.delete(crushRoute, validateTokenMiddleware, async (request, response) => {
+router.delete('/:id', validateTokenMiddleware, async (request, response) => {
   const { id } = request.params;
   const dataCrushs = await utils.getCrushs();
 
