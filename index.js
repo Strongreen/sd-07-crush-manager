@@ -25,10 +25,10 @@ function createToken() {
 const authenticationToken = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization) {
-    res.status(401).send({ message: 'Token não encontrado' });
+    return res.status(401).send({ message: 'Token não encontrado' });
   }
-  if (authorization.length < 16) {
-    res.status(401).send({ message: 'Token inválido' }); 
+  if (authorization.length !== 16) {
+    return res.status(401).send({ message: 'Token inválido' }); 
 }
   return next();
 };
