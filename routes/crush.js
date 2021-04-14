@@ -26,6 +26,22 @@ app.get('/:id', async (req, res) => {
 });
 
 app.use(middleware.authorizationMiddleware);
+
+app.delete('/:id', rescue(async (req, res) => {
+  const { id } = req.params;
+  const index = id - 1;
+  dataFile.splice(index, 1);
+
+  try {
+    await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(dataFile));
+    return res.status(200).send({
+      message: 'Crush deletado com sucesso',
+    });
+  } catch (error) {
+    throw new Error(error);
+  }
+}));
+
 app.use(middleware.nameMiddleware);
 app.use(middleware.ageMiddleware);
 app.use(middleware.dateMiddleware);
