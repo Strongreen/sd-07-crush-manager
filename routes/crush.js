@@ -6,13 +6,37 @@ const middleware = require('../middlewares');
 
 const app = express();
 
+const readData = async () => {
+  const data = JSON.parse(await fs.promises.readFile('./crush.json', 'utf-8'));
+  return data;
+};
+
 app.get('/', async (req, res) => {
-  const data = await JSON.parse(await fs.promises.readFile('./crush.json', 'utf-8'));
+  const data = await readData();
   return res.status(200).send(data);
 });
 
+app.get('/search', middleware.authorizationMiddleware, async (req, res) => {
+  console.log(req.query);
+  const { q } = req.query;
+  const search = q;
+  const data = await readData();
+  const searchCrushName = data.find((n) => n.name.includes(search));
+  console.log(searchCrushName);
+
+  if (!q) {
+    return res.status(200).send(data);
+  }
+
+  if (!searchCrushName) {
+    return res.status(200).send([]);
+  }
+
+  return res.status(200).send(searchCrushName);
+});
+
 app.get('/:id', async (req, res) => {
-  const data = await JSON.parse(await fs.promises.readFile('./crush.json', 'utf-8'));
+  const data = await readData();
   const { id } = req.params;
   const crushById = data.find((c) => c.id === parseInt(id, 10));
 
