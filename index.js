@@ -15,6 +15,7 @@ const pointById = '/crush/:id';
 // Função responsável por escrever informações
 const writeCrush = async (data) => fs.writeFileSync(point, data);
 
+// Função que cria o token
 function createToken() {
   const token = crypto.randomBytes(8).toString('hex');
     return token;
