@@ -15,9 +15,11 @@ router.get('/', async (_request, response) => response
   .status(SUCCESS)
   .send(await utils.getCrushs()));
 
-router.get('/search', async (request, response) => {
-  const term = request.query;  
-  response.status(SUCCESS).send({ message: term });
+router.get('/search', validateTokenMiddleware, async (request, response) => {
+  const term = request.query;
+  const dataCrushs = await utils.getCrushs();
+  const listCrush = await utils.getListCrushByName(term, dataCrushs);
+  response.status(SUCCESS).send(listCrush);
 });
 
 router.get('/:id', async (request, response) => {  

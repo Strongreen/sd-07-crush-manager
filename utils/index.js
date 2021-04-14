@@ -24,6 +24,10 @@ function getByIndexCrush(id, data) {
   return index;
 }
 
+function getListCrushByName(term, data) {  
+  return data.filter((crush) => crush.name.includes(term.q));
+}
+
 function generateToken() {
   let result = '';
 
@@ -43,4 +47,5 @@ module.exports = {
   getByIndexCrush,
   saveData,
   filterCrush,
+  getListCrushByName,
 };
