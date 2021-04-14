@@ -12,6 +12,7 @@ const PORT = '3000';
 const point = './crush.json';
 const pointById = '/crush/:id';
 
+// Função responsável por escrever informações
 const writeCrush = async (data) => fs.writeFileSync(point, data);
 
 function createToken() {
@@ -19,15 +20,16 @@ function createToken() {
     return token;
 }
 
+// Funções de autenticação e validação (middlewares)
 const authenticationToken = (req, res, next) => {
   const { authorization } = req.headers;
-  if (authorization && authorization.toString().length > 8) {
-    return next();
-  }
   if (!authorization) {
     res.status(401).json({ message: 'Token não encontrado' });
   }
-   return res.status(401).json({ message: 'Token inválido' });
+  if (authorization.length < 16) {
+    res.status(401).json({ message: 'Token inválido' }); 
+}
+  return next();
 };
 
 const validateName = (req, res, next) => {
@@ -54,7 +56,7 @@ const validateAge = (req, res, next) => {
 
 const validateDate = (req, res, next) => {
   const { date } = req.body;
-  if (!date || !date.datedAt || date.rate === undefined) {
+  if (!date || date.datedAt === undefined || date.rate === undefined) {
     return res.status(400).send({
       message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
     });
@@ -71,10 +73,10 @@ const validateDatedAt = (req, res, next) => {
   return next();
   };
 
-  const validateRate = (req, res, next) => {
-    const { date } = req.body;
-    if (date.rate < 1 || date.rate > 5) {
-      return res.status(400).send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
+const validateRate = (req, res, next) => {
+  const { date } = req.body;
+  if (date.rate < 1 || date.rate > 5) {
+    return res.status(400).send({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   } 
   return next();
 };
@@ -84,6 +86,7 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
+// Rotas
 app.get('/crush', async (req, res) => {
   const crushs = JSON.parse(await fs.promises.readFile(point, 'utf8'));
   return res.status(SUCCESS).send(crushs);
@@ -125,7 +128,7 @@ app.post('/login', (req, res) => {
 app.use(authenticationToken);
 
 app.post('/crush', validateName, validateAge, validateDate, validateDatedAt, validateRate,
-    async (req, res) => {
+  async (req, res) => {
   const { name, age, date } = req.body;
 
   const crushs = JSON.parse(await fs.promises.readFile(point, 'utf8'));
@@ -147,7 +150,7 @@ app.put(pointById, validateName, validateAge, validateDate, validateDatedAt, val
   crushById.age = age;
   crushById.date = date;
   await writeCrush(JSON.stringify(crushs));
-  res.status(SUCCESS).send(crushs[id - 1]);
+  res.status(SUCCESS).send(crushById);
 });
 
 app.delete(pointById, async (req, res) => {
