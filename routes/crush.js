@@ -8,7 +8,7 @@ const app = express();
 
 app.get('/', async (req, res) => {
   const data = await JSON.parse(await fs.promises.readFile('./crush.json', 'utf-8'));
-  res.status(200).send(data);
+  return res.status(200).send(data);
 });
 
 app.get('/:id', async (req, res) => {
@@ -17,12 +17,12 @@ app.get('/:id', async (req, res) => {
   const crushById = data.find((c) => c.id === parseInt(id, 10));
 
   if (!crushById) {
-    res.status(404).send({
+    return res.status(404).send({
       message: 'Crush não encontrado',
     });
   }
 
-  res.status(200).send(crushById);
+  return res.status(200).send(crushById);
 });
 
 app.use(middleware.authorizationMiddleware);
@@ -45,7 +45,27 @@ app.post('/', rescue(async (req, res) => {
 
   try {
     await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(dataFile));
-    res.status(201).send(dataFile[size]);
+    return res.status(201).send(dataFile[size]);
+  } catch (error) {
+    throw new Error(error);
+  }
+}));
+
+app.put('/:id', rescue(async (req, res) => {
+  const { id } = req.params;
+  const { name, age, date } = req.body;
+  dataFile[id - 1] = {
+    name: `${name}`,
+    age: parseInt(`${age}`, 10),
+    date: {
+      datedAt: `${date.datedAt}`,
+      rate: parseInt(`${date.rate}`, 10),
+    },
+  };
+
+  try {
+    await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(dataFile));
+    return res.status(200).send(dataFile[id - 1]);
   } catch (error) {
     throw new Error(error);
   }

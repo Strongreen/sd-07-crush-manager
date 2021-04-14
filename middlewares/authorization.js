@@ -17,7 +17,7 @@ const authorizationMiddleware = (req, res, next) => {
     findToken(authorization);
     validToken(authorization);
   } catch (error) {
-    res.status(401).send({
+    return res.status(401).send({
       message: error.message,
     });
   }

@@ -13,7 +13,6 @@ const app = express();
 
 const emailValidation = (email) => {
   const validEmail = emailRegex({ exact: true }).test(email);
-  console.log(validEmail);
 
   if (!email) {
     throw new Error('O campo "email" é obrigatório');
@@ -26,7 +25,6 @@ const emailValidation = (email) => {
 
 const passwordValidation = (password) => {
   const validPassword = schema.validate(password);
-  console.log(validPassword);
 
   if (!password) {
     throw new Error('O campo "password" é obrigatório');
@@ -41,16 +39,15 @@ app.post('/', (req, res) => {
   const { email, password } = req.body;
   try {
     const token = randToken.generate(16);
-    console.log(token);
 
     emailValidation(email);
     passwordValidation(password);
 
-    res.status(200).send({
+    return res.status(200).send({
       token: `${token}`,
   });
   } catch (error) {
-    res.status(400).send({
+    return res.status(400).send({
       message: error.message,
     });
   }

@@ -17,7 +17,7 @@ const ageMiddleware = (req, res, next) => {
     findAge(age);
     ageVerification(age);
   } catch (error) {
-    res.status(400).send({
+    return res.status(400).send({
       message: error.message,
     });
   }

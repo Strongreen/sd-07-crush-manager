@@ -17,7 +17,7 @@ const nameMiddleware = (req, res, next) => {
     findName(name);
     nameValidation(name);
   } catch (error) {
-    res.status(400).send({
+    return res.status(400).send({
       message: error.message,
     });
   }
