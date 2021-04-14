@@ -9,6 +9,8 @@ const {
   validateTokenMiddleware,
 } = middleware;
 
+const crushRoute = '/crush/:id';
+
 const router = express.Router();
 
 const SUCCESS = 200;
@@ -19,7 +21,7 @@ router.get('/crush', async (_request, response) => response
   .status(SUCCESS)
   .send(await utils.getCrushs()));
 
-router.get('/crush/:id', async (request, response) => {  
+router.get(crushRoute, async (request, response) => {  
   const { id } = request.params;  
   const crush = await utils.getCrushById(id);
   
@@ -46,7 +48,7 @@ router.post('/crush', middAll(), async (request, response) => {
   response.status(CREATED).send(objCrush);
 });
 
-router.put('/crush/:id', middAll(), async (request, response) => {  
+router.put(crushRoute, middAll(), async (request, response) => {  
     const { name, age, date } = request.body;
     const { id } = request.params; 
     const idNew = Number(id);   
@@ -60,12 +62,11 @@ router.put('/crush/:id', middAll(), async (request, response) => {
     response.status(SUCCESS).send(objCrush);
 });
 
-router.delete('/crush/:id', validateTokenMiddleware, async (request, response) => {
+router.delete(crushRoute, validateTokenMiddleware, async (request, response) => {
   const { id } = request.params;
   const dataCrushs = await utils.getCrushs();
 
-  const newListCrushs = dataCrushs
-    .filter((crush) => crush.id !== Number(id));
+  const newListCrushs = utils.filterCrush(id, dataCrushs);
   await utils.saveData(newListCrushs);
   response.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
 });

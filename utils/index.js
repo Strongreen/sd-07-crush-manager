@@ -9,6 +9,10 @@ async function saveData(data) {
   await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(data));    
 }
 
+function filterCrush(id, data) {
+  return data.filter((crush) => crush.id !== Number(id));
+}
+
 async function getCrushById(id) {   
   const crushsList = await getCrushs();  
   const resultFoundCrush = crushsList.find((crush) => crush.id === Number(id));
@@ -38,4 +42,5 @@ module.exports = {
   generateToken,
   getByIndexCrush,
   saveData,
+  filterCrush,
 };
