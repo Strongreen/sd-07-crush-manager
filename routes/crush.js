@@ -5,7 +5,8 @@ const middAll = require('../middlewares/middAll');
 
 const {
   validateEmailMiddleware, 
-  validatePasswordMiddleware,  
+  validatePasswordMiddleware,
+  validateTokenMiddleware,
 } = middleware;
 
 const router = express.Router();
@@ -57,6 +58,16 @@ router.put('/crush/:id', middAll(), async (request, response) => {
     dataCrushs[index] = objCrush;
     await utils.saveData(dataCrushs);          
     response.status(SUCCESS).send(objCrush);
+});
+
+router.delete('/crush/:id', validateTokenMiddleware, async (request, response) => {
+  const { id } = request.params;
+  const dataCrushs = await utils.getCrushs();
+
+  const newListCrushs = dataCrushs
+    .filter((crush) => crush.id !== Number(id));
+  await utils.saveData(newListCrushs);
+  response.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
 });
 
 module.exports = router;
