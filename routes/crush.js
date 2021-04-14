@@ -94,6 +94,7 @@ app.put('/:id', rescue(async (req, res) => {
   const { id } = req.params;
   const { name, age, date } = req.body;
   dataFile[id - 1] = {
+    id: parseInt(id, 10),
     name: `${name}`,
     age: parseInt(`${age}`, 10),
     date: {
@@ -101,7 +102,6 @@ app.put('/:id', rescue(async (req, res) => {
       rate: parseInt(`${date.rate}`, 10),
     },
   };
-
   try {
     await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(dataFile));
     return res.status(200).send(dataFile[id - 1]);
