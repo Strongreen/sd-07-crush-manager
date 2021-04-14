@@ -2,13 +2,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const crypto = require('crypto');
-/* const dataArr = require('./crush.json'); */
+const { restart } = require('nodemon');
 
 const app = express();
 app.use(bodyParser.json());
 
 const SUCCESS = 200;
+const SUCCESS_1 = 201;
 const FAIL = 400;
+const FAIL_HEADER = 401;
 const FAIL_2 = 404;
 
 /* const POST_SUCCESS = 201; */
@@ -100,23 +102,100 @@ app.post('/login', (req, res) => {
 });
 
 /* Requisito 4 */
-/* app.post('/crush', async (req, res) => {
-  const crushLength = dataArr.length;
-  dataArr[crushLength] = {
-    name: req.body.name,
-    age: req.body.age,
-    id: crushLength + 1,
-    date: { datedAt: req.body.date.datedAt, rate: req.body.date.rate },
-  };
-
-  try {
-    await fs.promises.writeFile(`${__dirname}/./crush.json`, JSON.stringify(dataArr));
-    res.status(POST_SUCCESS).send({
-      message: 'Salvou essa bagaça',
-    });
-  } catch (error) {
-    res.status(INTERNAL_ERROR).send({ message: 'ta zuado o role' });
+function validAuthorization(authorization) {
+  if (!authorization) {
+    return {
+      error: true,
+      message: 'Token não encontrado',
+    };
   }
-}); */
+
+  if (authorization < 16) {
+    return {
+      error: true,
+      message: 'Token Inválido',
+    };
+  }
+
+  return { error: false };
+}
+
+function validName(name) {
+  if (!name) {
+    throw new Error('O campo "name" é obrigatorio');
+  }
+  if (String(name).length < 3) {
+    throw new Error('O "name" deve ter pelo menos 3 caracteres');
+  }
+}
+
+function validAge(age) {
+  if (!age) {
+    throw new Error('O campo "age" é obrigatório');
+  }
+  if (Number(age) < 18) {
+    throw new Error('O crush deve ser maior de idade');
+  }
+}
+
+function validDate(datedAt) {
+  const reGex = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/;
+  if (!reGex.test(datedAt)) {
+    throw new Error('O campo "datedAt" deve ter o formato "dd/mm/aaaa"');
+  }
+}
+
+function validRate(rate) {
+  if (Number(rate) < 1 || Number(rate) > 5) {
+    throw new Error('O campo "rate" deve ser um inteiro de 1 à 5');
+  }
+}
+
+function validaDatedAtIsValid(element) {
+  if (!element.date.datedAt || element.date.datedAt === undefined) {
+    return true;
+  }
+}
+
+function validaDate(element) {
+  if (
+    element.date === undefined
+    || validaDatedAtIsValid(element)
+    || element.date.rate === ''
+    || element.date.rate === undefined
+  ) {
+    throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
+  }
+}
+
+function validForAll(element) {
+  validAuthorization(element.authorization);
+  validName(element.name);
+  validAge(element.age);
+  validDate(element.date.datedAt);
+  validRate(element.date.name);
+}
+
+app.post('/crush', (req, res) => {
+  const { authorization } = req.headers;
+  const { name, age, date, id } = req.body;
+  const { element } = req.body;
+  const data3 = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+
+  if (!authorization) {
+    res.status(FAIL_HEADER).json({ message: 'Token não encontrado' });
+  } else if (authorization.length < 16) {
+    res.status(FAIL_HEADER).json({ message: 'Token inválido' });
+  }
+  validaDate(element);
+  validForAll(element);
+
+  data3.push({ id: id || data3.length + 1, name, age, date });
+  res.status(SUCCESS_1).send(data3[data3.length - 1]);
+});
+
+app.use((err, _req, res, _next) => {
+  res.status(FAIL).json({ message: err.message });
+});
 
 app.listen(PORT, () => { console.log('O Pai ta ON na Porta 3000'); });
