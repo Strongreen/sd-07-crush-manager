@@ -16,12 +16,10 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/search', middleware.authorizationMiddleware, async (req, res) => {
-  console.log(req.query);
   const { q } = req.query;
   const search = q;
   const data = await readData();
-  const searchCrushName = data.find((n) => n.name.includes(search));
-  console.log(searchCrushName);
+  const searchCrushName = data.filter((n) => n.name.includes(search));
 
   if (!q) {
     return res.status(200).send(data);
