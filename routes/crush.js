@@ -1,7 +1,6 @@
 const express = require('express');
 const rescue = require('express-rescue');
 const fs = require('fs');
-const dataFile = require('../crush.json');
 const middleware = require('../middlewares');
 
 const app = express();
@@ -52,6 +51,7 @@ app.get('/:id', async (req, res) => {
 app.use(middleware.authorizationMiddleware);
 
 app.delete('/:id', rescue(async (req, res) => {
+  const dataFile = await readData();
   const { id } = req.params;
   const index = id - 1;
   dataFile.splice(index, 1);
@@ -72,6 +72,7 @@ app.use(middleware.dateMiddleware);
 
 app.post('/', rescue(async (req, res) => {
   const { name, age, date } = req.body;
+  const dataFile = await readData();
   const size = dataFile.length;
   dataFile[size] = {
     id: parseInt(`${size + 1}`, 10),
@@ -82,7 +83,6 @@ app.post('/', rescue(async (req, res) => {
       rate: parseInt(`${date.rate}`, 10),
     },
   };
-
   try {
     await fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(dataFile));
     return res.status(201).send(dataFile[size]);
@@ -92,6 +92,7 @@ app.post('/', rescue(async (req, res) => {
 }));
 
 app.put('/:id', rescue(async (req, res) => {
+  const dataFile = await readData();
   const { id } = req.params;
   const { name, age, date } = req.body;
   dataFile[id - 1] = {
