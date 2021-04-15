@@ -10,10 +10,10 @@ const SUCCESS_1 = 201;
 const FAIL = 400;
 const FAIL_HEADER = 401;
 const FAIL_2 = 404;
-
-/* const POST_SUCCESS = 201; */
 const INTERNAL_ERROR = 500;
 const PORT = '3000';
+
+const caminhoDoCrush = './crush.json';
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_req, res) => {
@@ -26,7 +26,7 @@ app.get('/', (_req, res) => {
 
 /* Requisito 1 */
 app.get('/crush', (_req, res) => {
-  const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+  const data = JSON.parse(fs.readFileSync(caminhoDoCrush, 'utf8'));
   if (data.length === 0) {
     return res.status(SUCCESS).send([]);
   }
@@ -35,7 +35,7 @@ app.get('/crush', (_req, res) => {
 
 /* Requisito 2 */
 app.get('/crush/:id', (req, res) => {
-  const data2 = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+  const data2 = JSON.parse(fs.readFileSync(caminhoDoCrush, 'utf8'));
   /* console.log(data2); */
   const { id } = req.params;
   const crushId = parseInt(id, 10);
@@ -101,24 +101,6 @@ app.post('/login', (req, res) => {
 });
 
 /* Requisito 4 */
-function validAuthorization(authorization) {
-  if (!authorization) {
-    return {
-      error: true,
-      message: 'Token não encontrado',
-    };
-  }
-
-  if (authorization < 16) {
-    return {
-      error: true,
-      message: 'Token Inválido',
-    };
-  }
-
-  return { error: false };
-}
-
 function validName(name) {
   if (!name) {
     throw new Error('O campo "name" é obrigatorio');
@@ -179,7 +161,7 @@ app.post('/crush', (req, res) => {
   const { authorization } = req.headers;
   const { name, age, date } = req.body;
   const element = req.body;
-  const data3 = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+  const data3 = JSON.parse(fs.readFileSync(caminhoDoCrush, 'utf8'));
   if (!authorization) {
    return res.status(FAIL_HEADER).json({ message: 'Token não encontrado' });
   } if (authorization.length < 16) {
@@ -192,7 +174,7 @@ app.post('/crush', (req, res) => {
     return res.status(401).json({ message: error.message });
   }
   data3.push({ id: data3.length + 1, name, age, date });
-  fs.writeFileSync('./crush.json', JSON.stringify(data3));
+  fs.writeFileSync(caminhoDoCrush, JSON.stringify(data3));
   res.status(SUCCESS_1).send(data3[data3.length - 1]);
 });
 
