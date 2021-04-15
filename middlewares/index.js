@@ -19,5 +19,5 @@ module.exports = {
   formatedDateRateMiddleware,
   requestTokenMidware,
   addCrushMiddleware,
-  errorMiddleware
+  errorMiddleware,
 };
