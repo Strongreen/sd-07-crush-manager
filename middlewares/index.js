@@ -7,6 +7,7 @@ const emptyDateRateMiddleware = require('./emptyDateRateMid');
 const formatedDateRateMiddleware = require('./formatedDateRateMid');
 const requestTokenMidware = require('./requestTokenMid');
 const addCrushMiddleware = require('./addCrushMid');
+const errorMiddleware = require('./errorMid');
 
 module.exports = {
   authorizationMiddleware,
@@ -17,5 +18,6 @@ module.exports = {
   emptyDateRateMiddleware,
   formatedDateRateMiddleware,
   requestTokenMidware,
-  addCrushMiddleware
+  addCrushMiddleware,
+  errorMiddleware
 };
