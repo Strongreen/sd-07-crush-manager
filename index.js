@@ -1,30 +1,18 @@
-const Express = require('express');
+const express = require('express');
 const bodyParser = require('body-parser');
+const CrushRoute = require('./routes/CrushRoute');
 
 const SUCCESS = 200;
 const PORT = '3000';
 
-class index {
-  constructor() {
-    this.app;
-  }
-
-  init() {
-    this.app = Express();
-    this.app.use(bodyParser.json());
-
-    const CrushRoute = require('./routes/CrushRoute');
-    new CrushRoute(this.app);
-
-// não remova esse endpoint, e para o avaliador funcionar
-    this.app.get('/', (_request, response) => {
+  const app = express();
+    app.use(bodyParser.json());
+    
+      // não remova esse endpoint, e para o avaliador funcionar
+    app.get('/', (_request, response) => {
       response.status(SUCCESS).send();
     });
-   
-    this.app.listen(PORT, () => {
-      console.log(`Aplicaçao rodando na ${PORT}  Online`);
+    app.use('/crush', CrushRoute);
+    app.listen(PORT, () => {
+      console.log(`Aplicaçao Online rodando na Porta ${PORT}  `);
     });
-  }
-}
-
-new index().init();
