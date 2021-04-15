@@ -1,20 +1,45 @@
 const express = require('express');
 
-const fs = require('fs');
+const fs = require('fs').promises;
 
-const rescue = require('express-rescue');
+const middlewares = require('../middlewares');
 
-const route = express.Router();
+const router = express.Router();
 
-route.get('/', rescue(async (_req, res) => {
+router.post(
+  '/',
+  middlewares.authorizationMiddleware,
+  middlewares.nameMiddleware,
+  middlewares.ageMiddleware,
+  middlewares.emptyDateRateMiddleware,
+  middlewares.formatedDateRateMiddleware,
+  middlewares.addCrushMiddleware,
+);
+
+router.get('/', async (_req, res) => {
   try {
-    const content = await fs.promises.readFile(`${__dirname}/../crush.json`);
-    const crushesArray = JSON.parse(content);
-    
-    return res.status(200).json(crushesArray);
-  } catch (e) {
-    throw new Error(e);
+    const data = await fs.readFile(`${__dirname}/../crush.json`);
+    res.status(200).send(JSON.parse(data));
+  } catch (error) {
+    console.log(error);
   }
-}));
+});
 
-module.exports = route;
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  const data = await fs.readFile(`${__dirname}/../crush.json`);
+  const dataFind = JSON.parse(data).find((crush) => crush.id === Number(id));
+  try {
+    if (dataFind) {
+      res.send(dataFind);
+    } else {
+      res.status(404).send({
+        message: 'Crush não encontrado',
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+module.exports = router;
