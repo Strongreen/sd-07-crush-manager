@@ -1,11 +1,9 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const fs = require('fs');
 const crypto = require('crypto');
-const { restart } = require('nodemon');
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 
 const SUCCESS = 200;
 const SUCCESS_1 = 201;
@@ -50,7 +48,7 @@ app.get('/crush/:id', (req, res) => {
 function validEmail(email) {
   const reGex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!email) {
+  if (email === undefined) {
     return {
       error: true,
       message: 'O campo "email" é obrigatório',
@@ -68,7 +66,7 @@ function validEmail(email) {
 }
 
 function validPass(password) {
-  if (!password) {
+  if (password === undefined) {
     return {
       error: true,
       message: 'O campo "password" é obrigatório',
@@ -86,6 +84,7 @@ function validPass(password) {
 app.post('/login', (req, res) => {
   const token = crypto.randomBytes(8).toString('hex');
   const { email, password } = req.body;
+
   try {
     const validEmailResult = validEmail(email);
     if (validEmailResult.error) {
@@ -169,7 +168,7 @@ function validaDate(element) {
 }
 
 function validForAll(element) {
-  validAuthorization(element.authorization);
+  /* validAuthorization(element.authorization); */
   validName(element.name);
   validAge(element.age);
   validDate(element.date.datedAt);
@@ -178,19 +177,22 @@ function validForAll(element) {
 
 app.post('/crush', (req, res) => {
   const { authorization } = req.headers;
-  const { name, age, date, id } = req.body;
-  const { element } = req.body;
+  const { name, age, date } = req.body;
+  const element = req.body;
   const data3 = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
-
   if (!authorization) {
-    res.status(FAIL_HEADER).json({ message: 'Token não encontrado' });
-  } else if (authorization.length < 16) {
-    res.status(FAIL_HEADER).json({ message: 'Token inválido' });
+   return res.status(FAIL_HEADER).json({ message: 'Token não encontrado' });
+  } if (authorization.length < 16) {
+    return res.status(FAIL_HEADER).json({ message: 'Token inválido' });
   }
-  validaDate(element);
-  validForAll(element);
-
-  data3.push({ id: id || data3.length + 1, name, age, date });
+  try {
+    validaDate(element);
+    validForAll(element);
+  } catch (error) {
+    return res.status(401).json({ message: error.message });
+  }
+  data3.push({ id: data3.length + 1, name, age, date });
+  fs.writeFileSync('./crush.json', JSON.stringify(data3));
   res.status(SUCCESS_1).send(data3[data3.length - 1]);
 });
 
