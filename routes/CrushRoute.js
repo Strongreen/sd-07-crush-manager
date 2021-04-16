@@ -4,14 +4,12 @@ const CrushController = require('../controller/CrushController');
 const CrushRoute = Router();
 
 CrushRoute
-  .get('/', CrushController.getAllCrushs);
-  /* .post('/', CrushController.adicionar)
-  .put(CrushController.editar)
-  .delete(CrushController.deletar); */
-    /* 
-      .route('/crush/:id')
-      .get(CrushController.buscar)
-      .put(CrushController.editar)
-      .delete(CrushController.deletar); 
- */
+  .get('/', CrushController.getAllCrushs)
+  .post('/', CrushController.addCrush);
+ 
+CrushRoute 
+    .get('/:id', CrushController.getOneCrush)
+    .put('/:id', CrushController.editCrush)
+    .delete('/:id', CrushController.deleteCrush); 
+ 
 module.exports = CrushRoute;

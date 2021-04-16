@@ -13,6 +13,7 @@ const PORT = '3000';
       response.status(SUCCESS).send();
     });
     app.use('/crush', CrushRoute);
+    app.use('/crush/:id', CrushRoute);
     app.listen(PORT, () => {
       console.log(`Aplicaçao Online rodando na Porta ${PORT}  `);
     });
