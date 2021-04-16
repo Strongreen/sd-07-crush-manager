@@ -3,11 +3,14 @@ const bodyParser = require('body-parser');
 const crush = require('./routes/crush');
 const login = require('./routes/login');
 const middlewares = require('./middlewares');
+const { searchCrush } = require('./helper');
 
 const app = express();
 app.use(bodyParser.json());
 app.use('/crush', crush);
 app.use('/login', login);
+// app.use('/', searchCrush);
+
 
 const SUCCESS = 200;
 const PORT = '3000';
@@ -16,6 +19,7 @@ app.use(middlewares.errorMiddleware);
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
+app.get('/crush/search', authorizationMiddleware, searchCrush);
 
 app.listen(PORT, () => {
   console.log(`Rodando na porta ${PORT}`);

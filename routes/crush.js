@@ -42,4 +42,13 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+router.put('/:id', middlewares.authorizationMiddleware,
+middlewares.nameMiddleware,
+middlewares.ageMiddleware,
+middlewares.emptyDateRateMiddleware,
+middlewares.formatedDateRateMiddleware,
+middlewares.editCrushMiddleware);
+
+router.delete('/:id', middlewares.authorizationMiddleware, middlewares.excludeCrushMiddleware);
+
 module.exports = router;

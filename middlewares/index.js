@@ -8,6 +8,10 @@ const formatedDateRateMiddleware = require('./formatedDateRateMid');
 const requestTokenMidware = require('./requestTokenMid');
 const addCrushMiddleware = require('./addCrushMid');
 const errorMiddleware = require('./errorMid');
+const editCrushMiddleware = require('./editCrushMid');
+const excludeCrushMiddleware = require('./excludeCrushMid');
+const { getIdMiddleware } = require('./getIdMid');
+const { searchCrushes } = require('./searchCrushMid');
 
 module.exports = {
   authorizationMiddleware,
@@ -20,4 +24,8 @@ module.exports = {
   requestTokenMidware,
   addCrushMiddleware,
   errorMiddleware,
+  editCrushMiddleware,
+  excludeCrushMiddleware,
+  getIdMiddleware,
+  searchCrushes,
 };
