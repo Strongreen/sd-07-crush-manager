@@ -22,4 +22,17 @@ app.get('/crush', (req, res) => {
   }
 });
 
+app.get('/crush/:id', (req, res) => {
+  const { id } = req.params;
+  const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+  const result = data.filter((element) => element.id === id);
+  if (result.length > 0) {
+    res.status(200).send(result);
+  } else {
+    res.status(404).send({
+      message: 'Crush não encontrado',
+    });
+  }
+});
+
 app.listen(PORT, () => { console.log('Online'); });
