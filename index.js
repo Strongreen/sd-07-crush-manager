@@ -25,14 +25,14 @@ app.get('/crush', (req, res) => {
 app.get('/crush/:id', (req, res) => {
   const { id } = req.params;
   const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
-  const result = data.filter((element) => element.id === Number(id));
-  if (result.length > 0) {
-    res.status(200).send(result);
-  } else {
+  // const result = data.filter((element) => element.id === Number(id));
+  const result = data.find((element) => element.id === parseInt(id, 10));
+  if (!result) {
     res.status(404).send({
       message: 'Crush não encontrado',
     });
   }
+  res.status(200).send(result);
 });
 
 app.listen(PORT, () => { console.log('Online'); });
