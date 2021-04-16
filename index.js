@@ -102,8 +102,8 @@ app.post('/login', (req, res) => {
 
 /* Requisito 4 */
 function validName(name) {
-  if (!name) {
-    throw new Error('O campo "name" é obrigatorio');
+  if (name === undefined) {
+    throw new Error('O campo "name" é obrigatório');
   }
   if (String(name).length < 3) {
     throw new Error('O "name" deve ter pelo menos 3 caracteres');
@@ -111,7 +111,7 @@ function validName(name) {
 }
 
 function validAge(age) {
-  if (!age) {
+  if (age === undefined) {
     throw new Error('O campo "age" é obrigatório');
   }
   if (Number(age) < 18) {
@@ -139,8 +139,7 @@ function validaDatedAtIsValid(element) {
 }
 
 function validaDate(element) {
-  if (
-    element.date === undefined
+  if (element.date === undefined
     || validaDatedAtIsValid(element)
     || element.date.rate === ''
     || element.date.rate === undefined
@@ -154,7 +153,7 @@ function validForAll(element) {
   validName(element.name);
   validAge(element.age);
   validDate(element.date.datedAt);
-  validRate(element.date.name);
+  validRate(element.date.rate);
 }
 
 app.post('/crush', (req, res) => {
@@ -171,7 +170,7 @@ app.post('/crush', (req, res) => {
     validaDate(element);
     validForAll(element);
   } catch (error) {
-    return res.status(401).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
   data3.push({ id: data3.length + 1, name, age, date });
   fs.writeFileSync(caminhoDoCrush, JSON.stringify(data3));
