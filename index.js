@@ -2,7 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const crypto = require('crypto');
 
-const data = ('./crussh.json');
+const dataMaster = ('./crussh.json');
 const app = express();
 app.use(express.json());
 
@@ -179,15 +179,6 @@ app.post('/crush', (req, res) => {
   res.status(SUCCESS_1).send(data3[data3.length - 1]);
 });
 
-const adicionada = {
-  id: 1,
-  name: 'Keanu Reeves',
-  age: 56,
-  date: {
-    datedAt: '22/10/2019',
-    rate: 4,
-  },
-};
 /* const data4 = JSON.parse(fs.readFileSync(caminhoDoCrush, 'utf8')); */
 /* data4[id].find((crush) => crush.id === crush); */
 /* Desafio 5 */
@@ -204,12 +195,12 @@ app.put('/crush/id:', (req, res) => {
   }
   try {
     validForAll(element);
-    data[id - 1] = { name, age, date };
-    fs.writeFileSync(caminhoDoCrush, JSON.stringify(data));
+    dataMaster[id - 1] = { name, age, date };
+    fs.writeFileSync(caminhoDoCrush, JSON.stringify(dataMaster));
   } catch (error) {
     return res.status(FAIL).json({ message: error.message });
   }
-  res.status(SUCCESS_1).send(data.id);
+  res.status(SUCCESS_1).send(dataMaster.id);
 });
 
 app.delete('/crush/:id', (req, res) => {
