@@ -14,7 +14,8 @@ const INTERNAL_ERROR = 500;
 const PORT = '3000';
 
 const caminhoDoCrush = './crush.json';
-
+const messageTokenOne = 'Token não encontrado';
+const messageTokenTwo = 'Token inválido';
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_req, res) => {
   res.status(SUCCESS).send(
@@ -163,9 +164,9 @@ app.post('/crush', (req, res) => {
   const element = req.body;
   const data3 = JSON.parse(fs.readFileSync(caminhoDoCrush, 'utf8'));
   if (!authorization) {
-    return res.status(FAIL_HEADER).json({ message: 'Token não encontrado' });
+    return res.status(FAIL_HEADER).json({ message: messageTokenOne });
   } if (authorization.length < 16) {
-    return res.status(FAIL_HEADER).json({ message: 'Token inválido' });
+    return res.status(FAIL_HEADER).json({ message: messageTokenTwo });
   }
   try {
     validForAll(element);
@@ -185,10 +186,10 @@ app.put('crush/id:', (req, res) => {
   const { id } = req.params;
   const element = req.body;
   if (!authorization) {
-    res.status(FAIL_HEADER).json({ message: 'Token não encontrado' });
+    res.status(FAIL_HEADER).json({ message: messageTokenOne });
   }
   if (!authorization.length < 16) {
-    res.status(FAIL_HEADER).json({ message: 'Token Inválido' });
+    res.status(FAIL_HEADER).json({ message: messageTokenTwo });
   }
   try {
     validForAll(element);
@@ -207,10 +208,10 @@ app.delete('crush/:id', async (req, res) => {
   const data5 = JSON.parse(fs.readFileSync(caminhoDoCrush, 'utf8'));
   data5.splice(index, 1);
   if (!authorization) {
-    res.status(FAIL_HEADER).json({ message: 'Token não encontrado' });
+    res.status(FAIL_HEADER).json({ message: messageTokenOne });
   }
   if (!authorization.length < 16) {
-    res.status(FAIL_HEADER).json({ message: 'Token Inválido' });
+    res.status(FAIL_HEADER).json({ message: messageTokenTwo });
   }
   try {
     await fs.promises.writeFile('../crush.json', JSON.stringify(data5));
