@@ -13,9 +13,13 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.get('/crush', (req, res) => {
+app.get('/crush/', (req, res) => {
   const data = JSON.parse(fs.readFileSync(source, 'utf8'));
   res.status(SUCCESS).send(data);
+});
+
+app.get('/crush/:id', (req, res) => {
+
 });
 
 app.listen(PORT, () => { console.log('Online'); });
