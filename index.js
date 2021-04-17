@@ -162,7 +162,7 @@ app.post('/crush', (req, res) => {
   const element = req.body;
   const data3 = JSON.parse(fs.readFileSync(caminhoDoCrush, 'utf8'));
   if (!authorization) {
-   return res.status(FAIL_HEADER).json({ message: 'Token não encontrado' });
+    return res.status(FAIL_HEADER).json({ message: 'Token não encontrado' });
   } if (authorization.length < 16) {
     return res.status(FAIL_HEADER).json({ message: 'Token inválido' });
   }
@@ -170,13 +170,44 @@ app.post('/crush', (req, res) => {
     validaDate(element);
     validForAll(element);
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    return res.status(FAIL).json({ message: error.message });
   }
   data3.push({ id: data3.length + 1, name, age, date });
   fs.writeFileSync(caminhoDoCrush, JSON.stringify(data3));
   res.status(SUCCESS_1).send(data3[data3.length - 1]);
 });
 
+app.put('crush/id:', (req, res) => {
+  const { authorization } = req.headers;
+  const { id } = req.params;
+  const { name, age, date } = req.body;
+  /* data4[id].find((crush) => crush.id === crush); */
+  if (!authorization) {
+    res.status(FAIL_HEADER).json({ message: 'Token não encontrado' });
+  }
+  if (!authorization.length < 16) {
+    res.status(FAIL_HEADER).json({ message: 'Token Inválido' });
+  }
+  const data4 = JSON.parse(fs.readFileSync(caminhoDoCrush, 'utf8'));
+  data4[id - 1].id = {
+    name,
+    age,
+    date,
+  };
+});
+
+app.delete('crush/:id', async (req, res) => {
+  const { id } = req.params;
+  const index = id - 1;
+  const data5 = JSON.parse(fs.readFileSync(caminhoDoCrush, 'utf8'));
+  data5.splice(index, 1);
+  try {
+    await fs.promises.writeFile('../crush.json', JSON.stringify(data5));
+    res.status(SUCCESS).send({ message: 'Deletado com sucesso' });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
 app.use((err, _req, res, _next) => {
   res.status(FAIL).json({ message: err.message });
 });
