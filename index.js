@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const crypto = require('crypto');
 
+const data = ('./crussh.json');
 const app = express();
 app.use(express.json());
 
@@ -178,9 +179,19 @@ app.post('/crush', (req, res) => {
   res.status(SUCCESS_1).send(data3[data3.length - 1]);
 });
 
+const adicionada = {
+  id: 1,
+  name: 'Keanu Reeves',
+  age: 56,
+  date: {
+    datedAt: '22/10/2019',
+    rate: 4,
+  },
+};
+/* const data4 = JSON.parse(fs.readFileSync(caminhoDoCrush, 'utf8')); */
 /* data4[id].find((crush) => crush.id === crush); */
 /* Desafio 5 */
-app.put('crush/id:', (req, res) => {
+app.put('/crush/id:', (req, res) => {
   const { authorization } = req.headers;
   const { name, age, date } = req.body;
   const { id } = req.params;
@@ -188,38 +199,39 @@ app.put('crush/id:', (req, res) => {
   if (!authorization) {
     res.status(FAIL_HEADER).json({ message: messageTokenOne });
   }
-  if (!authorization.length < 16) {
+  if (authorization.length < 16) {
     res.status(FAIL_HEADER).json({ message: messageTokenTwo });
   }
   try {
     validForAll(element);
+    data[id - 1] = { name, age, date };
+    fs.writeFileSync(caminhoDoCrush, JSON.stringify(data));
   } catch (error) {
     return res.status(FAIL).json({ message: error.message });
   }
-  const data4 = JSON.parse(fs.readFileSync(caminhoDoCrush, 'utf8'));
-  data4[id - 1].id = { name, age, date };
-  res.status(SUCCESS_1).send(data4.id);
+  res.status(SUCCESS_1).send(data.id);
 });
 
-app.delete('crush/:id', async (req, res) => {
+app.delete('/crush/:id', (req, res) => {
   const { authorization } = req.headers;
   const { id } = req.params;
-  const index = id - 1;
   const data5 = JSON.parse(fs.readFileSync(caminhoDoCrush, 'utf8'));
-  data5.splice(index, 1);
   if (!authorization) {
     res.status(FAIL_HEADER).json({ message: messageTokenOne });
   }
-  if (!authorization.length < 16) {
+  if (authorization.length < 16) {
     res.status(FAIL_HEADER).json({ message: messageTokenTwo });
   }
   try {
-    await fs.promises.writeFile('../crush.json', JSON.stringify(data5));
-    res.status(SUCCESS).send({ message: 'Deletado com sucesso' });
+    const index = id - 1;
+    data5.splice(index, 1);
+    fs.writeFileSync(caminhoDoCrush, JSON.stringify(data5));
   } catch (error) {
     throw new Error(error);
   }
+  res.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
 });
+
 app.use((err, _req, res, _next) => {
   res.status(FAIL).json({ message: err.message });
 });
