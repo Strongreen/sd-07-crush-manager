@@ -150,6 +150,7 @@ function validaDate(element) {
 
 function validForAll(element) {
   /* validAuthorization(element.authorization); */
+  validaDate(element);
   validName(element.name);
   validAge(element.age);
   validDate(element.date.datedAt);
@@ -167,7 +168,6 @@ app.post('/crush', (req, res) => {
     return res.status(FAIL_HEADER).json({ message: 'Token inválido' });
   }
   try {
-    validaDate(element);
     validForAll(element);
   } catch (error) {
     return res.status(FAIL).json({ message: error.message });
@@ -191,7 +191,6 @@ app.put('crush/id:', (req, res) => {
     res.status(FAIL_HEADER).json({ message: 'Token Inválido' });
   }
   try {
-    validaDate(element);
     validForAll(element);
   } catch (error) {
     return res.status(FAIL).json({ message: error.message });
