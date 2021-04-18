@@ -1,8 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const rescue = require('express-rescue');
 const fs = require('fs');
 const crypto = require('crypto');
-const rescue = require('express-rescue');
 
 const middlewareTokenCheck = require('./middlewares/middlewareTokenCheck');
 const middlewareAgeCheck = require('./middlewares/middlewareAgeCheck');
@@ -16,6 +16,16 @@ app.use(bodyParser.json());
 
 const SUCCESS = 200;
 const PORT = '3000';
+
+const api = async () => {
+  const readData = await fs.promises.readFile('./crush.json')
+    .then((data) => JSON.parse(data))
+    .catch((error) => {
+      throw new Error({ error, code: 404 });
+    });
+
+  return readData;
+};
 
 function nullOrEmpty(value) {
   if (!value || value === '') return true;
@@ -73,7 +83,7 @@ app.get('/', (_request, response) => {
 
 app.route('/crush')
   .get(rescue(async (req, res) => {
-    const findAll = await apiData();
+    const findAll = await api();
     res.json(findAll);
   }))
   .post(
@@ -85,7 +95,7 @@ app.route('/crush')
     middlewareRateCheck,
     rescue(async (req, res) => {
       const artist = req.body;
-      const artists = await apiData();
+      const artists = await api();
 
       let idValue = 1;
       artists.forEach((e) => {
@@ -106,7 +116,7 @@ app.route('/crush')
 
 app.get('/crush/:id', rescue(async (req, res) => {
   const artistId = req.params.id;
-  const findAll = await apiData();
+  const findAll = await api();
   const artist = findAll.find((e) => e.id === parseInt(artistId, 10));
 
   if (!artist) {
