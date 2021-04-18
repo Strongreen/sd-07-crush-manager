@@ -3,7 +3,6 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 
 const crush = './crush.json';
-const requireCrush = require('./crush.json');
 
 const app = express();
 
