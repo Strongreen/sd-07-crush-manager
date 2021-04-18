@@ -2,6 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const crypto = require('crypto');
+const rescue = require('express-rescue');
+
+const middlewareTokenCheck = require('./middlewares/middlewareTokenCheck');
+const middlewareAgeCheck = require('./middlewares/middlewareAgeCheck');
+const middlewareDateAtCheck = require('./middlewares/middlewareDateAtCheck');
+const middlewareDateCheck = require('./middlewares/middlewareDateCheck');
+const middlewareNameCheck = require('./middlewares/middlewareNameCheck');
+const middlewareRateCheck = require('./middlewares/middlewareRateCheck');
 
 const app = express();
 app.use(bodyParser.json());
@@ -41,27 +49,71 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
-app.get('/crush', (req, res) => {
-  const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
-  if (data.length > 0) {
-    res.status(200).send(data);
-  } else {
-    res.status(200).send([]);
-  }
-});
+// app.get('/crush', (req, res) => {
+//   const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+//   if (data.length > 0) {
+//     res.status(200).send(data);
+//   } else {
+//     res.status(200).send([]);
+//   }
+// });
 
-app.get('/crush/:id', (req, res) => {
-  const { id } = req.params;
-  const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
-  // const result = data.filter((element) => element.id === Number(id))[0];
-  const result = data.find((element) => element.id === parseInt(id, 10));
-  if (!result) {
-    res.status(404).send({
-      message: 'Crush não encontrado',
-    });
+// app.get('/crush/:id', (req, res) => {
+//   const { id } = req.params;
+//   const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+//   // const result = data.filter((element) => element.id === Number(id))[0];
+//   const result = data.find((element) => element.id === parseInt(id, 10));
+//   if (!result) {
+//     res.status(404).send({
+//       message: 'Crush não encontrado',
+//     });
+//   }
+//   res.status(200).send(result);
+// });
+
+app.route('/crush')
+  .get(rescue(async (req, res) => {
+    const findAll = await apiData();
+    res.json(findAll);
+  }))
+  .post(
+    middlewareTokenCheck,
+    middlewareAgeCheck,
+    middlewareDateAtCheck,
+    middlewareDateCheck,
+    middlewareNameCheck,
+    middlewareRateCheck,
+    rescue(async (req, res) => {
+      const artist = req.body;
+      const artists = await apiData();
+
+      let idValue = 1;
+      artists.forEach((e) => {
+        if (e.id === idValue) {
+          idValue += 1;
+        }
+      });
+
+      artist.id = idValue;
+
+      artists.push(artist);
+
+      await fs.promises.writeFile('./crush.json', JSON.stringify(artists));
+
+      res.status(201).json(artist);
+    }),
+  );
+
+app.get('/crush/:id', rescue(async (req, res) => {
+  const artistId = req.params.id;
+  const findAll = await apiData();
+  const artist = findAll.find((e) => e.id === parseInt(artistId, 10));
+
+  if (!artist) {
+    res.status(404).json({ message: 'Crush não encontrado' });
   }
-  res.status(200).send(result);
-});
+  res.json(artist);
+}));
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
