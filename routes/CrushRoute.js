@@ -6,7 +6,10 @@ const CrushRoute = Router();
 CrushRoute
   .get('/', CrushController.getAllCrushs)
   .post('/', CrushController.addCrush);
- 
+
+CrushRoute
+  .get('/search', CrushController.searchCrush);
+  
 CrushRoute 
   .get('/:id', CrushController.getOneCrush)
   .put('/:id', CrushController.editCrush)

@@ -19,9 +19,7 @@ const getOneCrush = async (req, res) => {
     const crushResult = result.find(({ id }) => id === parseFloat(crushId));
 
     if (!crushResult) {
-      return res.status(404).json(
-        { message: 'Crush não encontrado' },
-      );
+      return res.status(404).json({ message: 'Crush não encontrado' });
     }
     return res.status(200).json(crushResult);
   } catch (error) {
@@ -70,13 +68,25 @@ const deleteCrush = async (req, res) => {
     const result = await readCrushFile();
     const deleteResult = await result.filter(({ id }) => id !== parseFloat(crushId));
     await writeCrushFile(deleteResult);
-    
+
     return res.status(200).json({ message: 'Crush deletado com sucesso' });
   } catch (error) {
     console.log(`[CRUSH CONTROLLER] : buscarTodos => ${error}`);
     res.status(500).send('Erro ao buscar crush!');
   }
 };
-const searchCrush = async (_req, _res) => {};
+const searchCrush = async (req, res, next) => {
+  console.log('[CRUSH CONTROLLER] : CHAMOU O MÉTODO BUSCAR CRUSHS');
+  try {
+    const { q } = req.query;
 
+    const result = await readCrushFile();
+    const filteredResult = result.filter((e) => e.name.includes(q));
+    res.status(200).json(filteredResult);
+    if (filteredResult === []) next();
+  } catch (error) {
+    console.log(`[CRUSH CONTROLLER] : buscarTodos => ${error}`);
+    res.status(500).send('Erro ao buscar crush!');
+  }
+};
 module.exports = { getAllCrushs, getOneCrush, editCrush, addCrush, deleteCrush, searchCrush };
