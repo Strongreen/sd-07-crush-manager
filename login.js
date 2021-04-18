@@ -9,9 +9,9 @@ const checkPassword = (password) => {
   const minLength = 6;
   let message = null;
   if (!password) {
-    message = 'O campo \'password\' é obrigatório';
+    message = 'O campo "password" é obrigatório';
   } else if (password.toString().length < minLength) {
-    message = 'A \'senha\' deve ter pelo menos 6 caracteres';
+    message = 'A "senha" deve ter pelo menos 6 caracteres';
   }
   return message;
 };
@@ -20,9 +20,9 @@ const checkEmail = (email) => {
   console.log('email', email);
   let message = null;
   if (!email) {
-    message = 'O campo \'email\' é obrigatório';
+    message = 'O campo "email" é obrigatório';
   } else if (!/[A-Z0-9]{1,}@[A-Z0-9]{2,}\.[A-Z0-9]{2,}/i.test(email)) {
-    message = 'O \'email\' deve ter o formato \'email@email.com\'';
+    message = 'O "email" deve ter o formato "email@email.com"';
   }
   return message;
 };
