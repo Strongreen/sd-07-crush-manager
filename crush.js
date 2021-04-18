@@ -84,22 +84,6 @@ const newCrushValidations = (res, name, age, date) => {
   }
 };
 
-const endpointValidation = (req) => {
-  const { name, age, date } = req.body;
-  const sizeCrush = requireCrush.length;
-  const newCrush = {
-    id: `${sizeCrush + 1}`,
-    name,
-    age,
-    date: {
-      datedAt: date.datedAt,
-      rate: date.rate,
-    },
-  };
-  requireCrush[sizeCrush] = newCrush;
-  return newCrush;
-};
-
 app.post('/', async (req, res) => {
   const { name, age, date } = req.body;
   const invalidToken = checkToken(req.headers.authorization);
@@ -110,10 +94,15 @@ app.post('/', async (req, res) => {
   if (error) {
     return error;
   }
-  const newCrush = endpointValidation(req);
+  // const newCrush = endpointValidation(req);
+  const crushes = await crushData();
+  const newCrush = { id: JSON.parse(crushes).length + 1, name, age, date };
+  const addCrush = [...crushes, newCrush];
 
-  await fs.promises.writeFile('./crush.json', JSON.stringify(requireCrush));
+  await fs.promises.writeFile('./crush.json', JSON.stringify(addCrush));
   res.status(201).send(newCrush);
 });
+
+// app.put('/:id', async (req, res))
 
 module.exports = app;
