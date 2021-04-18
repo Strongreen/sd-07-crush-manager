@@ -18,10 +18,15 @@ const getOneCrush = async (req, res) => {
     const result = await readCrushFile();
     const crushResult = result.find(({ id }) => id === parseFloat(crushId));
 
+    if (!crushResult) {
+      return res.status(404).json(
+        { message: 'Crush não encontrado' },
+      );
+    }
     return res.status(200).json(crushResult);
   } catch (error) {
     console.log(`[CRUSH CONTROLLER] : buscar => ${error}`);
-    res.status(500).json({ message: 'Crush não encontrado' });
+    res.status(500).json({ message: 'errou ' });
   }
 };
 const addCrush = async (req, res) => {
@@ -32,7 +37,7 @@ const addCrush = async (req, res) => {
     const newResult = [...result, newCrush];
 
     await writeCrushFile(newResult);
-    return res.status(200).json(newCrush);
+    return res.status(201).json(newCrush);
   } catch (error) {
     console.log(`[CRUSH CONTROLLER] : buscar => ${error}`);
     res.status(500).json({ message: 'Crush não adicionado' });

@@ -8,8 +8,8 @@ CrushRoute
   .post('/', CrushController.addCrush);
  
 CrushRoute 
-    .get('/:id', CrushController.getOneCrush)
-    .put('/:id', CrushController.editCrush)
-    .delete('/:id', CrushController.deleteCrush); 
+  .get('/:id', CrushController.getOneCrush)
+  .put('/:id', CrushController.editCrush)
+  .delete('/:id', CrushController.deleteCrush); 
  
 module.exports = CrushRoute;
