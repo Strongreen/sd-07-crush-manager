@@ -98,7 +98,7 @@ app.post('/', async (req, res) => {
   const newCrush = { id: JSON.parse(crushes).length + 1, name, age, date };
   const addCrush = [...crushes, newCrush];
 
-  await fs.promises.writeFile('./crush.json', JSON.stringify(addCrush));
+  await fs.promises.writeFile(crush, JSON.stringify(addCrush));
   res.status(201).send(newCrush);
 });
 
@@ -113,13 +113,27 @@ app.put('/:id', async (req, res) => {
   if (error) {
     return error;
   }
-  const editCrush = crushIDs(id);
+  const editCrush = await crushIDs(id);
   if (editCrush) {
     editCrush.name = name;
     editCrush.age = age;
     editCrush.date = date;
     return res.status(200).json(editCrush);
   }
+});
+
+app.delete('/:id', async (req, res) => {
+  const invalidToken = checkToken(req.headers.authorization);
+  if (invalidToken) {
+    return res.status(401).json({ message: invalidToken });
+  }
+
+  const { id } = req.params;
+  const crushes = await crushData();
+  const crushUpdated = JSON.parse(crushes).filter((person) => person.id.toString() !== id);
+
+  await fs.promises.writeFile(crush, JSON.stringify(crushUpdated));
+  res.status(201).send({ message: 'Crush deletado com sucesso' });
 });
 
 module.exports = app;
