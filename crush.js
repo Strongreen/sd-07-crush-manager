@@ -102,6 +102,24 @@ app.post('/', async (req, res) => {
   res.status(201).send(newCrush);
 });
 
-// app.put('/:id', async (req, res))
+app.put('/:id', async (req, res) => {
+  const invalidToken = checkToken(req.headers.authorization);
+  if (invalidToken) {
+    return res.status(401).json({ message: invalidToken });
+  }
+  const { name, age, date } = req.body;
+  const { id } = req.params;
+  const error = newCrushValidations(res, name, age, date);
+  if (error) {
+    return error;
+  }
+  const editCrush = crushIDs(id);
+  if (editCrush) {
+    editCrush.name = name;
+    editCrush.age = age;
+    editCrush.date = date;
+    return res.status(200).json(editCrush);
+  }
+});
 
 module.exports = app;
