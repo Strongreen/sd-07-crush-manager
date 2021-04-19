@@ -13,6 +13,7 @@ const { ageCheck } = require('./middlewares/middlewareAgeCheck');
 const { dateCheck } = require('./middlewares/middlewareDateCheck');
 const { dateAtCheck } = require('./middlewares/middlewareDateAtCheck');
 const { rateCheck } = require('./middlewares/middlewareRateCheck');
+const { updateCrush } = require('./middlewares/middlewareUpdateCrush');
 
 const SUCCESS = 200;
 const PORT = '3000';
@@ -20,6 +21,14 @@ const PORT = '3000';
 app.get('/crush/:id', crushById);
 app.get('/crush', getAllCrushes);
 app.post('/crush', tokenCheck, nameCheck, ageCheck, dateCheck, dateAtCheck, rateCheck, createCrush);
+app.put('/crush/:id',
+  tokenCheck,
+  nameCheck,
+  ageCheck,
+  dateCheck,
+  dateAtCheck,
+  rateCheck,
+  updateCrush);
 
 app.post('/login', login);
 

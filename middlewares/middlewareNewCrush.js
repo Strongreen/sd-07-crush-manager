@@ -12,7 +12,6 @@ const createCrush = async (req, res) => {
 
   fs.promises.writeFile('./crush.json', JSON.stringify(file));
   return res.status(201).json(newCrush);
-  // return res.status(201).json('Deu bom!!!');
 };
 
 module.exports = { createCrush };
