@@ -5,7 +5,6 @@ const tokenCheck = (req, res, next) => {
     return res.status(401).json({ message: 'Token não encontrado' });
   }
   
-  // const tokenLength = authorization.split(' ')[1].length;
   const tokenLength = authorization.length;
   if (tokenLength < 16) {
     return res.status(401).json({ message: 'Token inválido' });

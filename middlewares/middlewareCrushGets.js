@@ -21,4 +21,16 @@ const getAllCrushes = async (req, res) => {
   }
 };
 
-module.exports = { crushById, getAllCrushes };
+const searchCrushes = async (req, res) => {
+  const data = await getCrushOnFile();
+  const { query: { q } } = req;
+
+  if (!q) {
+    return res.status(200).json(data);
+  }
+
+  const result = data.filter((crush) => crush.name.includes(q));
+  return res.status(200).json(result);
+};
+
+module.exports = { crushById, getAllCrushes, searchCrushes };

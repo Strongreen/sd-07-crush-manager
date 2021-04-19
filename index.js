@@ -7,7 +7,7 @@ const routesIdCrushes = '/crush/:id';
 
 app.use(bodyParser.json());
 
-const { crushById, getAllCrushes } = require('./middlewares/middlewareCrushGets');
+const { crushById, getAllCrushes, searchCrushes } = require('./middlewares/middlewareCrushGets');
 const { login } = require('./middlewares/middlewareLogin');
 const { tokenCheck } = require('./middlewares/middlewareTokenCheck');
 const { createCrush } = require('./middlewares/middlewareNewCrush');
@@ -22,6 +22,7 @@ const { deleteCrush } = require('./middlewares/middlewareDeleteCrush');
 const SUCCESS = 200;
 const PORT = '3000';
 
+app.get('/crush/search', tokenCheck, searchCrushes);
 app.get(routesIdCrushes, crushById);
 app.get('/crush', getAllCrushes);
 app.post('/crush', tokenCheck, nameCheck, ageCheck, dateCheck, dateAtCheck, rateCheck, createCrush);
