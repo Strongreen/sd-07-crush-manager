@@ -10,23 +10,12 @@ app.use(bodyParser.json());
 
 const crushData = () => fs.promises.readFile(crush, 'utf-8');
 
-app.get('/', async (_req, res) => {
-  res.status(200).json(JSON.parse(await crushData()));
-});
+app.get('/', async (_req, res) => res.status(200).json(JSON.parse(await crushData())));
 
 const crushIDs = async (id) => {
   const findID = JSON.parse(await crushData());
-  return findID.find((crushInfos) => crushInfos.id.toString() === id);
+  return findID.find((crushInfos) => crushInfos.id === Number(id));
 };
-
-app.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  const IDmatch = await crushIDs(id);
-  if (!IDmatch) {
-    return res.status(404).json({ message: 'Crush não encontrado' });
-  }
-  return res.status(200).json(IDmatch);
-});
 
 const checkToken = (token) => {
   let message;
@@ -39,6 +28,36 @@ const checkToken = (token) => {
   return message;
 };
 
+app.get('/search', async (req, res) => {
+  const invalidToken = checkToken(req.headers.authorization);
+  if (invalidToken) {
+    return res.status(401).json({ message: invalidToken });
+  }
+  const { q } = req.query;
+  if (q === undefined) {
+    return res.status(200).json(JSON.parse(await crushData()));
+  }
+  if (q !== undefined) {
+    const crushes = JSON.parse(await crushData());
+    console.log('crushes', crushes);
+    const search = crushes.filter((item) => item.name.includes(q));
+    if (search === []) {
+      return res.status(200).json([]);
+    }
+    return res.status(200).json(search);
+  }
+  return console.log('teste');
+});
+
+app.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  const IDmatch = await crushIDs(id);
+  if (!IDmatch) {
+    return res.status(404).json({ message: 'Crush não encontrado' });
+  }
+  return res.status(200).json(IDmatch);
+});
+
 const checkName = (name) => {
   if (!name) return 'O campo "name" é obrigatório';
   if (name.length < 3) return 'O "name" deve ter pelo menos 3 caracteres';
@@ -50,7 +69,7 @@ const checkAge = (age) => {
 };
 
 const checkDateandRate = (date) => {
-  if (!date.datedAt || !date.rate) {
+  if (!date || !date.datedAt || date.rate === undefined) {
     return 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios';
   }
   const validDate = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
@@ -60,7 +79,7 @@ const checkDateandRate = (date) => {
 };
 
 const checkRate = (date) => {
-  if (date.rate < 1 || date.rate > 5) return 'O campo "rate" deve ser um inteiro de 1 à 5';
+  if (!date || date.rate < 1 || date.rate > 5) return 'O campo "rate" deve ser um inteiro de 1 à 5';
 };
 
 const newCrushValidations = (res, name, age, date) => {
@@ -94,8 +113,8 @@ app.post('/', async (req, res) => {
     return error;
   }
   // const newCrush = endpointValidation(req);
-  const crushes = await crushData();
-  const newCrush = { id: JSON.parse(crushes).length + 1, name, age, date };
+  const crushes = JSON.parse(await crushData());
+  const newCrush = { id: crushes.length + 1, name, age, date };
   const addCrush = [...crushes, newCrush];
 
   await fs.promises.writeFile(crush, JSON.stringify(addCrush));
@@ -130,17 +149,10 @@ app.delete('/:id', async (req, res) => {
 
   const { id } = req.params;
   const crushes = await crushData();
-  const crushUpdated = JSON.parse(crushes).filter((person) => person.id.toString() !== id);
+  const crushUpdated = JSON.parse(crushes).filter((person) => person.id !== Number(id));
 
   await fs.promises.writeFile(crush, JSON.stringify(crushUpdated));
-  res.status(201).send({ message: 'Crush deletado com sucesso' });
-});
-
-app.get('/search?q=searchTerm', async (req, res) => {
-  const invalidToken = checkToken(req.headers.authorization);
-  if (invalidToken) {
-    return res.status(401).json({ message: invalidToken });
-  }
+  res.status(200).send({ message: 'Crush deletado com sucesso' });
 });
 
 module.exports = app;

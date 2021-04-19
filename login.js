@@ -17,7 +17,6 @@ const checkPassword = (password) => {
 };
 
 const checkEmail = (email) => {
-  console.log('email', email);
   let message = null;
   if (!email) {
     message = 'O campo "email" é obrigatório';
