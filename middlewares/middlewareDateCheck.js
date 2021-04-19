@@ -1,7 +1,7 @@
-const middlewareDateCheck = (req, res, next) => {
-  const { date } = req.body;
+const dateCheck = (req, res, next) => {
+  const { body: { date, date: { datedAt }, date: { rate } } } = req;
 
-  if (!date) {
+  if (!date || !datedAt || typeof rate !== 'number') {
     return res.status(400)
       .json({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
   }
@@ -9,4 +9,4 @@ const middlewareDateCheck = (req, res, next) => {
   next();
 };
 
-module.exports = middlewareDateCheck;
+module.exports = { dateCheck };

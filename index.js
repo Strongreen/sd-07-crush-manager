@@ -1,142 +1,31 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const rescue = require('express-rescue');
-const fs = require('fs');
-const crypto = require('crypto');
-
-const middlewareTokenCheck = require('./middlewares/middlewareTokenCheck');
-const middlewareAgeCheck = require('./middlewares/middlewareAgeCheck');
-const middlewareDateAtCheck = require('./middlewares/middlewareDateAtCheck');
-const middlewareDateCheck = require('./middlewares/middlewareDateCheck');
-const middlewareNameCheck = require('./middlewares/middlewareNameCheck');
-const middlewareRateCheck = require('./middlewares/middlewareRateCheck');
 
 const app = express();
 app.use(bodyParser.json());
 
+const { crushById, getAllCrushes } = require('./middlewares/middlewareCrushGets');
+const { login } = require('./middlewares/middlewareLogin');
+const { tokenCheck } = require('./middlewares/middlewareTokenCheck');
+const { createCrush } = require('./middlewares/middlewareNewCrush');
+const { nameCheck } = require('./middlewares/middlewareNameCheck');
+const { ageCheck } = require('./middlewares/middlewareAgeCheck');
+const { dateCheck } = require('./middlewares/middlewareDateCheck');
+const { dateAtCheck } = require('./middlewares/middlewareDateAtCheck');
+const { rateCheck } = require('./middlewares/middlewareRateCheck');
+
 const SUCCESS = 200;
 const PORT = '3000';
 
-const api = async () => {
-  const readData = await fs.promises.readFile('./crush.json')
-    .then((data) => JSON.parse(data))
-    .catch((error) => {
-      throw new Error({ error, code: 404 });
-    });
+app.get('/crush/:id', crushById);
+app.get('/crush', getAllCrushes);
+app.post('/crush', tokenCheck, nameCheck, ageCheck, dateCheck, dateAtCheck, rateCheck, createCrush);
 
-  return readData;
-};
-
-function nullOrEmpty(value) {
-  if (!value || value === '') return true;
-  return false;
-}
-
-function checkEmail(email) {
-  const mailFormat = /\b[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}\b/g;
-
-  if (nullOrEmpty(email)) {
-    throw new Error('O campo "email" é obrigatório');
-  }
-
-  if (!email.match(mailFormat)) {
-    throw new Error('O "email" deve ter o formato "email@email.com"');
-  }
-}
-
-function check(password) {
-  if (nullOrEmpty(password)) {
-    throw new Error('O campo "password" é obrigatório');
-  }
-
-  if (password.toString().length < 6) {
-    throw new Error('A "senha" deve ter pelo menos 6 caracteres');
-  }
-}
+app.post('/login', login);
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
-});
-
-// app.get('/crush', (req, res) => {
-//   const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
-//   if (data.length > 0) {
-//     res.status(200).send(data);
-//   } else {
-//     res.status(200).send([]);
-//   }
-// });
-
-// app.get('/crush/:id', (req, res) => {
-//   const { id } = req.params;
-//   const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
-//   // const result = data.filter((element) => element.id === Number(id))[0];
-//   const result = data.find((element) => element.id === parseInt(id, 10));
-//   if (!result) {
-//     res.status(404).send({
-//       message: 'Crush não encontrado',
-//     });
-//   }
-//   res.status(200).send(result);
-// });
-
-app.route('/crush')
-  .get(rescue(async (req, res) => {
-    const findAll = await api();
-    res.json(findAll);
-  }))
-  .post(
-    middlewareTokenCheck,
-    middlewareAgeCheck,
-    middlewareDateAtCheck,
-    middlewareDateCheck,
-    middlewareNameCheck,
-    middlewareRateCheck,
-    rescue(async (req, res) => {
-      const artist = req.body;
-      const artists = await api();
-
-      let idValue = 1;
-      artists.forEach((e) => {
-        if (e.id === idValue) {
-          idValue += 1;
-        }
-      });
-
-      artist.id = idValue;
-
-      artists.push(artist);
-
-      await fs.promises.writeFile('./crush.json', JSON.stringify(artists));
-
-      res.status(201).json(artist);
-    }),
-  );
-
-app.get('/crush/:id', rescue(async (req, res) => {
-  const artistId = req.params.id;
-  const findAll = await api();
-  const artist = findAll.find((e) => e.id === parseInt(artistId, 10));
-
-  if (!artist) {
-    res.status(404).json({ message: 'Crush não encontrado' });
-  }
-  res.json(artist);
-}));
-
-app.post('/login', (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    checkEmail(email);
-    check(password);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-
-  const token = crypto.randomBytes(8).toString('hex');
-  res.json({ token });
 });
 
 app.listen(PORT, () => { console.log('Online'); });
