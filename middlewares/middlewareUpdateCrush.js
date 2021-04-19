@@ -1,4 +1,3 @@
-// const fs = require('fs');
 const { getCrushOnFile } = require('../services');
 
 const updateCrush = async (req, res) => {
@@ -15,7 +14,6 @@ const updateCrush = async (req, res) => {
   localizedCrush.date = date;
 
   return res.status(200).json(localizedCrush);
-  // return res.status(201).json('Deu bom!!!');
 };
 
 module.exports = { updateCrush };
