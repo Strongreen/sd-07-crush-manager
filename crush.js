@@ -53,7 +53,7 @@ const checkDateandRate = (date) => {
   if (!date.datedAt || !date.rate) {
     return 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios';
   }
-  const validDate = /^(0?[1-9]|[12][0-9]|3[01])[/](0?[1-9]|1[012])[/]\d{4}$/;
+  const validDate = /^\d{1,2}\/\d{1,2}\/\d{4}$/;
   if (!validDate.test(date.datedAt)) {
     return 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"';
   }
@@ -134,6 +134,13 @@ app.delete('/:id', async (req, res) => {
 
   await fs.promises.writeFile(crush, JSON.stringify(crushUpdated));
   res.status(201).send({ message: 'Crush deletado com sucesso' });
+});
+
+app.get('/search?q=searchTerm', async (req, res) => {
+  const invalidToken = checkToken(req.headers.authorization);
+  if (invalidToken) {
+    return res.status(401).json({ message: invalidToken });
+  }
 });
 
 module.exports = app;
