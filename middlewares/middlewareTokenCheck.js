@@ -1,4 +1,4 @@
-const tokenCheck = (req, res, next) => {
+const middlewareTokenCheck = (req, res, next) => {
   const { headers: { authorization } } = req;
 
   if (!authorization || authorization === '') {
@@ -12,4 +12,4 @@ const tokenCheck = (req, res, next) => {
   next();
 };
 
-module.exports = tokenCheck;
+module.exports = middlewareTokenCheck;

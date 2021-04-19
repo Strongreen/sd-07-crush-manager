@@ -1,4 +1,4 @@
-const nameCheck = (req, res, next) => {
+const middlewareNameCheck = (req, res, next) => {
   const { body: { name } } = req;
 
   if (!name || name === '') {
@@ -12,4 +12,4 @@ const nameCheck = (req, res, next) => {
   next();
 };
 
-module.exports = nameCheck;
+module.exports = middlewareNameCheck;

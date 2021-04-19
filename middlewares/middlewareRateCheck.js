@@ -1,5 +1,5 @@
-const rateCheck = (req, res, next) => {
-  const { date } = req.body;
+const middlewareRateCheck = (req, res, next) => {
+  const { body: { date } } = req;
 
   if (!date.rate || date.rate === '') {
     return res.status(400)
@@ -13,4 +13,4 @@ const rateCheck = (req, res, next) => {
   next();
 };
 
-module.exports = rateCheck;
+module.exports = middlewareRateCheck;

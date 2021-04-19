@@ -1,4 +1,4 @@
-const dateCheck = (req, res, next) => {
+const middlewareDateCheck = (req, res, next) => {
   const { date } = req.body;
 
   if (!date) {
@@ -9,4 +9,4 @@ const dateCheck = (req, res, next) => {
   next();
 };
 
-module.exports = dateCheck;
+module.exports = middlewareDateCheck;

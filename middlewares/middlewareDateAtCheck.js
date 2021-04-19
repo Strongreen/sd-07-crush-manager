@@ -1,4 +1,4 @@
-const dateAtCheck = (req, res, next) => {
+const middlewareDateAtCheck = (req, res, next) => {
   const { body: { date } } = req;
   const formatDate = /^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/;
 
@@ -14,4 +14,4 @@ const dateAtCheck = (req, res, next) => {
   next();
 };
 
-module.exports = dateAtCheck;
+module.exports = middlewareDateAtCheck;

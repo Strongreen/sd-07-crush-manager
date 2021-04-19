@@ -1,4 +1,4 @@
-const ageCheck = (req, res, next) => {
+const middlewareAgeCheck = (req, res, next) => {
   const { age } = req.body;
   console.log(age);
 
@@ -13,4 +13,4 @@ const ageCheck = (req, res, next) => {
   next();
 };
 
-module.exports = ageCheck;
+module.exports = middlewareAgeCheck;
