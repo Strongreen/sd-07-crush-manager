@@ -1,8 +1,8 @@
 const validAge = (req, res, next) => {
-    const { authorization } = req.headers;
+    const { age } = req.body;
     
-    if (!authorization) return res.status(401).json({ menssage: 'Token não encontrado' });
-    if (authorization.length < 16) return res.status(401).json({ message: 'Token inválido' });
+    if (!age) return res.status(400).send({ message: 'O campo "age" é obrigatório' });
+    if (age < 18) res.status(400).send({ message: 'O crush deve ser maior de idade' });
     next();
   };
   
