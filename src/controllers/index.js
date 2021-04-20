@@ -1,5 +1,5 @@
 const fs = require('fs');
-// const cryptoRandomString = require('crypto-random-string');
+const crypto = require('crypto');
 
 const SUCCESS = 200;
 const FAIL = 500;
@@ -29,7 +29,7 @@ const getCrushById = async (req, res) => {
 };
 
 const geradorDeToken = () => {
-  const token = '7mqaVRXJSp886CGr';
+  const token = crypto.randomBytes(8).toString('hex');
   return token;
 };
 
