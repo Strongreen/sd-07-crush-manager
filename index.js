@@ -1,9 +1,8 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const crushRouters = require('./src/routes');
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 
 const SUCCESS = 200;
 const PORT = '3000';
@@ -14,7 +13,5 @@ app.get('/', (_request, response) => {
 });
 
 app.use(crushRouters);
-
-/* app.get('/crush', crushController.getCrushes); */
 
 app.listen(PORT, () => { console.log(`Online, Ouvindo porta ${PORT}!`); });
