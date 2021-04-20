@@ -8,10 +8,11 @@ router.get('/crush', crushController.getCrushes);
 router.get('/crush/:id', crushController.getCrushById);
 router.post('/login', middlewares.validEmail, middlewares.validPassword, crushController.login);
 router.post('/crush', 
-  middlewares.validToken, 
-  middlewares.validDate, 
-  middlewares.validName, 
-  middlewares.validAge);
+  middlewares.validToken,
+  middlewares.validDate,
+  middlewares.validName,
+  middlewares.validAge,
+  crushController.createCrush);
 // router.put('/crush/:id', '');
 // router.delete('/crush/:id', '');
 // router.get('/crush/search?q=searchTerm', '');
