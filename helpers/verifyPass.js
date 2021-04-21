@@ -1,0 +1,1 @@
+module.exports = (pass) => pass.length >= 6;
