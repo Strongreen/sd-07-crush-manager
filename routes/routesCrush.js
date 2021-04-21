@@ -44,6 +44,25 @@ routes.route('/crush/:id')
     fs.writeFileSync(FILE, JSON.stringify(newCrush, null, 2));
 
     res.status(200).send({ message: 'Crush deletado com sucesso' });
+  })
+  .put(authMiddleware, paramsMiddleware, (req, res) => {
+    const { id } = req.params;
+    const { name, age, date } = req.body;
+
+    const file = fs.readFileSync(FILE);
+    const dataString = file.toString('utf8');
+    const data = JSON.parse(dataString);
+
+    const crushIndex = data.findIndex((crush) => crush.id === Number(id));
+
+    if (crushIndex === -1) return res.status(404).send({ message: 'Crush não encontrado' });
+
+    const newCrush = { name, age, id: Number(id), date };
+    data.splice(crushIndex, 1, newCrush);
+
+    fs.writeFileSync(FILE, JSON.stringify(data, null, 2));
+
+    res.status(200).send(newCrush);
   });
 
 routes.post('/crush', authMiddleware, paramsMiddleware, (req, res) => {
