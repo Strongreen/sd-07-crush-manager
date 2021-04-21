@@ -48,12 +48,12 @@ const createCrush = async (req, res) => {
   const { name, age, date } = req.body;
   const result = await fs.promises.readFile(crushFile, 'utf-8');
   const resultArray = JSON.parse(result);
-  const newId = result.length + 1;
+  const id = 5;
 
-  const newCrush = ({ name, age, newId, date });
+  const newCrush = ({ name, age, id, date });
   resultArray.push(newCrush);
 
-  await fs.promises.writeFile('../../crush.json', JSON.stringify(resultArray));
+  await fs.promises.writeFile(crushFile, JSON.stringify(resultArray));
   return res.status(CREATED).json(newCrush);
 };
 
