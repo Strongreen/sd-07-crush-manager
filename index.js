@@ -1,20 +1,24 @@
 const express = require('express');
+const fs = require('fs');
 const bodyParser = require('body-parser');
-const Crushes = require('./routes/Crush');
-const Login = require('./routes/Login');
+const { OK } = require('./httpCode');
 
 const app = express();
 app.use(bodyParser.json());
 
-const SUCCESS = 200;
-const PORT = '3000';
+const PORT = 3000;
 
-// não remova esse endpoint, e para o avaliador funcionar
-app.get('/', (_request, response) => {
-  response.status(SUCCESS).send();
+app.get('/', (_req, res) => {
+  res.status(OK).send();
 });
 
-app.use('/crush', Crushes);
-app.use('/login', Login);
+app.get('/crush', async (_req, res) => {
+  const data = await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8')
+    .then((result) => res.status(OK).send(JSON.parse(result)))
+    .catch((err) => console.error(err));
+  return data;
+});
 
-app.listen(PORT, () => { console.log('Online'); });
+app.listen(PORT, () => {
+  console.log('Online');
+});
