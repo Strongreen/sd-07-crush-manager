@@ -7,7 +7,7 @@ const router = express.Router();
 router.get('/crush', crushController.getCrushes);
 router.get('/crush/:id', crushController.getCrushById);
 router.post('/login', middlewares.validEmail, middlewares.validPassword, crushController.login);
-router.post('/crush', 
+router.post('/crush',
   middlewares.validToken,
   middlewares.validDate,
   middlewares.validName,

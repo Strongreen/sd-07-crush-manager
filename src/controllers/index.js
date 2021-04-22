@@ -35,7 +35,7 @@ const geradorDeToken = () => {
   return token;
 };
 
-const login = async (req, res) => {
+const login = (req, res) => {
   try {
     const token = geradorDeToken();
     return res.status(SUCCESS).send({ token });
@@ -45,7 +45,8 @@ const login = async (req, res) => {
 };
 
 const createCrush = async (req, res) => {
-  const { name, age, date } = req.body;
+  try {
+    const { name, age, date } = req.body;
   const result = await fs.promises.readFile(crushFile, 'utf-8');
   const resultArray = JSON.parse(result);
   const id = 5;
@@ -55,6 +56,9 @@ const createCrush = async (req, res) => {
 
   await fs.promises.writeFile(crushFile, JSON.stringify(resultArray));
   return res.status(CREATED).json(newCrush);
+  } catch (error) {
+    return res.status(FAIL).send({ menssage: error.menssage });
+  }
 };
 
 module.exports = { getCrushes, getCrushById, login, createCrush };
