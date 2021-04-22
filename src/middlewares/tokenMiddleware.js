@@ -1,7 +1,7 @@
 const { tokenValidate } = require('../validations');
 
 const tokenValidateMiddleware = (req, res, next) => {
-  const { authorization } = req.header;
+  const { authorization } = req.headers;
   try {
     tokenValidate(authorization);
   } catch (error) {
