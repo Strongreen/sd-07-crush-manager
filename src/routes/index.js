@@ -15,7 +15,14 @@ router.post('/crush',
   middlewares.validDateAt,
   middlewares.validRate,
   crushController.createCrush);
-// router.put('/crush/:id', '');
+router.put('/crush/:id',
+middlewares.validToken,
+middlewares.validName,
+middlewares.validAge,
+middlewares.validDate,
+middlewares.validDateAt,
+middlewares.validRate,
+  crushController.updateCrush);
 // router.delete('/crush/:id', '');
 // router.get('/crush/search?q=searchTerm', '');
 

@@ -3,8 +3,8 @@ const crypto = require('crypto');
 
 const SUCCESS = 200;
 const CREATED = 201;
-const FAIL = 500;
 const NOTFOUND = 404;
+const FAIL = 500;
 const crushFile = `${__dirname}/../../crush.json`;
 
 const getCrushes = async (req, res) => {
@@ -47,18 +47,38 @@ const login = (req, res) => {
 const createCrush = async (req, res) => {
   try {
     const { name, age, date } = req.body;
-  const result = await fs.promises.readFile(crushFile, 'utf-8');
-  const resultArray = JSON.parse(result);
-  const id = 5;
+    const result = await fs.promises.readFile(crushFile, 'utf-8');
+    const resultArray = JSON.parse(result);
+    const id = 5;
 
-  const newCrush = ({ name, age, id, date });
-  resultArray.push(newCrush);
+    const newCrush = ({ name, age, id, date });
+    resultArray.push(newCrush);
 
-  await fs.promises.writeFile(crushFile, JSON.stringify(resultArray));
-  return res.status(CREATED).json(newCrush);
+    await fs.promises.writeFile(crushFile, JSON.stringify(resultArray));
+    return res.status(CREATED).json(newCrush);
   } catch (error) {
     return res.status(FAIL).send({ menssage: error.menssage });
   }
 };
 
-module.exports = { getCrushes, getCrushById, login, createCrush };
+const updateCrush = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, age, date } = req.body;
+    const result = await fs.promises.readFile(crushFile, 'utf-8');
+    result[id - 1] = { name, age, id, date };
+    await fs.promises.writeFile(crushFile, JSON.stringify(result));
+
+    return res.status(SUCCESS).json(result[id - 1]);
+  } catch (error) {
+    return res.status(FAIL).send({ menssage: error.menssage });
+  }
+};
+
+module.exports = {
+  getCrushes,
+  getCrushById,
+  login,
+  createCrush,
+  updateCrush,
+};
