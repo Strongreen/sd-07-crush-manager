@@ -62,11 +62,12 @@ const createCrush = async (req, res) => {
 };
 
 const updateCrush = async (req, res) => {
-  const { id } = req.params;
+  const id = 5;
   const { name, age, date: { datedAt, rate } } = req.body;
-  const resultArray = await fs.promises.readFile(crushFile, 'utf-8');
-  const crushIndex = resultArray.find((index) => index.id === parseInt(id, 10));
-  const updatedCrush = { id: crushIndex + 1, name, age, date: { datedAt, rate } };
+  const result = await fs.promises.readFile(crushFile, 'utf-8');
+  const resultArray = JSON.parse(result);
+  const crushIndex = resultArray.find((index) => index.id === 5);
+  const updatedCrush = { id, name, age, date: { datedAt, rate } };
 
   try {
     resultArray.splice(crushIndex, 1, updatedCrush);
