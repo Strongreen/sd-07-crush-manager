@@ -18,6 +18,22 @@ routes.get('/crush', (req, res) => {
   res.status(200).send(data);
 });
 
+routes.get('/crush/search', authMiddleware, (req, res) => {
+  const { q } = req.query;
+
+  if (!q) res.redirect('/crush');
+
+  const file = fs.readFileSync(FILE);
+  const dataString = file.toString('utf8');
+  const data = JSON.parse(dataString);
+
+  const findCrushes = data.filter((crush) => crush.name.includes(q));
+
+  if (!findCrushes) return res.status(200).send([]);
+
+  res.status(200).send(findCrushes);
+});
+
 routes.route('/crush/:id')
   .get((req, res) => {
     const { id } = req.params;
