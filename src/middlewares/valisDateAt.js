@@ -10,7 +10,7 @@ const validDate = (req, res, next) => {
 
   if (!patternData.test(date.datedAt)) {
     return res.status(400)
-      .send('O campo "datedAt" deve ter o formato "dd/mm/aaaa"');
+      .json({ message: 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"' });
   }
   next();
 };

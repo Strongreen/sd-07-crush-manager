@@ -4,10 +4,10 @@ const validEmail = (req, res, next) => {
     const regex = /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$/;
 
     if (!email || email === '') {
-        return res.status(400).send({ message: 'O campo "email" é obrigatório' });
+        return res.status(400).json({ message: 'O campo "email" é obrigatório' });
     }
     if (!regex.test(email)) {
-        return res.status(400).send({ message: 'O "email" deve ter o formato "email@email.com"' });
+        return res.status(400).json({ message: 'O "email" deve ter o formato "email@email.com"' });
     }
     next();
 };
