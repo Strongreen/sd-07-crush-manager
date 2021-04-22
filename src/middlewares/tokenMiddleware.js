@@ -6,9 +6,9 @@ const tokenValidateMiddleware = (req, res, next) => {
     tokenValidate(authorization);
   } catch (error) {
     console.log(error.message);
-    res.status(401).json({ message: error.message });
+    return res.status(401).json({ message: error.message });
   }
-  next();
+  return next();
 };
 
 module.exports = tokenValidateMiddleware;

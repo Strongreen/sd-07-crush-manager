@@ -12,9 +12,9 @@ const dataValidations = (req, res, next) => {
     nameValidate(name);
   } catch (error) {
     console.log(error.message);
-    res.status(400).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
-  next();
+  return next();
 };
 
 module.exports = dataValidations;

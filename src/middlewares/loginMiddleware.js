@@ -7,9 +7,9 @@ const loginMiddleware = (req, res, next) => {
     mailValidate(email);
   } catch (error) {
     console.log(error.message);
-    res.status(400).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
-  next();
+  return next();
 };
 
 module.exports = loginMiddleware;

@@ -1,9 +1,14 @@
 const express = require('express');
-const crushes = require('../../crush.json');
+const fs = require('fs').promises;
+const path = require('path');
 
 const route = express.Router();
 
-route.get('/crush/:id', (req, res) => {
+const dataDirectory = path.join(__dirname, '../../crush.json');
+
+route.get('/crush/:id', async (req, res) => {
+  let crushes = await fs.readFile(dataDirectory);
+  crushes = JSON.parse(crushes);
   const { id } = req.params;
   const crushFinded = crushes.filter((crush) => crush.id === +id)[0];
   if (!crushFinded) return res.status(404).json({ message: 'Crush não encontrado' });
