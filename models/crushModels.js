@@ -35,17 +35,9 @@ const validPass = (password) => {
 };
 
 const validToken = (authorization) => {
-  if (!authorization) {
-    return {
-      message: 'Token não encontrado',
-    };
-  }
-  if (authorization.length < 16) {
-    return {
-      message: 'Token inválido',
-    };
-  }
-  return true;
+  if (!authorization) throw new Error('Token não encontrado');
+  if (authorization.length < 16) throw new Error('Token inválido');
+  return false;
 };
 
 const validName = (name) => {

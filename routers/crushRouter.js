@@ -49,40 +49,40 @@ router.post('/login', (req, res) => {
   }
 });
 
+/* const authorizationResult = crushModels.validToken(authorization);
+  if (!authorizationResult) {
+    res.status(403).json({ message: authorizationResult.message });
+  } else {
+    res.status(402).json({ message: authorizationResult.message });
+  } */
 /* ---------- REQUISITO 4 ---------- */
 router.post(crushInit, (req, res) => {
   const { authorization } = req.headers;
   const { name, age, date } = req.body;
   const element = req.body;
-  const authorizationResult = crushModels.validToken(authorization);
-  if (authorizationResult === false) {
-    return res.status(401).json({ message: authorizationResult.message });
-  }
-  res.status(401).json({ message: authorizationResult.message });
   try {
+    crushModels.validToken(authorization);
+    console.log('entrou no try');
     crushModels.validForAll(element);
     data.push({ name, age, id: data.length + 1, date });
     fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(data));
+    res.status(201).json({ message: data[data.length - 1] });
   } catch (error) {
-    return res.status(400).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
-  return res.status(201).json({ message: data[data.length - 1] });
 });
+/* data[data.length - 1] */
 
 /* ----------- REQUISITO 5 ---------- */
 router.put(crushRoute, (req, res) => {
   const { authorization } = req.headers;
   const { id } = req.params;
   const { name, age, date } = req.body;
-  const authorizationResult = crushModels.validToken(authorization);
-  if (authorizationResult === false) {
-    return res.status(401).json({ message: authorizationResult.message });
-  }
-  res.status(401).json({ message: authorizationResult.message });
-  data[id - 1].name = name;
-  data[id - 1].age = age;
-  data[id - 1].date = date;
   try {
+    crushModels.validToken(authorization);
+    data[id - 1].name = name;
+    data[id - 1].age = age;
+    data[id - 1].date = date;
     fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(data));
     return res.status(200).send({ message: 'Personagem adicionado' });
   } catch (error) {
@@ -94,11 +94,7 @@ router.put(crushRoute, (req, res) => {
 router.delete(crushRoute, (req, res) => {
   const { authorization } = req.headers;
   const { id } = req.params;
-  const authorizationResult = crushModels.validToken(authorization);
-  if (authorizationResult === false) {
-    return res.status(401).json({ message: authorizationResult.message });
-  }
-  res.status(401).json({ message: authorizationResult.message });
+  crushModels.validToken(authorization);
   const index = Number(id - 1);
   data.splice(index, 1);
   try {
