@@ -4,10 +4,13 @@ const middlewares = require('../middlewares');
 
 const router = express.Router();
 
-router.get('/crush', crushController.getCrushes);
-router.get('/crush/:id', crushController.getCrushById);
+const crush = '/crush';
+const crushId = '/crush/:id';
+
+router.get(crush, crushController.getCrushes);
+router.get(crushId, crushController.getCrushById);
 router.post('/login', middlewares.validEmail, middlewares.validPassword, crushController.login);
-router.post('/crush',
+router.post(crush,
   middlewares.validToken,
   middlewares.validName,
   middlewares.validAge,
@@ -15,15 +18,15 @@ router.post('/crush',
   middlewares.validDateAt,
   middlewares.validRate,
   crushController.createCrush);
-router.put('/crush/:id',
-middlewares.validToken,
-middlewares.validName,
-middlewares.validAge,
-middlewares.validDate,
-middlewares.validDateAt,
-middlewares.validRate,
+router.put(crushId,
+  middlewares.validToken,
+  middlewares.validName,
+  middlewares.validAge,
+  middlewares.validDate,
+  middlewares.validDateAt,
+  middlewares.validRate,
   crushController.updateCrush);
-// router.delete('/crush/:id', '');
+router.delete(crushId, middlewares.validToken, crushController.deleteCrush);
 // router.get('/crush/search?q=searchTerm', '');
 
 module.exports = router;

@@ -80,10 +80,27 @@ const updateCrush = async (req, res) => {
   }
 };
 
+const deleteCrush = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await fs.promises.readFile(crushFile, 'utf-8');
+
+    const resultArray = JSON.parse(result);
+    const crushIndex = resultArray.findIndex((crush) => crush.id === Number(id));
+
+    resultArray.splice(crushIndex, 1);
+    await fs.promises.writeFile(resultArray, JSON.stringify(resultArray));
+    return res.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
+  } catch (error) {
+    return res.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
+  }
+};
+
 module.exports = {
   getCrushes,
   getCrushById,
   login,
   createCrush,
   updateCrush,
+  deleteCrush,
 };
