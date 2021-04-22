@@ -5,9 +5,9 @@ const route = express.Router();
 
 route.get('/crush/:id', (req, res) => {
   const { id } = req.params;
-  const crushFinded = crushes.find((crush) => crush.id === +id);
+  const crushFinded = crushes.filter((crush) => crush.id === +id)[0];
   if (!crushFinded) return res.status(404).json({ message: 'Crush não encontrado' });
-  return res.status(200).json(JSON.parse(crushFinded));
+  return res.status(200).json(crushFinded);
 });
 
 module.exports = route;
