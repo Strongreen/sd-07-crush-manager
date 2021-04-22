@@ -1,0 +1,12 @@
+const validateDate = (req, res, next) => {
+  const { date } = req.body;
+
+  if (date === undefined) {
+    return res.status(400)
+      .json({ message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios' });
+  }
+
+  next();
+};
+
+module.exports = validateDate;
