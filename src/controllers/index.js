@@ -84,8 +84,8 @@ const deleteCrush = async (req, res) => {
   try {
     const { id } = req.params;
     const result = await fs.promises.readFile(crushFile, 'utf-8');
-
     const resultArray = JSON.parse(result);
+
     const crushIndex = resultArray.findIndex((crush) => crush.id === Number(id));
 
     resultArray.splice(crushIndex, 1);
@@ -96,6 +96,24 @@ const deleteCrush = async (req, res) => {
   }
 };
 
+const searchCrush = async (req, res, next) => {
+  try {
+    const { q } = req.query;
+    const result = await fs.promises.readFile(crushFile, 'utf-8');
+    const resultArray = JSON.parse(result);
+    if (!q) {
+      return res.status(200).json(resultArray);
+    }
+    const response = resultArray.filter((crush) => crush.name.includes(q));
+    return res.status(200).json(response);
+  } catch (error) {
+    next({
+      status: NOTFOUND,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getCrushes,
   getCrushById,
@@ -103,4 +121,5 @@ module.exports = {
   createCrush,
   updateCrush,
   deleteCrush,
+  searchCrush,
 };
