@@ -1,7 +1,7 @@
 const fs = require('fs').promises;
 const express = require('express');
 
-const router = express.Router();
+const crushRoute = express();
 
 const SUCESSS = 200;
 const NOT_FOUND = 404;
@@ -16,7 +16,7 @@ const readCrushFile = async () => {
   }
 };
 
-router.get('/', async (req, res) => {
+crushRoute.get('/', async (req, res) => {
   try {
     const result = await readCrushFile();
     res.status(SUCESSS).send(result);
@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+crushRoute.get('/:id', async (req, res) => {
   try {
     const result = await readCrushFile();
     const { id } = req.params;
@@ -45,4 +45,4 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = crushRoute;
