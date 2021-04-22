@@ -40,7 +40,7 @@ crushRoute.get('/:id', async (req, res) => {
     });
   } catch (err) {
     return res.status(INTERNAL_ERROR).send({
-      message: 'Erro na requisição id do crush!',
+      message: 'Erro no id do crush!',
     });
   }
 });
