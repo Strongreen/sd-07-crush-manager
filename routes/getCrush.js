@@ -33,13 +33,13 @@ crushRoute.get('/:id', async (req, res) => {
     const { id } = req.params;
     const getItem = await result.find((personalData) => personalData.id === Number(id));
     if (getItem) {
-      res.status(SUCESSS).send(getItem);
+      return res.status(SUCESSS).send(getItem);
     }
-    res.status(NOT_FOUND).send({
+    return res.status(NOT_FOUND).send({
       message: 'Crush não encontrado',
     });
   } catch (err) {
-    res.status(INTERNAL_ERROR).send({
+    return res.status(INTERNAL_ERROR).send({
       message: 'Erro no id do crush!',
     });
   }
