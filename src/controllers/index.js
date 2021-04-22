@@ -97,15 +97,16 @@ const deleteCrush = async (req, res) => {
 };
 
 const searchCrush = async (req, res) => {
-    const { q } = req.query;
-    const result = await fs.promises.readFile(crushFile, 'utf-8');
-    const resultArray = JSON.parse(result);
-    if (!q) {
-      return res.status(200).json(resultArray);
-    }
-    const response = resultArray.filter((crush) => crush.name.includes(q));
-    if (!response) return res.status(NOTFOUND).json({ message: 'Crush não encontrado' });
-    return res.status(200).json(response);
+  const { q } = req.query;
+  const result = await fs.promises.readFile(crushFile, 'utf-8');
+  const resultArray = JSON.parse(result);
+  if (!q) {
+    return res.status(200).json(resultArray);
+  }
+  const response = resultArray.filter((crush) => crush.name.includes(q));
+  if (!response) return res.status(NOTFOUND).json({ message: 'Crush não encontrado' });
+
+  return res.status(200).json(response);
 };
 
 module.exports = {
