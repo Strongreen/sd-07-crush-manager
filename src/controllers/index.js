@@ -10,10 +10,10 @@ const crushFile = `${__dirname}/../../crush.json`;
 const getCrushes = async (req, res) => {
   try {
     const result = await fs.promises.readFile(crushFile, 'utf-8');
-    return res.status(SUCCESS).send(JSON.parse(result));
+    return res.status(SUCCESS).json(JSON.parse(result));
   } catch (error) {
     console.error(error);
-    return res.status(FAIL).send({ menssage: error.menssage });
+    return res.status(FAIL).json({ menssage: error.menssage });
   }
 };
 
@@ -23,10 +23,10 @@ const getCrushById = async (req, res) => {
     const crushes = await fs.promises.readFile(crushFile, 'utf-8');
     const arrayOfCrushes = JSON.parse(crushes);
     const currCrush = arrayOfCrushes.find((index) => index.id === parseInt(id, 10));
-    if (!currCrush) return res.status(NOTFOUND).send({ message: 'Crush não encontrado' });
-    return res.status(SUCCESS).send(currCrush);
+    if (!currCrush) return res.status(NOTFOUND).json({ message: 'Crush não encontrado' });
+    return res.status(SUCCESS).json(currCrush);
   } catch (error) {
-    return res.status(FAIL).send({ menssage: error.menssage });
+    return res.status(FAIL).json({ menssage: error.menssage });
   }
 };
 
@@ -38,9 +38,9 @@ const geradorDeToken = () => {
 const login = (req, res) => {
   try {
     const token = geradorDeToken();
-    return res.status(SUCCESS).send({ token });
+    return res.status(SUCCESS).json({ token });
   } catch (error) {
-    return res.status(FAIL).send({ menssage: error.menssage });
+    return res.status(FAIL).json({ menssage: error.menssage });
   }
 };
 
@@ -57,21 +57,24 @@ const createCrush = async (req, res) => {
     await fs.promises.writeFile(crushFile, JSON.stringify(resultArray));
     return res.status(CREATED).json(newCrush);
   } catch (error) {
-    return res.status(FAIL).send({ menssage: error.menssage });
+    return res.status(FAIL).json({ menssage: error.menssage });
   }
 };
 
 const updateCrush = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, age, date } = req.body;
-    const result = await fs.promises.readFile(crushFile, 'utf-8');
-    result[id - 1] = { name, age, id, date };
-    await fs.promises.writeFile(crushFile, JSON.stringify(result));
+  const { id } = req.params;
+  const { name, age, date: { datedAt, rate } } = req.body;
+  const resultArray = await fs.promises.readFile(crushFile, 'utf-8');
+  const crushIndex = resultArray.find((index) => index.id === parseInt(id, 10));
+  const updatedCrush = { id: crushIndex + 1, name, age, date: { datedAt, rate } };
 
-    return res.status(SUCCESS).json(result[id - 1]);
+  try {
+    resultArray.splice(crushIndex, 1, updatedCrush);
+    await fs.promises.writeFile(crushFile, JSON.stringify(resultArray));
+
+    return res.status(SUCCESS).json(updatedCrush);
   } catch (error) {
-    return res.status(FAIL).send({ menssage: error.menssage });
+    return res.status(FAIL).json({ menssage: error.menssage });
   }
 };
 
