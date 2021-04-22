@@ -20,6 +20,9 @@ app.get('/crush', async (_req, res) => {
   return data;
 });
 
+const nada = 'nada';
+console.log(nada);
+
 app.get('/crush/:id', async (req, res) => {
   const { id } = req.params;
   const data = await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8');
