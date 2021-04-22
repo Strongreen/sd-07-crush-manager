@@ -1,1 +1,3 @@
-// Arquivo para exportação dos middlewares utilizados
+// const errorMiddleware = require('./error');
+
+// module.exports = { errorMiddleware };

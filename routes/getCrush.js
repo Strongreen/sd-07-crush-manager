@@ -1,7 +1,11 @@
-const express = require('express');
 const fs = require('fs').promises;
+const express = require('express');
 
-const crushRoute = express();
+const router = express.Router();
+
+const SUCESSS = 200;
+const NOT_FOUND = 404;
+const INTERNAL_ERROR = 500;
 
 const readCrushFile = async () => {
   try {
@@ -12,13 +16,33 @@ const readCrushFile = async () => {
   }
 };
 
-crushRoute.get('/', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const result = await readCrushFile();
-    res.status(200).send(result);
+    res.status(SUCESSS).send(result);
   } catch (err) {
-    throw new Error(err);
+    res.status(INTERNAL_ERROR).send({
+      message: 'Erro na requisição do crush!',
+    });
   }
 });
 
-module.exports = crushRoute;
+router.get('/:id', async (req, res) => {
+  try {
+    const result = await readCrushFile();
+    const { id } = req.params;
+    const getItem = await result.find((personalData) => personalData.id === Number(id));
+    if (getItem) {
+      res.status(SUCESSS).send(getItem);
+    }
+    res.status(NOT_FOUND).send({
+      message: 'Crush não encontrado',
+    });
+  } catch (err) {
+    res.status(INTERNAL_ERROR).send({
+      message: 'Erro no id do crush!',
+    });
+  }
+});
+
+module.exports = router;
