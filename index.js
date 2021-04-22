@@ -25,6 +25,7 @@ app.get('/', (_request, response) => {
 app.use(login);
 app.use(router.getAllCrush);
 app.use(router.getCrushById);
+app.use(router.creatCrush);
 
 // // Requisito 2
 // app.get('/crush/:id', async (req, res) => {

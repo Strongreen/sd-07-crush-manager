@@ -1,8 +1,8 @@
 const mailValidate = (email) => {
   const regexEmail = new RegExp(/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+$/);
   const emailIsValid = regexEmail.test(email);
-  if (email === '' || email === undefined) return { message: 'O campo "email" é obrigatório' };
-  if (!emailIsValid) return { message: 'O "email" deve ter o formato "email@email.com"' };
+  if (email === '' || email === undefined) throw new Error('O campo "email" é obrigatório');
+  if (!emailIsValid) throw new Error('O "email" deve ter o formato "email@email.com"');
   return false;
 };
 

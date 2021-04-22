@@ -1,6 +1,7 @@
 const tokenValidate = (token) => {
-  if (token === '' || token === undefined) return { message: 'Token não encontrado' };
-  if (token.length !== 16) return { message: 'Token inválido' };
+  if (token === '' || token === undefined) throw new Error('Token não encontrado');
+  if (token.length !== 16) throw new Error('Token inválido');
+  return false;
 };
 
 module.exports = tokenValidate;
