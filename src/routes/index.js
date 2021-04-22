@@ -9,9 +9,11 @@ router.get('/crush/:id', crushController.getCrushById);
 router.post('/login', middlewares.validEmail, middlewares.validPassword, crushController.login);
 router.post('/crush',
   middlewares.validToken,
-  middlewares.validDate,
   middlewares.validName,
   middlewares.validAge,
+  middlewares.validDate,
+  middlewares.validDateAt,
+  middlewares.validRate,
   crushController.createCrush);
 // router.put('/crush/:id', '');
 // router.delete('/crush/:id', '');
