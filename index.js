@@ -5,7 +5,7 @@ const routes = require('./routes');
 const app = express();
 app.use(bodyParser.json());
 
-app.use(routes.crushRoute);
+app.use('/crush', routes.crushRoute);
 
 const SUCCESS = 200;
 const PORT = '3000';
