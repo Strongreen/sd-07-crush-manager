@@ -20,19 +20,20 @@ app.get('/crush', async (_req, res) => {
   return data;
 });
 
-const nada = 'nada';
-console.log(nada);
-
 app.get('/crush/:id', async (req, res) => {
   const { id } = req.params;
   const data = await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8');
-  const result = data.find((crush) => crush.id === id);
+  // eslint-disable-next-line array-callback-return
+  const result = JSON.parse(data).find((crush) => {
+    if (crush.id === Number(id)) {
+      return crush;
+    }
+  });
 
   if (result === undefined) {
-    res.status(NOT_FOUND).json(notFound);
-  } else {
-    res.status(OK).json(JSON.parse(result));
+    return res.status(NOT_FOUND).json(notFound);
   }
+  return res.status(OK).json(result);
 });
 
 app.listen(PORT, () => {
