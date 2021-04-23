@@ -15,7 +15,7 @@ const passwordIsMandatory = {
 };
 
 const passwordWrongFormat = {
-  message: 'O "password" deve ter pelo menos 6 caracteres',
+  message: 'A "senha" deve ter pelo menos 6 caracteres',
 };
 
 module.exports = {
