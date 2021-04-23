@@ -98,6 +98,8 @@ const deleteCrush = async (req, res) => {
 
 const searchCrush = async (req, res) => {
   const { q } = req.query;
+  console.log(req);
+  console.log('Passou por aqui');
   const result = await fs.promises.readFile(crushFile, 'utf-8');
   const resultArray = JSON.parse(result);
   if (!q) {
