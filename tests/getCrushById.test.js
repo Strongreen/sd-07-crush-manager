@@ -10,7 +10,6 @@ describe('2 - Crie o endpoint GET /crush/:id', () => {
       path.join(__dirname, 'seed.json'),
       'utf8',
     );
-
     fs.writeFileSync(
       path.join(__dirname, '..', 'crush.json'),
       crushSeed,
