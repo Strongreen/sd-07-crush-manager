@@ -23,12 +23,7 @@ app.get('/crush', async (_req, res) => {
 app.get('/crush/:id', async (req, res) => {
   const { id } = req.params;
   const data = await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8');
-  // eslint-disable-next-line array-callback-return
-  const result = JSON.parse(data).find((crush) => {
-    if (crush.id === Number(id)) {
-      return crush;
-    }
-  });
+  const result = JSON.parse(data).find((crush) => crush.id === Number(id));
 
   if (result === undefined) {
     return res.status(NOT_FOUND).json(notFound);
