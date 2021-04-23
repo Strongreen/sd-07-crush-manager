@@ -1,3 +1,3 @@
-// const errorMiddleware = require('./error');
+const tokenValidationMiddleware = require('./token');
 
-// module.exports = { errorMiddleware };
+module.exports = { tokenValidationMiddleware };
