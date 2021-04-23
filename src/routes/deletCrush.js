@@ -1,13 +1,13 @@
 const express = require('express');
 const fs = require('fs').promises;
 const path = require('path');
-const { tokenMiddleware, dataValidations } = require('../middlewares');
+const { tokenMiddleware } = require('../middlewares');
 
 const route = express.Router();
 
 const dataDirectory = path.join(__dirname, '../../crush.json');
 
-route.delete('/crush/:id', tokenMiddleware, dataValidations, async (req, res) => {
+route.delete('/crush/:id', tokenMiddleware, async (req, res) => {
   let crushes = await fs.readFile(dataDirectory);
   crushes = JSON.parse(crushes);
   const crush = crushes.find((element) => element.id === +req.body.id);
