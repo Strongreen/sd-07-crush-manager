@@ -96,10 +96,16 @@ const deleteCrush = async (req, res) => {
   }
 };
 
-const searchCrush = async (req, res) => {
+const searchCrush = async (req, res, _next) => {
   const { q } = req.query;
   console.log(req);
   console.log('Passou por aqui');
+
+  const { authorization } = req.headers;
+
+  if (!authorization) return res.status(401).json({ message: 'Token não encontrado' });
+  if (authorization.length < 16) return res.status(401).json({ message: 'Token inválido' });
+
   const result = await fs.promises.readFile(crushFile, 'utf-8');
   const resultArray = JSON.parse(result);
   if (!q) {
