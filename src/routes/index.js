@@ -7,6 +7,7 @@ const router = express.Router();
 const crush = '/crush';
 const crushId = '/crush/:id';
 
+router.get('/crush/search', middlewares.validToken, crushController.searchCrush);
 router.get(crush, crushController.getCrushes);
 router.get(crushId, crushController.getCrushById);
 router.post('/login', middlewares.validEmail, middlewares.validPassword, crushController.login);
@@ -27,6 +28,5 @@ router.put(crushId,
   middlewares.validRate,
   crushController.updateCrush);
 router.delete(crushId, middlewares.validToken, crushController.deleteCrush);
-router.get('/crush/search', middlewares.validToken, crushController.searchCrush);
 
 module.exports = router;

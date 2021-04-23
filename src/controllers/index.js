@@ -114,7 +114,7 @@ const searchCrush = async (req, res) => {
     return res.status(SUCCESS).json(response);
   } catch (error) {
     console.log('Erro no controller');
-    return res.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
+    return res.status(SUCCESS).json({ message: 'Catch do controller' });
   }
 };
 
