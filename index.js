@@ -1,8 +1,16 @@
 const express = require('express');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const { OK, NOT_FOUND } = require('./httpCode');
-const { notFound } = require('./errorMessages');
+const { OK, NOT_FOUND, BAD_REQUEST } = require('./httpCode');
+const {
+  notFound,
+  emailIsMandatory,
+  emailWrongFormat,
+  passwordIsMandatory,
+  passwordWrongFormat,
+} = require('./errorMessages');
+
+const { getToken } = require('./middlewares');
 
 const app = express();
 app.use(bodyParser.json());
@@ -29,6 +37,30 @@ app.get('/crush/:id', async (req, res) => {
     return res.status(NOT_FOUND).json(notFound);
   }
   return res.status(OK).json(result);
+});
+
+const emailMiddleware = (req, res, next) => {
+  const { email } = req.body;
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+
+  if (!email || email === '') return res.status(BAD_REQUEST).send(emailIsMandatory);
+  if (!emailRegex.test(email)) return res.status(BAD_REQUEST).send(emailWrongFormat);
+  next();
+};
+
+const passwordMiddleware = (req, res, next) => {
+  const { password } = req.body;
+
+  if (!password || password === '') return res.status(BAD_REQUEST).send(passwordIsMandatory);
+  if (password.toString().length < 6) return res.status(BAD_REQUEST).send(passwordWrongFormat);
+  next();
+};
+
+app.post('/login', emailMiddleware, passwordMiddleware, async (req, res) => {
+  const token = getToken();
+
+  req.headers.Authorization = token;
+  return res.status(OK).send({ token });
 });
 
 app.listen(PORT, () => {
