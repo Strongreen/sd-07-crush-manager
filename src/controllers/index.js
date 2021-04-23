@@ -81,6 +81,7 @@ const updateCrush = async (req, res) => {
 };
 
 const deleteCrush = async (req, res) => {
+  const menssageDelete = 'Crush deletado com sucesso';
   try {
     const { id } = req.params;
     const result = await fs.promises.readFile(crushFile, 'utf-8');
@@ -90,31 +91,31 @@ const deleteCrush = async (req, res) => {
 
     resultArray.splice(crushIndex, 1);
     await fs.promises.writeFile(resultArray, JSON.stringify(resultArray));
-    return res.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
+    return res.status(SUCCESS).json({ message: menssageDelete });
   } catch (error) {
-    return res.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
+    return res.status(SUCCESS).json({ message: menssageDelete });
   }
 };
 
-const searchCrush = async (req, res, _next) => {
-  const { q } = req.query;
-  console.log(req);
-  console.log('Passou por aqui');
+const searchCrush = async (req, res) => {
+  try {
+    const { q } = req.query;
+    console.log(req);
+    console.log('Passou por aqui em controller');
 
-  const { authorization } = req.headers;
+    const result = await fs.promises.readFile(crushFile, 'utf-8');
+    const resultArray = JSON.parse(result);
+    if (!q) {
+      return res.status(SUCCESS).json([]);
+    }
+    const response = resultArray.filter((crush) => crush.name.includes(q));
+    if (!response) return res.status(NOTFOUND).json({ message: 'Crush não encontrado' });
 
-  if (!authorization) return res.status(401).json({ message: 'Token não encontrado' });
-  if (authorization.length < 16) return res.status(401).json({ message: 'Token inválido' });
-
-  const result = await fs.promises.readFile(crushFile, 'utf-8');
-  const resultArray = JSON.parse(result);
-  if (!q) {
-    return res.status(200).json(resultArray);
+    return res.status(SUCCESS).json(response);
+  } catch (error) {
+    console.log('Erro no controller');
+    return res.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
   }
-  const response = resultArray.filter((crush) => crush.name.includes(q));
-  if (!response) return res.status(NOTFOUND).json({ message: 'Crush não encontrado' });
-
-  return res.status(200).json(response);
 };
 
 module.exports = {

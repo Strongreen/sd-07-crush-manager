@@ -27,6 +27,6 @@ router.put(crushId,
   middlewares.validRate,
   crushController.updateCrush);
 router.delete(crushId, middlewares.validToken, crushController.deleteCrush);
-router.get('/crush/search', crushController.searchCrush);
+router.get('/crush/search', middlewares.validToken, crushController.searchCrush);
 
 module.exports = router;
