@@ -1,13 +1,38 @@
 const express = require('express');
+const rescue = require('express-rescue');
+const helpers = require('./helpers');
 
-const loginRoute = express();
+const loginRoute = express.Router();
+const {
+  tokenGenerator,
+  emailValidator,
+  passwordValidator,
+} = helpers.loginRouteHelper;
 
-loginRoute.post('/', async (req, res) => {
+const SUCESSS = 200;
+const BAD_REQUEST = 400;
+// const NOT_FOUND = 404;
+// const INTERNAL_ERROR = 500;
+
+// loginRoute.get('/', rescue(async (req, res) => {
+//   try {
+//     res.status(SUCESSS).send({ token: tokenGenerator() });
+//   } catch (err) {
+//     res.status(INTERNAL_ERROR).send('Erro na requisição no login!');
+//   }
+// }));
+
+loginRoute.post('/', rescue(async (req, res) => {
   try {
-    res.status(200).send({ message: 'Entrou na rota login!' });
-  } catch (err) {
-    res.status(500).send(err);
+    const { email, password } = req.body;
+    emailValidator(email);
+    passwordValidator(password);
+    res.status(SUCESSS).send({ token: tokenGenerator() });
+  } catch (error) {
+    res.status(BAD_REQUEST).send({
+      message: error.message, // Identificará a mensagem passada do emailValidator. Referência: Luciano Berchon.
+    });
   }
-});
+}));
 
 module.exports = loginRoute;

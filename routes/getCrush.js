@@ -1,7 +1,7 @@
 const fs = require('fs').promises;
 const express = require('express');
 
-const crushRoute = express();
+const crushRoute = express.Router();
 
 const SUCESSS = 200;
 const NOT_FOUND = 404;
