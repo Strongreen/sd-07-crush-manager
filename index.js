@@ -1,7 +1,6 @@
 const express = require('express');
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const { response } = require('express');
 const { OK, NOT_FOUND, BAD_REQUEST, UNAUTHORIZED, CREATED } = require('./httpCode');
 const {
   notFound,
