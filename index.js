@@ -17,6 +17,7 @@ const {
   dateWrongFormat,
   rateInvalid,
   dateIsMandatory,
+  crushDeleted,
 } = require('./errorMessages');
 
 const { getToken } = require('./middlewares');
@@ -30,6 +31,8 @@ app.get('/', (_req, res) => {
   res.status(OK).send();
 });
 
+const crushRouteId = '/crush/:id';
+
 app.get('/crush', async (_req, res) => {
   const data = await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8')
     .then((result) => res.status(OK).send(JSON.parse(result)))
@@ -37,7 +40,7 @@ app.get('/crush', async (_req, res) => {
   return data;
 });
 
-app.get('/crush/:id', async (req, res) => {
+app.get(crushRouteId, async (req, res) => {
   const { id } = req.params;
   const data = await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8');
   const result = JSON.parse(data).find((crush) => crush.id === Number(id));
@@ -108,6 +111,48 @@ app.post(
       return fs.promises
         .writeFile(`${__dirname}/crush.json`, JSON.stringify(data))
         .then(() => res.status(CREATED).send(req.body))
+        .catch((error) => console.error(error));
+    } catch (error) {
+      console.error(error);
+    }
+  },
+);
+
+app.put(
+  crushRouteId,
+  validateToken,
+  validateCrushExistence,
+  validateDate,
+  validateRate,
+  validateCrush,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      req.body.id = Number(id);
+      const data = await JSON.parse(await fs.promises.readFile(`${__dirname}/crush.json`));
+      const newCrush = data.map((crush) => (crush.id === Number(id) ? req.body : crush));
+      return fs.promises
+        .writeFile(`${__dirname}/cruush.json`, JSON.stringify(newCrush))
+        .then(() => res.status(OK).send(req.body))
+        .catch((error) => console.error(error));
+    } catch (error) {
+      console.error(error);
+    }
+  },
+);
+
+app.delete(
+  crushRouteId,
+  validateToken,
+  async (req, res) => {
+    try {
+      const { id } = req.params;
+      const data = await JSON.parse(await fs.promises.readFile(`${__dirname}/crush.json`));
+      req.body.id = Number(id);
+      data.foreach((crush, index) => crush.id === Number(id) && data.splice(index, 1));
+      return fs.promises
+        .writeFile(`${__dirname}/crush.json`, JSON.stringify(data))
+        .then(() => res.status(OK).send(crushDeleted))
         .catch((error) => console.error(error));
     } catch (error) {
       console.error(error);

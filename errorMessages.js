@@ -54,6 +54,8 @@ const dateIsMandatory = {
   message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
 };
 
+const crushDeleted = { message: 'Crush deletado com sucesso' };
+
 module.exports = {
   notFound,
   emailIsMandatory,
@@ -69,4 +71,5 @@ module.exports = {
   dateWrongFormat,
   rateInvalid,
   dateIsMandatory,
+  crushDeleted,
 };
