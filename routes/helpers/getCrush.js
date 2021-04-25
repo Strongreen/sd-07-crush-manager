@@ -24,11 +24,14 @@ const dateValidator = (date) => {
 };
 
 const datedAtValidator = (date) => {
-  const expectedPattern = /^[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
+  const expectedPattern = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/;
+  
   const { datedAt } = date;
-  if (datedAt !== expectedPattern) {
+  if (!expectedPattern.test(datedAt)) {
+    console.log(datedAt);
     throw new Error('O campo "datedAt" deve ter o formato "dd/mm/aaaa');
   }
+  return date;
 };
 
 const rateValidator = (date) => {

@@ -1,11 +1,20 @@
 const fs = require('fs').promises;
 const express = require('express');
-const crushData = require('../crush.json');
+const helpers = require('./helpers');
 
 const crushRoute = express.Router();
 
+const {
+  nameValidator,
+  ageValidator,
+  datedAtValidator,
+  rateValidator,
+  dateValidator,
+} = helpers.crushRouteHelper;
+
 const SUCESSS = 200;
-// const BAD_REQUEST = 400;
+const NEW_FILE = 201;
+const BAD_REQUEST = 400;
 const NOT_FOUND = 404;
 const INTERNAL_ERROR = 500;
 
@@ -18,13 +27,13 @@ const readCrushFile = async () => {
   }
 };
 
-// const writeCrushFile = async () => {
-//   try {
-//     await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushData));
-//   } catch (error) {
-//     throw new Error('Erro na escrita do arquivo!');
-//   }
-// };
+const writeCrushFile = async (content) => {
+  try {
+    await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(content));
+  } catch (error) {
+    throw new Error('Erro na escrita do arquivo!');
+  }
+};
 
 crushRoute.get('/', async (req, res) => {
   try {
@@ -55,12 +64,23 @@ crushRoute.get('/:id', async (req, res) => {
   }
 });
 
-// crushRoute.post('/crush', async (req, res) => {
-//   try {
-//     const { name, age, date: { datedAt, rate } } = req.body;
-//   } catch (error) {
-    
-//   }
-// });
+crushRoute.post('/', async (req, res) => {
+  try {
+    const oldResult = await readCrushFile();
+    const { name, age, date } = req.body;
+    nameValidator(name);
+    ageValidator(age);
+    dateValidator(date);
+    datedAtValidator(date);
+    rateValidator(date);
+    const newResult = oldResult.push({ name, age, date });
+    await writeCrushFile(newResult);
+    res.status(NEW_FILE).send({ message: 'Deu bom!' });
+  } catch (error) {
+   res.status(BAD_REQUEST).send({
+     message: error.message,
+   });
+  }
+});
 
 module.exports = crushRoute;
