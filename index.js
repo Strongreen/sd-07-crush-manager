@@ -1,6 +1,5 @@
 const express = require('express');
 const fs = require('fs');
-const { dirname } = require('path');
 
 const app = express();
 const source = './crush.json';
