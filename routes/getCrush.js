@@ -78,5 +78,6 @@ crushRoute.post('/', rescue(async (req, res) => {
    res.status(BAD_REQUEST).json({ message: error.message });
   }
 }));
+// teste
 
 module.exports = crushRoute;
