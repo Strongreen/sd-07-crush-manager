@@ -1,5 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const router = require('./routes');
+const route = require('./routes/getAllCrush');
 
 const app = express();
 app.use(bodyParser.json());
@@ -11,5 +13,7 @@ const PORT = '3000';
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
+
+app.use(router.getAllCrush);
 
 app.listen(PORT, () => { console.log('Online'); });
