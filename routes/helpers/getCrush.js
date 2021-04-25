@@ -28,10 +28,8 @@ const datedAtValidator = (date) => {
   
   const { datedAt } = date;
   if (!expectedPattern.test(datedAt)) {
-    console.log(datedAt);
     throw new Error('O campo "datedAt" deve ter o formato "dd/mm/aaaa');
   }
-  return date;
 };
 
 const rateValidator = (date) => {
