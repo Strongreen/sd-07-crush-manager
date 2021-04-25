@@ -8,26 +8,28 @@ app.use(express.json());
 
 const router = express.Router();
 
-const data = JSON.parse(fs.readFileSync('./crush.json', 'utf8'));
+const data = JSON.parse(fs.readFileSync('crush.json', 'utf8'));
 const crushInit = '/crush';
 const crushRoute = '/crush/:id';
 
 /* ---------- REQUISITO 1 ---------- */
 router.get(crushInit, (_req, res) => {
-  if (data.length === 0) {
-    return res.status(200).send([]);
+  if (!data.length) {
+    console.log('entrou no if');
+    return res.status(200).json([]);
   }
   res.status(200).json(data);
 });
 
 /* ---------- REQUISITO 2 -----------*/
 router.get(crushRoute, (req, res) => {
-  /* console.log(data2); */
   const { id } = req.params;
   const crushId = parseInt(id, 10);
   const crushFind = data.find((crush) => crush.id === crushId);
-  if (crushFind) res.status(200).json(crushFind);
+  if (!crushFind) {
   return res.status(404).json({ message: 'Crush não encontrado' });
+  }
+  res.status(200).json(crushFind);
 });
 
 /* ----------- REQUISITO 3 ---------- */
@@ -65,10 +67,10 @@ router.post(crushInit, (req, res) => {
     console.log('entrou no try');
     crushModels.validForAll(element);
     data.push({ name, age, id: data.length + 1, date });
-    fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(data));
+    /* fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(data)); */
     res.status(201).json({ message: data[data.length - 1] });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(401).json({ message: error.message });
   }
 });
 /* data[data.length - 1] */
@@ -83,7 +85,7 @@ router.put(crushRoute, (req, res) => {
     data[id - 1].name = name;
     data[id - 1].age = age;
     data[id - 1].date = date;
-    fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(data));
+    /* fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(data)); */
     return res.status(200).send({ message: 'Personagem adicionado' });
   } catch (error) {
     throw new Error(error);
@@ -98,7 +100,7 @@ router.delete(crushRoute, (req, res) => {
   const index = Number(id - 1);
   data.splice(index, 1);
   try {
-    fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(data));
+    /* fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(data)); */
     return res.status(200).json({ message: 'Crush deletado com sucesso' });
   } catch (error) {
     throw new Error(error);
@@ -106,7 +108,7 @@ router.delete(crushRoute, (req, res) => {
 });
 
 router.use((err, _req, res, _next) => {
-  res.status(400).json({ message: err.message });
+  res.status(401).json({ message: err.message });
 });
 
 module.exports = router;
