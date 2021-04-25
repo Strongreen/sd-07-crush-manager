@@ -1,9 +1,11 @@
 const fs = require('fs').promises;
 const express = require('express');
+const crushData = require('../crush.json');
 
 const crushRoute = express.Router();
 
 const SUCESSS = 200;
+// const BAD_REQUEST = 400;
 const NOT_FOUND = 404;
 const INTERNAL_ERROR = 500;
 
@@ -15,6 +17,14 @@ const readCrushFile = async () => {
     throw new Error('Erro na leitura do arquivo!');
   }
 };
+
+// const writeCrushFile = async () => {
+//   try {
+//     await fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushData));
+//   } catch (error) {
+//     throw new Error('Erro na escrita do arquivo!');
+//   }
+// };
 
 crushRoute.get('/', async (req, res) => {
   try {
@@ -44,5 +54,13 @@ crushRoute.get('/:id', async (req, res) => {
     });
   }
 });
+
+// crushRoute.post('/crush', async (req, res) => {
+//   try {
+//     const { name, age, date: { datedAt, rate } } = req.body;
+//   } catch (error) {
+    
+//   }
+// });
 
 module.exports = crushRoute;
