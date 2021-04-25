@@ -16,9 +16,9 @@ const BAD_REQUEST = 400;
 
 // loginRoute.get('/', rescue(async (req, res) => {
 //   try {
-//     res.status(SUCESSS).send({ token: tokenGenerator() });
+//     res.status(SUCESSS).json({ token: tokenGenerator() });
 //   } catch (err) {
-//     res.status(INTERNAL_ERROR).send('Erro na requisição no login!');
+//     res.status(INTERNAL_ERROR).json('Erro na requisição no login!');
 //   }
 // }));
 
@@ -27,9 +27,9 @@ loginRoute.post('/', rescue(async (req, res) => {
     const { email, password } = req.body;
     emailValidator(email);
     passwordValidator(password);
-    res.status(SUCESSS).send({ token: tokenGenerator() });
+    res.status(SUCESSS).json({ token: tokenGenerator() });
   } catch (error) {
-    res.status(BAD_REQUEST).send({
+    res.status(BAD_REQUEST).json({
       message: error.message, // Identificará a mensagem passada do emailValidator. Referência: Luciano Berchon.
     });
   }

@@ -1,20 +1,20 @@
 const fs = require('fs').promises;
 const express = require('express');
+const rescue = require('express-rescue');
 const helpers = require('./helpers');
 
 const crushRoute = express.Router();
 
 const {
-  nameValidator,
-  ageValidator,
-  datedAtValidator,
-  rateValidator,
-  dateValidator,
+  newCrush,
+  idGenerator,
+  authCrush,
 } = helpers.crushRouteHelper;
 
 const SUCESSS = 200;
 const NEW_FILE = 201;
 const BAD_REQUEST = 400;
+const UNAUTHORIZED = 401;
 const NOT_FOUND = 404;
 const INTERNAL_ERROR = 500;
 
@@ -38,9 +38,9 @@ const writeCrushFile = async (content) => {
 crushRoute.get('/', async (req, res) => {
   try {
     const result = await readCrushFile();
-    res.status(SUCESSS).send(result);
+    res.status(SUCESSS).json(result);
   } catch (err) {
-    res.status(INTERNAL_ERROR).send({
+    res.status(INTERNAL_ERROR).json({
       message: 'Erro na requisição do crush!',
     });
   }
@@ -52,35 +52,31 @@ crushRoute.get('/:id', async (req, res) => {
     const { id } = req.params;
     const getItem = await result.find((personalData) => personalData.id === Number(id));
     if (getItem) {
-      return res.status(SUCESSS).send(getItem);
+      return res.status(SUCESSS).json(getItem);
     }
-    return res.status(NOT_FOUND).send({
+    return res.status(NOT_FOUND).json({
       message: 'Crush não encontrado',
     });
   } catch (err) {
-    return res.status(INTERNAL_ERROR).send({
+    return res.status(INTERNAL_ERROR).json({
       message: 'Erro na requisição id do crush!',
     });
   }
 });
 
-crushRoute.post('/', async (req, res) => {
+crushRoute.post('/', rescue(async (req, res) => {
   try {
-    const oldResult = await readCrushFile();
+    authCrush(req, res);
     const { name, age, date } = req.body;
-    nameValidator(name);
-    ageValidator(age);
-    dateValidator(date);
-    datedAtValidator(date);
-    rateValidator(date);
-    const newResult = oldResult.push({ name, age, date });
+    const oldResult = await readCrushFile();
+    const params = { id: idGenerator(oldResult), name, age, date };
+    const newResult = [...oldResult, params];
     await writeCrushFile(newResult);
-    res.status(NEW_FILE).send({ message: 'Deu bom!' });
+    newCrush(req, res);
+    res.status(NEW_FILE).json(params);
   } catch (error) {
-   res.status(BAD_REQUEST).send({
-     message: error.message,
-   });
+   res.status(BAD_REQUEST).json({ message: error.message });
   }
-});
+}));
 
 module.exports = crushRoute;
