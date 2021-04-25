@@ -15,8 +15,8 @@ app.get('/', (_request, response) => {
 });
 
 app.get('/crush/', (req, res) => {
-  if (!data.length) return res.status(SUCCESS).send([]);
-  return res.status(SUCCESS).send(data);
+  if (data.length === 0) return res.status(SUCCESS).json([]);
+  return res.status(SUCCESS).json(data);
 });
 
 app.get('/crush/:id', (req, res) => {
