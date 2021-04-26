@@ -108,9 +108,13 @@ const crushCreationValidation = (name, age, date) => {
   const nameValidation = nameIsValid(name);
   const ageValidation = ageIsValid(age);
   const dateValidation = dateIsValid(date);
-  const dateContentValidation = contentIsValid(date);
-  const check = [nameValidation, ageValidation, dateValidation, dateContentValidation];
-  return check.find((validation) => validation !== undefined);
+  if (dateValidation) {
+    return dateValidation
+  } else {
+    const dateContentValidation = contentIsValid(date);
+    const check = [nameValidation, ageValidation, dateContentValidation];
+    return check.find((validation) => validation !== undefined);
+  }
 };
 
 // reads content from file crush.json
