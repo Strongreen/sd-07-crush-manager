@@ -1,3 +1,4 @@
+const crushRoute = require('./routes/crush');
 const express = require('express');
 const bodyParser = require('body-parser');
 
@@ -11,5 +12,7 @@ const PORT = '3000';
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
+
+app.use('/crush', crushRoute);
 
 app.listen(PORT, () => { console.log('Online'); });
