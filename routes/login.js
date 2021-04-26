@@ -11,16 +11,6 @@ const {
 
 const SUCESSS = 200;
 const BAD_REQUEST = 400;
-// const NOT_FOUND = 404;
-// const INTERNAL_ERROR = 500;
-
-// loginRoute.get('/', rescue(async (req, res) => {
-//   try {
-//     res.status(SUCESSS).json({ token: tokenGenerator() });
-//   } catch (err) {
-//     res.status(INTERNAL_ERROR).json('Erro na requisição no login!');
-//   }
-// }));
 
 loginRoute.post('/', rescue(async (req, res) => {
   try {

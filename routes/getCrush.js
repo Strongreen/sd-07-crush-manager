@@ -38,6 +38,23 @@ const writeCrushFile = async (content) => {
   }
 };
 
+crushRoute.get(
+  '/search',
+  authCrush,
+  async (req, res) => {
+    try {
+      const query = req.query.q;
+      const result = await readCrushFile();
+      const filteredResult = result
+      .filter((element) => element.name.toLowerCase().includes(query.toLowerCase()));
+      console.log(filteredResult);
+      res.status(SUCESSS).json(filteredResult);
+    } catch (error) {
+      return res.status(INTERNAL_ERROR).json({ message: error.message });
+    }
+  },
+);
+
 crushRoute.get('/', async (req, res) => {
   try {
     const result = await readCrushFile();
@@ -49,24 +66,24 @@ crushRoute.get('/', async (req, res) => {
   }
 });
 
-crushRoute.get('/:id', async (req, res) => {
-  try {
-    const result = await readCrushFile();
-    const { id } = req.params;
-    const getItem = result.find((personalData) => personalData.id === Number(id));
-    if (getItem) {
-      return res.status(SUCESSS).json(getItem);
+  crushRoute.get('/:id', async (req, res) => {
+    try {
+      const result = await readCrushFile();
+      const { id } = req.params;
+      const getItem = result.find((personalData) => personalData.id === Number(id));
+      if (getItem) {
+        return res.status(SUCESSS).json(getItem);
+      }
+      return res.status(NOT_FOUND).json({
+        message: 'Crush não encontrado',
+      });
+    } catch (err) {
+      return res.status(INTERNAL_ERROR).json({
+        message: 'Erro na requisição id do crush!',
+      });
     }
-    return res.status(NOT_FOUND).json({
-      message: 'Crush não encontrado',
-    });
-  } catch (err) {
-    return res.status(INTERNAL_ERROR).json({
-      message: 'Erro na requisição id do crush!',
-    });
-  }
-});
-
+  });
+  
 crushRoute.post(
   '/',
   authCrush,
