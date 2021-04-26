@@ -6,11 +6,10 @@ const crush = express.Router();
 function readCrushesFile() {
   return fs.readFile(`${__dirname}/../crush.json`, 'utf-8')
     .then((content) => JSON.parse(content))
-    .catch(err => console.log(err.message));
+    .catch((err) => console.log(err.message));
 }
 
 const SUCCESS = 200;
-const PORT = '3000';
 
 crush.get('/', async (_request, response) => {
   try {
