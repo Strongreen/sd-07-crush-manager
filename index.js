@@ -70,7 +70,7 @@ const nameIsValid = (name) => {
   return message;
 };
 
-//verifies if age key attends requirements
+// verifies if age key attends requirements
 const ageIsValid = (age) => {
   let message;
   if (!age) {
@@ -82,7 +82,7 @@ const ageIsValid = (age) => {
   return message;
 };
 
-//verifies if date key and contents exist
+// verifies if date key and contents exist
 const dateIsValid = (date) => {
   let message;
   if (!date || !date.datedAt || !date.rate) {
