@@ -53,7 +53,7 @@ crushRoute.get('/:id', async (req, res) => {
   try {
     const result = await readCrushFile();
     const { id } = req.params;
-    const getItem = await result.find((personalData) => personalData.id === Number(id));
+    const getItem = result.find((personalData) => personalData.id === Number(id));
     if (getItem) {
       return res.status(SUCESSS).json(getItem);
     }
@@ -100,12 +100,28 @@ crushRoute.put(
       const { name, age, date } = req.body;
       const result = await readCrushFile();
       const { id } = req.params;
-      const getIndex = await result.filter((personalData) => personalData.id).indexOf(id);
+      const getIndex = result.filter((personalData) => personalData.id).indexOf(id);
       result[getIndex] = { id: Number(id), name, age, date };
       await writeCrushFile(result);
       res.status(SUCESSS).json(result[getIndex]);
     } catch (error) {
       res.status(BAD_REQUEST).json({ message: error.message });
+    }
+  }),
+);
+
+crushRoute.delete(
+  '/:id',
+  authCrush,
+  rescue(async (req, res) => {
+    try {
+      const { id } = req.params;
+      const oldResult = await readCrushFile();
+      const newResult = oldResult.filter((personalData) => personalData.id !== Number(id));
+      await writeCrushFile(newResult);
+      res.status(SUCESSS).json({ message: 'Crush deletado com sucesso' });
+    } catch (error) {
+      res.status(INTERNAL_ERROR).json({ message: error.message });
     }
   }),
 );
