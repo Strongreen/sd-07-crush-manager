@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const routes = require('./routes');
-// const middlewares = require('./middlewares');
+const { crushRoute, loginRoute } = require('./routes');
 
 const app = express();
 const SUCCESS = 200;
@@ -13,10 +12,7 @@ app.get('/', (_request, response) => {
 });
 
 app.use(bodyParser.json());
-// app.use(middlewares);
-app.use('/crush', routes.crushRoute);
-app.use('/login', routes.loginRoute);
-
-// app.use(middleware.errorMiddleware);
+app.use('/crush', crushRoute);
+app.use('/login', loginRoute);
 
 app.listen(PORT, () => { console.log(`Online na porta ${PORT}`); });
