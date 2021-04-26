@@ -5,7 +5,6 @@ const crushModels = require('../models/crushModels');
 
 const router = express.Router();
 
-/* const data = JSON.parse(fs.readFileSync('crush.json', 'utf8')); */
 const crushJson = 'crush.json';
 const crushInit = '/crush';
 const crushRoute = '/crush/:id';
