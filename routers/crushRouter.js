@@ -93,7 +93,7 @@ router.put(crushRoute, (req, res) => {
     data[id - 1].age = age;
     data[id - 1].date = date;
     fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(data));
-    return res.status(200).send({ message: 'Personagem adicionado' });
+    return res.status(200).json(data[id - 1]);
   } catch (error) {
     if (error.message.includes('Token')) return res.status(401).json({ message: error.message });
     res.status(400).json({ message: error.message });
