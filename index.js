@@ -91,10 +91,10 @@ const dateIsValid = (date) => {
   return message;
 };
 
-// verifies is date content has correct format
+// verifies if date content has correct format
 const contentIsValid = (date) => {
   let message;
-  const splitDate = date.datedAt.split('/');
+  const splitDate = date ? date.datedAt.split('/') : 1;
   if (splitDate.length === 1) {
     message = 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"';
   } else if (date.rate < 1 || date.rate > 5) {
