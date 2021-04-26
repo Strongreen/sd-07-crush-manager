@@ -83,6 +83,28 @@ crushRoute.post(
       await writeCrushFile(newResult);
       res.status(NEW_FILE).json(params);
     } catch (error) {
+      res.status(INTERNAL_ERROR).json({ message: error.message });
+    }
+  }),
+);
+
+crushRoute.put(
+  '/:id',
+  authCrush,
+  nameValidator,
+  ageValidator,
+  datedAtValidator,
+  rateValidator,
+  rescue(async (req, res) => {
+    try {
+      const { name, age, date } = req.body;
+      const result = await readCrushFile();
+      const { id } = req.params;
+      const getIndex = await result.filter((personalData) => personalData.id).indexOf(id);
+      result[getIndex] = { id: Number(id), name, age, date };
+      await writeCrushFile(result);
+      res.status(SUCESSS).json(result[getIndex]);
+    } catch (error) {
       res.status(BAD_REQUEST).json({ message: error.message });
     }
   }),
