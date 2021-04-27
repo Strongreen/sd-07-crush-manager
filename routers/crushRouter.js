@@ -19,6 +19,25 @@ router.get(crushInit, (_req, res) => {
   res.status(200).json(data);
 });
 
+/* ---------- REQUISITO 7 -----------*/
+router.get('/crush/search', (req, res) => {
+  const data = JSON.parse(fs.readFileSync(crushJson, 'utf8'));
+  const { authorization } = req.headers;
+  const { q: search } = req.query;
+  try {
+    crushModels.validToken(authorization);
+    const crushFiltered = data.filter((crush) =>
+      crush.name.toUpperCase().includes(search.toUpperCase()));
+    if (!search || search === '') return res.status(200).json(router.get(crushInit));
+    return res.status(200).json(crushFiltered);
+  } catch (error) {
+    if (error.message.includes('Token')) {
+      return res.status(401).json({ message: error.message });
+    }
+    res.status(400).json({ message: error.message });
+  }
+});
+
 /* ---------- REQUISITO 2 -----------*/
 router.get(crushRoute, (req, res) => {
   const data = JSON.parse(fs.readFileSync(crushJson, 'utf8'));
