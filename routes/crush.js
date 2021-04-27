@@ -11,6 +11,8 @@ function readCrushesFile() {
 
 const SUCCESS = 200;
 
+const NOT_FOUND = 404;
+
 crush.get('/:id', async (request, response) => {
   try {
     console.log(request.params);
@@ -22,7 +24,7 @@ crush.get('/:id', async (request, response) => {
     const message = {
       message: 'Crush não encontrado',
     };
-    return response.status(404).send(message);
+    return response.status(NOT_FOUND).send(message);
   } catch (err) {
     response.status(500).send(err.message);
   }
