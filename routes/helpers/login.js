@@ -1,20 +1,10 @@
 const crypto = require('crypto');
 
 const tokenGenerator = () => crypto.randomBytes(8).toString('hex');
-
-// module.exports = (req, res, next) => {
-//   const { authorization } = req.headers;
-//   if (authorization && authorization > 15) return next();
-//   return res.status().send({
-//     message: 'Token inválido',
-//   });
-// };
-
 const emailValid = (email) => {
   const expectedPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return email && expectedPattern.test(email) && email !== '';
 };
-
 const emailValidator = (email) => {
   const expectedPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!email || email === '') {

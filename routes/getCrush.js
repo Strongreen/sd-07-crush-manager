@@ -1,9 +1,6 @@
 const fs = require('fs').promises;
 const express = require('express');
 const rescue = require('express-rescue');
-// const helpers = require('./helpers');
-
-const crushRoute = express.Router();
 
 const {
   idGenerator,
@@ -14,10 +11,11 @@ const {
   authCrush,
 } = require('./helpers').crushRouteHelper;
 
+const crushRoute = express.Router();
+
 const SUCESSS = 200;
 const NEW_FILE = 201;
 const BAD_REQUEST = 400;
-// const UNAUTHORIZED = 401;
 const NOT_FOUND = 404;
 const INTERNAL_ERROR = 500;
 
@@ -47,7 +45,6 @@ crushRoute.get(
       const result = await readCrushFile();
       const filteredResult = result
       .filter((element) => element.name.toLowerCase().includes(query.toLowerCase()));
-      console.log(filteredResult);
       res.status(SUCESSS).json(filteredResult);
     } catch (error) {
       return res.status(INTERNAL_ERROR).json({ message: error.message });
@@ -66,23 +63,23 @@ crushRoute.get('/', async (req, res) => {
   }
 });
 
-  crushRoute.get('/:id', async (req, res) => {
-    try {
-      const result = await readCrushFile();
-      const { id } = req.params;
-      const getItem = result.find((personalData) => personalData.id === Number(id));
-      if (getItem) {
-        return res.status(SUCESSS).json(getItem);
-      }
-      return res.status(NOT_FOUND).json({
-        message: 'Crush não encontrado',
-      });
-    } catch (err) {
-      return res.status(INTERNAL_ERROR).json({
-        message: 'Erro na requisição id do crush!',
-      });
+crushRoute.get('/:id', async (req, res) => {
+  try {
+    const result = await readCrushFile();
+    const { id } = req.params;
+    const getItem = result.find((personalData) => personalData.id === Number(id));
+    if (getItem) {
+      return res.status(SUCESSS).json(getItem);
     }
-  });
+    return res.status(NOT_FOUND).json({
+      message: 'Crush não encontrado',
+    });
+  } catch (err) {
+    return res.status(INTERNAL_ERROR).json({
+      message: 'Erro na requisição id do crush!',
+    });
+  }
+});
   
 crushRoute.post(
   '/',

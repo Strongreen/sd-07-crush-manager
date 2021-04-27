@@ -1,13 +1,13 @@
 const express = require('express');
 const rescue = require('express-rescue');
-const helpers = require('./helpers');
 
-const loginRoute = express.Router();
 const {
   tokenGenerator,
   emailValidator,
   passwordValidator,
-} = helpers.loginRouteHelper;
+} = require('./helpers').loginRouteHelper;
+
+const loginRoute = express.Router();
 
 const SUCESSS = 200;
 const BAD_REQUEST = 400;
