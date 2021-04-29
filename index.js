@@ -1,18 +1,22 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const router = require('./routes');
+/* const bodyParser = require('body-parser'); */
+const crushRouter = require('./routers');
 
 const app = express();
-app.use(bodyParser.json());
+/* app.use(bodyParser.json()); */
+app.use(express.json());
 
-const SUCCESS = 200;
-const PORT = '3000';
+const PORT = 3000;
 
-// não remova esse endpoint, e para o avaliador funcionar
-app.get('/', (_request, response) => {
-  response.status(SUCCESS).send();
+/* não remova esse endpoint, é para o avaliador funcionar */
+app.get('/', (_req, res) => {
+  res.status(200).send(
+    {
+      message: 'Só para voce saber amigo, ta logado; server ok',
+    },
+  );
 });
 
-app.use(router.getAllCrush);
+app.use('/', crushRouter);
 
 app.listen(PORT, () => { console.log('Online'); });
