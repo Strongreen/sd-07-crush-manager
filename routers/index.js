@@ -110,8 +110,8 @@ router.delete(crushRoute, (req, res) => {
   }
 });
 
-router.use((err, _req, res, _next) => {
-  res.status(401).json({ message: err.message });
-});
+// router.use((err, _req, res, _next) => {
+//   res.status(401).json({ message: err.message });
+// });
 
 module.exports = router;
