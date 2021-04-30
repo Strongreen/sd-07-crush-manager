@@ -319,7 +319,7 @@ Isso está configurado para o avaliador funcionar.
 
     ```js
     {
-      "message": "A \"senha\" deve ter pelo menos 6 caracteres"
+      "message": "A \"senha\" ter pelo menos 6 caracteres"
     }
     ```
 
@@ -342,7 +342,7 @@ Isso está configurado para o avaliador funcionar.
   }
   ```
 
-- A requisição deve ter o token de autenticação no header `Authorization`
+- A requisição deve ter o token de autenticação nos headers.
 
   - Caso o token não seja encontrado retorne um código de `status 401`, com o seguinte corpo:
 
@@ -461,7 +461,7 @@ Isso está configurado para o avaliador funcionar.
   }
   ```
   
-- A requisição deve ter o token de autenticação no header `Authorization`.
+- A requisição deve ter o token de autenticação nos headers.
 
   - Caso o token não seja encontrado retorne um código de `status 401`, com o seguinte corpo:
 
@@ -565,7 +565,7 @@ Isso está configurado para o avaliador funcionar.
 
 #### Os seguintes pontos serão avaliados:
 
-- A requisição deve ter o token de autenticação no header `Authorization`.
+- A requisição deve ter o token de autenticação nos headers.
 
   - Caso o token não seja encontrado retorne um código de `status 401`, com o seguinte corpo:
 
@@ -614,7 +614,7 @@ Isso está configurado para o avaliador funcionar.
   ];
   ```
 
-- A requisição deve ter o token de autenticação no header `Authorization`.
+- A requisição deve ter o token de autenticação nos headers.
 
   - Caso o token não seja encontrado retorne um código de `status 401`, com o seguinte corpo:
 

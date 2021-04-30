@@ -1,7 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const crypto = require('crypto');
-const middlewares = require('../middlewares');
+const crushModels = require('../models/crushModels');
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.get('/crush/search', (req, res) => {
   let data = JSON.parse(fs.readFileSync(crushJson, 'utf8'));
   const { authorization } = req.headers;
   const { q: term } = req.query;
-  middlewares.validToken(authorization);
+  crushModels.validToken(authorization);
   try {
     data = data.filter((crush) => crush.name.includes(term));
     return res.status(200).json(data);
@@ -43,10 +43,10 @@ router.get(crushRoute, (req, res) => {
 router.post('/login', (req, res) => {
   const token = crypto.randomBytes(8).toString('hex');
   const { email, password } = req.body;
-  const validEmailResult = middlewares.validEmail(email);
+  const validEmailResult = crushModels.validEmail(email);
   try {
     if (validEmailResult.error) return res.status(400).json({ message: validEmailResult.message });
-    const validPasswordResult = middlewares.validPass(password);
+    const validPasswordResult = crushModels.validPass(password);
     if (validPasswordResult.error) {
     return res.status(200).json({ token });
     }
@@ -61,8 +61,8 @@ router.post(crushInit, (req, res) => {
   const { authorization } = req.headers;
   const { name, age, date } = req.body;
   const element = req.body;
-  middlewares.validToken(authorization);
-  middlewares.validForAll(element);
+  crushModels.validToken(authorization);
+  crushModels.validForAll(element);
   try {
     data.push({ name, age, id: data.length + 1, date });
     fs.writeFileSync(`${__dirname}/../crush.json`, JSON.stringify(data));
@@ -81,8 +81,8 @@ router.put(crushRoute, (req, res) => {
   const { id } = req.params;
   const { name, age, date } = req.body;
   try {
-    middlewares.validToken(authorization);
-    middlewares.validForAll(element);
+    crushModels.validToken(authorization);
+    crushModels.validForAll(element);
     data[id - 1].name = name;
     data[id - 1].age = age;
     data[id - 1].date = date;
@@ -99,7 +99,7 @@ router.delete(crushRoute, (req, res) => {
   const data = JSON.parse(fs.readFileSync(crushJson, 'utf8'));
   const { authorization } = req.headers;
   const { id } = req.params;
-  middlewares.validToken(authorization);
+  crushModels.validToken(authorization);
   const index = Number(id - 1);
   data.splice(index, 1);
   try {
@@ -110,8 +110,8 @@ router.delete(crushRoute, (req, res) => {
   }
 });
 
-// router.use((err, _req, res, _next) => {
-//   res.status(401).json({ message: err.message });
-// });
+router.use((err, _req, res, _next) => {
+  res.status(401).json({ message: err.message });
+});
 
 module.exports = router;

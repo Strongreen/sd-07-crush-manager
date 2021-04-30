@@ -1,6 +1,6 @@
 const express = require('express');
 /* const bodyParser = require('body-parser'); */
-const crushRouter = require('./routers');
+const crushRouter = require('./routers/crushRouter');
 
 const app = express();
 /* app.use(bodyParser.json()); */
@@ -19,4 +19,6 @@ app.get('/', (_req, res) => {
 
 app.use('/', crushRouter);
 
-app.listen(PORT, () => { console.log('Online'); });
+app.listen(PORT, () => {
+  console.log(`O Pai ta ON na Porta ${PORT}`);
+});
