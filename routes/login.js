@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 const crypto = require('crypto');
 const emailMidleware = require('../middlewares/email');
@@ -13,7 +14,8 @@ router.post('/', emailMidleware, passwordMidleware, (_req, res) => {
     const token = generateToken();
     res.status(200).send({ token });
   } catch (err) {
-    res.status(500).send(`Deu ruim. Mensagem: ${err.message}`);  }
+    res.status(500).send(`Deu ruim. Mensagem: ${err.message}`);
+  }
 });
 
 module.exports = router;
