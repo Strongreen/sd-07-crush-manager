@@ -1,5 +1,13 @@
 const express = require('express');
 const fs = require('fs').promises;
+const {
+  nameMiddleware,
+  ageAuthMiddleware,
+  dateAuthMiddleware,
+  datedAtMiddle,
+  rateMiddle,
+  authMiddleware,
+} = require('../middlewares/authToken');
 
 const crush = express.Router();
 
@@ -8,6 +16,17 @@ function readCrushesFile() {
   .then((content) => JSON.parse(content))
   .catch((err) => console.log(err.message));
 }
+
+const writeCrushesFile = async (content) => (
+  fs.writeFile(
+    `${__dirname}/../crush.json`,
+    JSON.stringify(content),
+    'utf8',
+    (err) => {
+      if (err) throw err;
+    },
+  )
+);
 
 const SUCCESS = 200;
 
@@ -38,5 +57,33 @@ crush.get('/', async (request, response) => {
     response.status(500).send(err.message);
   }
 });
+
+crush.post(
+  '/',
+  authMiddleware,
+  nameMiddleware,
+  ageAuthMiddleware,
+  dateAuthMiddleware,
+  datedAtMiddle,
+  rateMiddle,
+  async (req, res) => {
+  const currentCrushes = await readCrushesFile();
+  const { name, age, date } = req.body;
+  const newCrushId = currentCrushes.length + 1;
+  const newCrush = {
+    id: newCrushId,
+    name,
+    age,
+    date,
+  };
+  try {
+    const newCrushesArray = [...currentCrushes, newCrush];
+    await writeCrushesFile(newCrushesArray);
+    return res.status(201).send(newCrush);
+  } catch (err) {
+    res.status(500).send(`Deu ruim. Mensagem: ${err.message}`);
+  }
+},
+);
 
 module.exports = crush;

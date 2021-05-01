@@ -2,7 +2,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const crushRoute = require('./routes/crush');
 const loginRoute = require('./routes/login');
-// const authMiddleware = require('./middlewares/login');
 
 const app = express();
 app.use(bodyParser.json());
