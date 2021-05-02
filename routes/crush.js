@@ -18,7 +18,7 @@ function readCrushesFile() {
 }
 
 const writeCrushesFile = async (content) => (
-  fs.writeFile(
+  await fs.writeFile(
     `${__dirname}/../crush.json`,
     JSON.stringify(content),
     'utf8',
@@ -34,7 +34,6 @@ const NOT_FOUND = 404;
 
 crush.get('/:id', async (request, response) => {
   try {
-    console.log(request.params);
     const result = await readCrushesFile();
     const crushId = result.find((crushData) => crushData.id === Number(request.params.id));
     if (crushId) {
@@ -65,8 +64,7 @@ crush.post(
   ageAuthMiddleware,
   dateAuthMiddleware,
   datedAtMiddle,
-  rateMiddle,
-  async (req, res) => {
+  rateMiddle,async (req, res) => {
   const currentCrushes = await readCrushesFile();
   const { name, age, date } = req.body;
   const newCrushId = currentCrushes.length + 1;
@@ -83,7 +81,30 @@ crush.post(
   } catch (err) {
     res.status(500).send(`Deu ruim. Mensagem: ${err.message}`);
   }
-},
-);
+});
+
+crush.put('/:id',
+  authMiddleware,
+  nameMiddleware,
+  ageAuthMiddleware,
+  dateAuthMiddleware,
+  datedAtMiddle,
+  rateMiddle, async (req, res) => {
+  const result = await readCrushesFile();
+  const { id } = req.params;
+  const { name, age, date } = req.body;
+  const crushIndex = result
+    .findIndex((crushData) => crushData.id === Number(id));
+  result[crushIndex] = { id: Number(id), name, age, date }
+  try {
+    await writeCrushesFile(result);
+    return res.status(SUCCESS).send(result[crushIndex]);
+  } catch (err) {
+    const message = {
+      message: 'Crush não encontrado',
+    };
+    return response.status(NOT_FOUND).send(message);
+  }
+});
 
 module.exports = crush;
