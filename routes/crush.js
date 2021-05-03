@@ -39,7 +39,6 @@ crush.get('/search', authMiddleware, async (req, res) => {
   const searchQuery = req.query.q;
   const crushMatchers = result
   .filter((crushData) => crushData.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  console.log(crushMatchers);
   if (!crushMatchers) {
     return res.status(SUCCESS).send(result);
   }
