@@ -94,8 +94,8 @@ const dateIsValid = (date) => {
 // verifies if date content has correct format
 const contentIsValid = (date) => {
   let message;
-  const splitDate = date ? date.datedAt.split('/') : 1;
-  if (splitDate.length === 1) {
+  const splitDate = date.datedAt.split('/');
+  if (splitDate.length !== 3) {
     message = 'O campo "datedAt" deve ter o formato "dd/mm/aaaa"';
   } else if (date.rate < 1 || date.rate > 5) {
     message = 'O campo "rate" deve ser um inteiro de 1 à 5';
@@ -109,9 +109,9 @@ const crushCreationValidation = (name, age, date) => {
   const ageValidation = ageIsValid(age);
   const dateValidation = dateIsValid(date);
   if (dateValidation) return dateValidation;
-    const dateContentValidation = contentIsValid(date);
-    const check = [nameValidation, ageValidation, dateContentValidation];
-    return check.find((validation) => validation !== undefined);
+  const dateContentValidation = contentIsValid(date);
+  const check = [nameValidation, ageValidation, dateContentValidation];
+  return check.find((validation) => validation !== undefined);
 };
 
 // reads content from file crush.json
@@ -168,6 +168,24 @@ app.post('/crush', tokenIsValid, async (req, res) => {
   const addCrush = [...allCrushs, newCrush];
   await fs.writeFile(crushJSON, JSON.stringify(addCrush));
   return res.status(CREATED).send(newCrush);
+});
+
+// allows to edit a crush (requirement n5)
+app.put('/crush/:id', tokenIsValid, async (req, res) => {
+  const { name, age, date } = req.body;
+  const validateInput = crushCreationValidation(name, age, date);
+  if (validateInput) {
+    return res.status(BAD_REQUEST).send({ message: `${validateInput}` });
+  }
+  const { id } = req.params;
+  const allCrushs = await fs.readFile(crushJSON, 'utf-8');
+  const toEditCrush = JSON.parse(allCrushs).find((crush) => Number(crush.id) === Number(id));
+  if (toEditCrush) {
+    toEditCrush.name = name;
+    toEditCrush.age = age;
+    toEditCrush.date = date;
+  }
+  return res.status(SUCCESS).send(toEditCrush);
 });
 
 app.listen(PORT, () => { console.log('Online'); });
