@@ -24,6 +24,7 @@ app.get('/', (_request, response) => {
 });
 
 const crushJSON = './crush.json';
+const crushByIdRoute = '/crush/:id';
 
 // function from https://ui.dev/validate-email-address-javascript/
 const emailIsValid = (email) => {
@@ -130,7 +131,7 @@ app.get('/crush', async (req, res) => {
 });
 
 // returns a crush from an id (requirement n2)
-app.get('/crush/:id', async (req, res) => {
+app.get(crushByIdRoute, async (req, res) => {
   const allCrushs = await readCrushs();
   const selectedCrush = allCrushs.find((crush) => crush.id === Number(req.params.id));
   if (selectedCrush) {
@@ -171,7 +172,7 @@ app.post('/crush', tokenIsValid, async (req, res) => {
 });
 
 // allows to edit a crush (requirement n5)
-app.put('/crush/:id', tokenIsValid, async (req, res) => {
+app.put(crushByIdRoute, tokenIsValid, async (req, res) => {
   const { name, age, date } = req.body;
   const validateInput = crushCreationValidation(name, age, date);
   if (validateInput) {
@@ -188,7 +189,14 @@ app.put('/crush/:id', tokenIsValid, async (req, res) => {
   return res.status(SUCCESS).send(toEditCrush);
 });
 
-// // allows to delete a crush (requirement n6)
-// app.delete('/crush/:id', tokenIsValid, async (req, res) => res.status(SUCCESS).send(toEditCrush));
+// allows to delete a crush (requirement n6)
+app.delete(crushByIdRoute, tokenIsValid, async (req, res) => {
+  const { id } = req.params;
+  const allCrushs = await fs.readFile(crushJSON, 'utf-8');
+  const undeletedCrushs = JSON.parse(allCrushs).filter((crush) => 
+  Number(crush.id) !== Number(id));
+  await fs.writeFile(crushJSON, JSON.stringify(undeletedCrushs));
+  res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
+});
 
 app.listen(PORT, () => { console.log('Online'); });
