@@ -110,4 +110,21 @@ crush.put('/:id',
   }
 });
 
+crush.delete('/:id', authMiddleware, async (req, res) => {
+  const result = await readCrushesFile();
+  const { id } = req.params;
+  const crushIndex = result
+    .findIndex((crushData) => crushData.id === Number(id));
+  result.splice(crushIndex, 1); 
+  try {
+    await writeCrushesFile(result);
+    const message = {
+      message: 'Crush deletado com sucesso',
+    };
+    return res.status(SUCCESS).send(message);
+  } catch (err) {
+    return res.status(NOT_FOUND).send(err.message);
+  }
+});
+
 module.exports = crush;
