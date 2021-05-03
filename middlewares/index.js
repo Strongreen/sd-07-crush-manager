@@ -15,5 +15,5 @@ module.exports = {
   errorMid,
   emailMid,
   passwordMid,
-  requestTokenMid
+  requestTokenMid,
 };

@@ -19,7 +19,6 @@ app.get('/search', midwares.authorizationMid, async (req, res) => {
   const filteredData = JSON.parse(response).filter(({ name }) =>
     name.includes(searchTerm),
   );
-
   res.status(200).send(filteredData);
 });
 
@@ -63,16 +62,13 @@ app.post('/', (req, res) => {
     res.status(201).send(object),
   );
 });
-
 app.put('/:id', (req, res) => {
   const { id } = req.params;
-
   const crush = { id: parseInt(id, 10), ...req.body };
   const filteredData = data.filter(
     (element) => element.id !== parseInt(id, 10),
   );
   const newData = [...filteredData, crush];
-
   fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData)).then(() =>
     res.status(200).send(crush),
   );
