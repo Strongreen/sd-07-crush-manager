@@ -17,8 +17,7 @@ app.get('/search', midwares.authorizationMid, async (req, res) => {
   }
   const response = await fs.readFile(`${__dirname}/../crush.json`, 'utf8');
   const filteredData = JSON.parse(response).filter(({ name }) =>
-    name.includes(searchTerm),
-  );
+    name.includes(searchTerm));
   res.status(200).send(filteredData);
 });
 
@@ -59,8 +58,7 @@ app.post('/', (req, res) => {
   const newData = [...data, object];
 
   fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData)).then(() =>
-    res.status(201).send(object),
-  );
+    res.status(201).send(object));
 });
 app.put('/:id', (req, res) => {
   const { id } = req.params;
@@ -70,8 +68,7 @@ app.put('/:id', (req, res) => {
   );
   const newData = [...filteredData, crush];
   fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData)).then(() =>
-    res.status(200).send(crush),
-  );
+    res.status(200).send(crush));
 });
 
 module.exports = app;
