@@ -85,7 +85,7 @@ const ageIsValid = (age) => {
 // verifies if date key and contents exist
 const dateIsValid = (date) => {
   let message;
-  if (!date || !date.datedAt || !date.rate) {
+  if (!date || !date.datedAt || date.rate === undefined || date.rate.length === 0) {
     message = 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios';
   }
   return message;
@@ -187,5 +187,8 @@ app.put('/crush/:id', tokenIsValid, async (req, res) => {
   }
   return res.status(SUCCESS).send(toEditCrush);
 });
+
+// // allows to delete a crush (requirement n6)
+// app.delete('/crush/:id', tokenIsValid, async (req, res) => res.status(SUCCESS).send(toEditCrush));
 
 app.listen(PORT, () => { console.log('Online'); });
