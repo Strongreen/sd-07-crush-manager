@@ -1,3 +1,5 @@
+// uso da função findIndex() sugerida por Lorena Goes
+
 const express = require('express');
 const fs = require('fs').promises;
 const {
@@ -18,7 +20,7 @@ function readCrushesFile() {
 }
 
 const writeCrushesFile = async (content) => (
-  await fs.writeFile(
+  fs.writeFile(
     `${__dirname}/../crush.json`,
     JSON.stringify(content),
     'utf8',
@@ -64,7 +66,7 @@ crush.post(
   ageAuthMiddleware,
   dateAuthMiddleware,
   datedAtMiddle,
-  rateMiddle,async (req, res) => {
+  rateMiddle, async (req, res) => {
   const currentCrushes = await readCrushesFile();
   const { name, age, date } = req.body;
   const newCrushId = currentCrushes.length + 1;
@@ -81,7 +83,8 @@ crush.post(
   } catch (err) {
     res.status(500).send(`Deu ruim. Mensagem: ${err.message}`);
   }
-});
+},
+);
 
 crush.put('/:id',
   authMiddleware,
@@ -95,7 +98,7 @@ crush.put('/:id',
   const { name, age, date } = req.body;
   const crushIndex = result
     .findIndex((crushData) => crushData.id === Number(id));
-  result[crushIndex] = { id: Number(id), name, age, date }
+  result[crushIndex] = { id: Number(id), name, age, date };
   try {
     await writeCrushesFile(result);
     return res.status(SUCCESS).send(result[crushIndex]);
@@ -103,7 +106,7 @@ crush.put('/:id',
     const message = {
       message: 'Crush não encontrado',
     };
-    return response.status(NOT_FOUND).send(message);
+    return res.status(NOT_FOUND).send(message);
   }
 });
 
