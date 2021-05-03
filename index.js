@@ -124,10 +124,24 @@ const readCrushs = async () => {
     console.error('Cannot read file');
   }
 };
+
 // returns an array of all crushes (requirement n1)
 app.get('/crush', async (req, res) => {
   const allCrushs = await readCrushs();
   return res.status(SUCCESS).send(allCrushs);
+});
+
+// allows to search a crush (requirement n7)
+app.get('/crush/search', tokenIsValid, async (req, res) => {
+  console.log('entrou');
+  const allCrushs = await readCrushs();
+  // adapted from @vitor-rc1
+  let resultArray = [...allCrushs];
+  const { q } = req.query;
+    if (q) {
+      resultArray = resultArray.filter(({ name }) => name.includes(q));
+    }
+    res.status(200).send(resultArray);
 });
 
 // returns a crush from an id (requirement n2)
