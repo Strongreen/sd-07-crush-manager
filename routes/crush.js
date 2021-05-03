@@ -34,6 +34,23 @@ const SUCCESS = 200;
 
 const NOT_FOUND = 404;
 
+crush.get('/search', authMiddleware, async (req, res) => {
+  const result = await readCrushesFile();
+  const searchQuery = req.query.q;
+  const crushMatchers = result
+  .filter((crushData) => crushData.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  console.log(crushMatchers);
+  if (!crushMatchers) {
+    return res.status(SUCCESS).send(result);
+  }
+  if (crushMatchers.length === 0) return res.status(200).send([]);
+  try {
+    return res.status(SUCCESS).send(crushMatchers);
+  } catch (err) {
+    return res.status(NOT_FOUND).send(err.message);
+  }
+});
+
 crush.get('/:id', async (request, response) => {
   try {
     const result = await readCrushesFile();
