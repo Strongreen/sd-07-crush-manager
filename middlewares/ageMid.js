@@ -1,4 +1,4 @@
-const checkAgeMiddleware = (req, res, next) => {
+const checkAgeMid = (req, res, next) => {
   const { age } = req.body;
   if (!age) {
     return res.status(400).send({
@@ -13,4 +13,4 @@ const checkAgeMiddleware = (req, res, next) => {
   next();
 };
 
-module.exports = checkAgeMiddleware;
+module.exports = checkAgeMid;

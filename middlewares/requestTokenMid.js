@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 
-const requestTokenMidware = (req, res, _next) => {
+const requestTokenMid = (req, res, _next) => {
   try {
     res.send({
       token: crypto.randomBytes(8).toString('hex'),
@@ -10,4 +10,4 @@ const requestTokenMidware = (req, res, _next) => {
   }
 };
 
-module.exports = requestTokenMidware;
+module.exports = requestTokenMid;

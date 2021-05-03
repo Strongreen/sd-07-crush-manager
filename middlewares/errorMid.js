@@ -1,7 +1,12 @@
-const erroMiddleware = (err, req, res, _next) => {
+const errorMid = (err, _req, res, _next) => {
   if (err.status) {
-    res.status(err.status).send(err.status);
+    res.status(err.status).send({
+      error: err.message,
+    });
   }
+  res.status(500).send({
+    error: err.message,
+  });
 };
 
-module.exports = erroMiddleware;
+module.exports = errorMid;

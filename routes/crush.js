@@ -1,54 +1,81 @@
 const express = require('express');
-
 const fs = require('fs').promises;
+const midwares = require('../middlewares/index');
+const data = require('../crush.json');
 
-const middlewares = require('../middlewares');
+const app = express();
 
-const router = express.Router();
-
-router.post(
-  '/',
-  middlewares.authorizationMiddleware,
-  middlewares.nameMiddleware,
-  middlewares.ageMiddleware,
-  middlewares.emptyDateRateMiddleware,
-  middlewares.formatedDateRateMiddleware,
-  middlewares.addCrushMiddleware,
-);
-
-router.get('/', async (_req, res) => {
-  try {
-    const data = await fs.readFile(`${__dirname}/../crush.json`);
-    res.status(200).send(JSON.parse(data));
-  } catch (error) {
-    console.log(error);
-  }
+app.get('/', async (_req, res) => {
+  const response = await fs.readFile(`${__dirname}/../crush.json`, 'utf8');
+  res.status(200).send(JSON.parse(response));
 });
 
-router.get('/:id', async (req, res) => {
+app.get('/search', midwares.authorizationMid, async (req, res) => {
+  const searchTerm = req.query.q;
+  if (searchTerm === undefined || searchTerm === '') {
+    res.status(200).send(data);
+  }
+  const response = await fs.readFile(`${__dirname}/../crush.json`, 'utf8');
+  const filteredData = JSON.parse(response).filter(({ name }) =>
+    name.includes(searchTerm),
+  );
+
+  res.status(200).send(filteredData);
+});
+
+app.get('/:id', (req, res) => {
   const { id } = req.params;
-  const data = await fs.readFile(`${__dirname}/../crush.json`);
-  const dataFind = JSON.parse(data).find((crush) => crush.id === Number(id));
-  try {
-    if (dataFind) {
-      res.send(dataFind);
-    } else {
-      res.status(404).send({
-        message: 'Crush não encontrado',
-      });
-    }
-  } catch (error) {
-    console.log(error);
+  const crushById = data.find((element) => element.id === parseInt(id, 10));
+
+  if (!crushById) {
+    res.status(404).send({
+      message: 'Crush não encontrado',
+    });
   }
+
+  res.status(200).send(crushById);
 });
 
-router.put('/:id', middlewares.authorizationMiddleware,
-middlewares.nameMiddleware,
-middlewares.ageMiddleware,
-middlewares.emptyDateRateMiddleware,
-middlewares.formatedDateRateMiddleware,
-middlewares.editCrushMiddleware);
+app.use(midwares.authorizationMid);
 
-router.delete('/:id', middlewares.authorizationMiddleware, middlewares.excludeCrushMiddleware);
+app.delete('/:id', (req, res) => {
+  const { id } = req.params;
 
-module.exports = router;
+  const filteredData = data.filter(
+    (element) => element.id !== parseInt(id, 10),
+  );
+
+  fs.writeFile(
+    `${__dirname}/../crush.json`,
+    JSON.stringify(filteredData),
+  ).then(() => res.status(200).send({ message: 'Crush deletado com sucesso' }));
+});
+
+app.use(midwares.checkNameMid);
+app.use(midwares.checkAgeMid);
+app.use(midwares.dateMid);
+
+app.post('/', (req, res) => {
+  const object = { id: data.length + 1, ...req.body };
+  const newData = [...data, object];
+
+  fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData)).then(() =>
+    res.status(201).send(object),
+  );
+});
+
+app.put('/:id', (req, res) => {
+  const { id } = req.params;
+
+  const crush = { id: parseInt(id, 10), ...req.body };
+  const filteredData = data.filter(
+    (element) => element.id !== parseInt(id, 10),
+  );
+  const newData = [...filteredData, crush];
+
+  fs.writeFile(`${__dirname}/../crush.json`, JSON.stringify(newData)).then(() =>
+    res.status(200).send(crush),
+  );
+});
+
+module.exports = app;

@@ -1,6 +1,5 @@
-const nameMidware = (req, res, next) => {
+const checkNameMid = (req, res, next) => {
   const { name } = req.body;
-
   if (name === '' || name === 'undefined') {
     res.status(400).send({
       message: 'O campo "name" é obrigatório',
@@ -14,4 +13,4 @@ const nameMidware = (req, res, next) => {
   }
 };
 
-module.exports = nameMidware;
+module.exports = checkNameMid;

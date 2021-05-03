@@ -6,9 +6,9 @@ const midwares = require('../middlewares');
 
 router.post(
   '/',
-  midwares.emailMiddleware,
-  midwares.passwordMiddleware,
-  midwares.requestTokenMidware,
+  midwares.emailMid,
+  midwares.passwordMid,
+  midwares.requestTokenMid,
 );
 
 module.exports = router;

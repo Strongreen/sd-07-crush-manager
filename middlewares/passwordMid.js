@@ -1,4 +1,4 @@
-const passwordMiddleware = (req, res, next) => {
+const passwordMid = (req, res, next) => {
   const { password } = req.body;
 
   if (!password || password === '') {
@@ -14,4 +14,4 @@ const passwordMiddleware = (req, res, next) => {
   next();
 };
 
-module.exports = passwordMiddleware;
+module.exports = passwordMid;

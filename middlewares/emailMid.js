@@ -2,7 +2,7 @@ const checkEmail = (email) =>
   /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.+-]+\.com$/.test(email);
 // https://www.w3resource.com/javascript/form/email-validation.php;
 
-const emailMiddiware = (req, res, next) => {
+const emailMid = (req, res, next) => {
   const { email } = req.body;
 
   if (!email || email === '') {
@@ -18,4 +18,4 @@ const emailMiddiware = (req, res, next) => {
   }
 };
 
-module.exports = emailMiddiware;
+module.exports = emailMid;
