@@ -13,7 +13,7 @@ const CREATED = 201;
 const BAD_REQ = 400;
 const UNAUTHORIZED = 401;
 const NOT_FOUND = 404;
-const PORT = '3000';
+const PORT = 3000;
 
 const tokenGenerator = () => crypto.randomBytes(8).toString('hex');
 
@@ -66,9 +66,7 @@ function verifyData(req, res, next) {
 }
 
 // não remova esse endpoint, e para o avaliador funcionar
-app.get('/', (_request, response) => {
-  response.status(SUCCESS).send();
-});
+app.get('/', (_request, response) => response.status(SUCCESS).send());
 
 // 1
 app.get('/crush', async (_req, res) => {
@@ -85,7 +83,7 @@ app.get('/crush/search', verifyAuth, async (req, res) => {
   if (!term) return res.status(SUCCESS).json(data);
 
   const findCrushes = data.filter(({ name }) => name.includes(term));
-  res.status(SUCCESS).json(findCrushes);
+  return res.status(SUCCESS).json(findCrushes);
 });
 
 // 2
@@ -124,7 +122,7 @@ app.post('/crush', verifyAuth, verifyData, async (req, res) => {
   data.push(addCrush);
   await fs.writeFile(file, JSON.stringify(data));
 
-  res.status(CREATED).json(addCrush);
+  return res.status(CREATED).json(addCrush);
 });
 
 // 5
@@ -138,7 +136,7 @@ app.put(idRoute, verifyAuth, verifyData, async (req, res) => {
   });
   await fs.writeFile(file, JSON.stringify(newData));
 
-  res.status(SUCCESS).json(updatedInfo);
+  return res.status(SUCCESS).json(updatedInfo);
 });
 
 // 6
@@ -148,7 +146,7 @@ app.delete(idRoute, verifyAuth, async (req, res) => {
   const newData = data.filter((crush) => crush.id !== id);
   await fs.writeFile(file, JSON.stringify(newData));
 
-  res.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
+  return res.status(SUCCESS).json({ message: 'Crush deletado com sucesso' });
 });
 
 app.listen(PORT, () => { console.log('Online'); });
