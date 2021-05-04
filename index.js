@@ -69,29 +69,21 @@ const validateCrushExistence = (req, res, next) => {
   next();
 };
 
+const validateRate = (req, res, next) => {
+  const { rate, datedAt } = req.body.date;
+  if (!datedAt) return res.status(BAD_REQUEST).send(dateIsMandatory);
+  if (rate === undefined) return res.status(BAD_REQUEST).send(dateIsMandatory);
+  if (rate < 1 || rate > 5) return res.status(BAD_REQUEST).send(rateInvalid);
+  next();
+};
+
 const validateCrush = (req, res, next) => {
   const { name, age, date } = req.body;
+  // source: https://github.com/tryber/sd-07-crush-manager/blob/Pedro-Paulo-Project-crush-manager/index.js
   const dateRegex = /([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/i;
-
   if (name.length < 3) return res.status(BAD_REQUEST).send(nameWrongFormat);
   if (age < 18) return res.status(BAD_REQUEST).send(ageInvalid);
-  if (!dateRegex.test(date)) return res.status(BAD_REQUEST).send(dateWrongFormat);
-
-  next();
-};
-
-const validateDate = (req, res, next) => {
-  const { date: { datedAt }, rate } = req.body;
-  if (datedAt === '' || rate === '' || !datedAt || rate === undefined) {
-    return res.status(BAD_REQUEST).send(dateIsMandatory);
-  }
-
-  next();
-};
-
-const validateRate = (req, res, next) => {
-  const { rate } = req.body.date;
-  if (rate < 1 || rate > 5) return res.status(BAD_REQUEST).send(rateInvalid);
+  if (!dateRegex.test(date.datedAt)) return res.status(BAD_REQUEST).send(dateWrongFormat);
   next();
 };
 
@@ -99,7 +91,6 @@ app.post(
   '/crush',
   validateToken,
   validateCrushExistence,
-  validateDate,
   validateRate,
   validateCrush,
   async (req, res) => {
@@ -122,7 +113,6 @@ app.put(
   crushRouteId,
   validateToken,
   validateCrushExistence,
-  validateDate,
   validateRate,
   validateCrush,
   async (req, res) => {
@@ -132,7 +122,7 @@ app.put(
       const data = await JSON.parse(await fs.promises.readFile(`${__dirname}/crush.json`));
       const newCrush = data.map((crush) => (crush.id === Number(id) ? req.body : crush));
       return fs.promises
-        .writeFile(`${__dirname}/cruush.json`, JSON.stringify(newCrush))
+        .writeFile(`${__dirname}/crush.json`, JSON.stringify(newCrush))
         .then(() => res.status(OK).send(req.body))
         .catch((error) => console.error(error));
     } catch (error) {
@@ -183,7 +173,6 @@ app.post('/login', emailMiddleware, passwordMiddleware, async (req, res) => {
   req.headers.Authorization = token;
   return res.status(OK).send({ token });
 });
-
 app.listen(PORT, () => {
   console.log('Online');
 });
