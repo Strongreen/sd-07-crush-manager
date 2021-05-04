@@ -139,7 +139,7 @@ app.delete(
       const { id } = req.params;
       const data = await JSON.parse(await fs.promises.readFile(`${__dirname}/crush.json`));
       req.body.id = Number(id);
-      data.foreach((crush, index) => crush.id === Number(id) && data.splice(index, 1));
+      data.forEach((crush, index) => crush.id === Number(id) && data.splice(index, 1));
       return fs.promises
         .writeFile(`${__dirname}/crush.json`, JSON.stringify(data))
         .then(() => res.status(OK).send(crushDeleted))
