@@ -33,7 +33,8 @@ function verifyAuth(req, res, next) {
   next();
 }
 
-function checkDateInfo(res, date) {
+function verifyDate(req, res, next) {
+  const { date } = req.body;
   const dateRegx = /^(0?[1-9]|[12][0-9]|3[01])[/-](0?[1-9]|1[012])[/-]\d{4}$/;
 
   if (checkMatchObjct(date)) {
@@ -47,10 +48,12 @@ function checkDateInfo(res, date) {
   if (date.rate < 1 || date.rate > 5) {
     return res.status(BAD_REQ).json({ message: 'O campo "rate" deve ser um inteiro de 1 à 5' });
   }
+
+  next();
 }
 
-function verifyData(req, res, next) {
-  const { name, age, date } = req.body;
+function verifyInfo(req, res, next) {
+  const { name, age } = req.body;
 
   if (!name) return res.status(BAD_REQ).json({ message: 'O campo "name" é obrigatório' });
   if (!age) return res.status(BAD_REQ).json({ message: 'O campo "age" é obrigatório' });
@@ -60,7 +63,6 @@ function verifyData(req, res, next) {
   if (age < 18) {
     return res.status(BAD_REQ).json({ message: 'O crush deve ser maior de idade' });
   }
-  checkDateInfo(res, date);
 
   next();
 }
@@ -115,7 +117,7 @@ app.post('/login', (req, res) => {
 });
 
 // 4
-app.post('/crush', verifyAuth, verifyData, async (req, res) => {
+app.post('/crush', verifyAuth, verifyInfo, verifyDate, async (req, res) => {
   const data = JSON.parse(await fs.readFile(file, 'utf-8'));
   const addCrush = { ...req.body, id: data.length + 1 };
 
@@ -126,7 +128,7 @@ app.post('/crush', verifyAuth, verifyData, async (req, res) => {
 });
 
 // 5
-app.put(idRoute, verifyAuth, verifyData, async (req, res) => {
+app.put(idRoute, verifyAuth, verifyInfo, verifyDate, async (req, res) => {
   const id = Number(req.params.id);
   const data = JSON.parse(await fs.readFile(file, 'utf-8'));
   const updatedInfo = { ...req.body, id };
