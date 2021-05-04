@@ -156,7 +156,7 @@ app.get('/crush/:id', (req, res) => {
   });
 });
 
-app.put('/crush/:id', (req, res) => {
+app.put('/crush/:id', async (req, res) => {
   const crushs = readFile(crushFile);
   const { id } = req.params;
   const oneCrush = crushs.find((c) => c.id === parseInt(id, 10));
