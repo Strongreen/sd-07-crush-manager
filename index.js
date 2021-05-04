@@ -156,6 +156,26 @@ app.get('/crush/:id', (req, res) => {
   });
 });
 
+app.put('/crush/:id', (req, res) => {
+  const crushs = readFile(crushFile);
+  const { id } = req.params;
+  const oneCrush = crushs.find((c) => c.id === parseInt(id, 10));
+  if (oneCrush[0]) {
+    const crushIndex = crushs.indexOf(oneCrush[0]);
+    crushs[crushIndex] = {
+      id: parseInt(id, 10),
+      name: req.body.name,
+      age: req.body.age,
+      date: req.body.date,
+    };
+    await writeInFile(crushs);
+    return res.status(SUCCESS).send(crushs[crushIndex]);
+  } 
+  return res.status(NOTFOUND).send({
+    message : 'Crush não encontrado'
+  });
+
+});
 app.delete('/crush/:id', middlewareLogin, async (req, res) => {
   const crushs = readFile(crushFile);
   const { id } = req.params;
