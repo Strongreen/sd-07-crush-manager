@@ -5,6 +5,7 @@ const path = require('path');
 
 const fs = require('fs');
 
+const idd = '/crush/:id';
 const crushFile = './crush.json';
 const validatorEmail = /^\S+@\S+\.\S+$/;
 const validatorDate = /^(0?[1-9]|[12][0-9]|3[01])[/](0?[1-9]|1[012])[/]\d{4}$/;
@@ -156,7 +157,7 @@ app.get('/crush/:id', (req, res) => {
   });
 });
 
-app.put('/crush/:id', (req, res) => {
+app.put(idd, (req, res) => {
   const crushs = readFile(crushFile);
   const { id } = req.params;
   const crushId = crushs.find((c) => c.id === parseInt(id, 10));
