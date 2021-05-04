@@ -161,7 +161,7 @@ app.put('/crush/:id', (req, res) => {
   const { id } = req.params;
   const crushId = crushs.find((c) => c.id === parseInt(id, 10));
   if (crushId) {
-    const crushIndex = crushs.indexOf(oneCrush[0]);
+    const crushIndex = crushs.indexOf(crushId[0]);
     crushs[crushIndex] = {
       id: parseInt(id, 10),
       name: req.body.name,
