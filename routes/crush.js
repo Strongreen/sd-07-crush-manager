@@ -2,7 +2,7 @@ const express = require('express');
 const fs = require('fs').promises;
 const crypto = require('crypto');
 const validations = require('../controllers/index');
-const { checkDate, checkAge, checkName, writeCrush } = require('../controllers/index');
+const { checkDate, checkAge, checkName } = require('../controllers/index');
 const checkAuthorization = require('../middlewares/authorization');
 const createdCrush = require('../models/createCrush');
 const { readFile, writeFile } = require('../services/readAndWrite');
@@ -93,7 +93,7 @@ app.put('/crush/:id', checkAuthorization, async (req, res) => {
   const crushIndex = result.findIndex((crushData) => crushData.id === Number(id));
   result[crushIndex] = { id: Number(id), name, age, date };
   try {
-    await writeCrush(result);
+    await writeFile(result);
     return res.status(200).send(result[crushIndex]);
   } catch (err) {
     const message = { message: 'Crush não encontrado' };

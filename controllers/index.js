@@ -8,7 +8,6 @@ const {
   checkAge,
   checkName,
 } = require('./createCrush');
-const writeCrush = require('./updateCrush');
 
 module.exports = {
   emailValidation,
@@ -19,5 +18,4 @@ module.exports = {
   checkDatedAt,
   checkAge,
   checkName,
-  writeCrush,
 };
