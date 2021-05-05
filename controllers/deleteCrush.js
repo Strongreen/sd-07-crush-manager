@@ -1,9 +1,8 @@
-const fs = require('fs').promises;
+const { readFile } = require('../services/readAndWrite');
 
 const deleteCrush = async (id, name, age, date) => {
-  const datas = await fs.readFile(`${__dirname}/../crush.json`, 'utf-8');
-  const dataParse = JSON.parse(datas);
-  const updatedCrushList = dataParse.map((elem) => {
+const result = readFile();
+  const updatedCrushList = result.map((elem) => {
    if (id === elem.id) return { id, name, age, date };
    return elem;
   }).find((curr) => id === curr.id);

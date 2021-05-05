@@ -28,10 +28,8 @@ app.get('/crush/search', checkAuthorization, async (req, res) => {
   }
 });
 
-app.get('/crush', (req, res) => {
-  fs.readFile(`${__dirname}/../crush.json`, 'utf-8')
-    .then((result) => res.status(SUCCESS).send(JSON.parse(result)))
-    .catch((_err) => console.log(_err));
+app.get('/crush', async (req, res) => {
+ res.send(await readFile());
 });
 
 app.get(`/crush/:${idRoute}`, async (req, res) => {
