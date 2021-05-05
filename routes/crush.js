@@ -4,7 +4,7 @@ const fs = require('fs').promises;
 const midwares = require('../middlewares/index');
 const data = require('../crush.json');
 
-const app = express()
+const app = express();
 
 // -------------------------------------------------------------------- METODOS GET
 
