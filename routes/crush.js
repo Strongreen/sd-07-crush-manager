@@ -20,7 +20,7 @@ app.get('/crush/search', checkAuthorization, async (req, res) => {
   const crushMatchers = result.filter((crushData) => crushData.name.includes(q));
   if (!crushMatchers) return res.status(SUCCESS).send(result);
   if (crushMatchers.length === 0) return res.status(200).send([]);
-  
+
   try {
     return res.status(200).send(crushMatchers);
   } catch (err) {
@@ -104,8 +104,7 @@ app.delete('/crush/:id', checkAuthorization, async (req, res) => {
   const { id } = req.params;
   const result = await readFile();
   const deletedCrushList = result.filter((element) => element.id === Number(id));
-  const convertDeleteCrushList = JSON.stringify(deletedCrushList, null, 2);
-  await writeFile(convertDeleteCrushList);
+  await writeFile(deletedCrushList);
   return res.status(200).send({ message: 'Crush deletado com sucesso' });
 });
 
