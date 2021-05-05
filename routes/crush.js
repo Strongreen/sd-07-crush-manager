@@ -1,5 +1,4 @@
 const express = require('express');
-const fs = require('fs').promises;
 const crypto = require('crypto');
 const validations = require('../controllers/index');
 const { checkDate, checkAge, checkName } = require('../controllers/index');
@@ -34,7 +33,7 @@ app.get('/crush', async (req, res) => {
 
 app.get(`/crush/:${idRoute}`, async (req, res) => {
   const { id } = req.params;
-  const data = await JSON.parse(await fs.readFile(`${__dirname}/../crush.json`, 'utf-8'));
+  const data = await readFile();
   const find = data.find((elem) => parseInt(id, 10) === elem.id);
   if (find) return res.status(SUCCESS).send(find);
   res.status(404).send({
