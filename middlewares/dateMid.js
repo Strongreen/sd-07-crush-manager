@@ -19,7 +19,7 @@ const checkRange = (date) => {
   }
 };
 
-const verifyRegex = (date) => {
+const checkRegex = (date) => {
   const dataRegex = new RegExp('[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}');
   const { datedAt } = date;
   if (!dataRegex.test(datedAt)) {
@@ -32,7 +32,7 @@ const dateMid = (req, res, next) => {
   try {
     checkEmpty(date);
     checkRange(date);
-    verifyRegex(date);
+    checkRegex(date);
     next();
   } catch (error) {
     res.status(400).send({ message: error.message });

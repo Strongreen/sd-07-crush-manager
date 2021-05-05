@@ -1,6 +1,5 @@
 const express = require('express');
 const randomToken = require('random-token');
-// https://www.npmjs.com/package/random-token
 
 const app = express();
 
