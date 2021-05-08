@@ -27,6 +27,14 @@ app.use(bodyParser.json());
 
 const PORT = 3000;
 
+const validateToken = (req, res, next) => {
+  const { authorization } = req.headers;
+
+  if (!authorization) return res.status(UNAUTHORIZED).send(tokenDoesntFound);
+  if (authorization.length < 16) return res.status(UNAUTHORIZED).send(tokenInvalid);
+  next();
+};
+
 app.get('/', (_req, res) => {
   res.status(OK).send();
 });
@@ -40,6 +48,22 @@ app.get('/crush', async (_req, res) => {
   return data;
 });
 
+app.get(
+  '/crush/search',
+  validateToken,
+  async (req, res) => {
+    const { q: searchTerm } = req.query;
+    const data = await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8')
+      .then((result) => res.status(OK).send(JSON.parse(result)))
+      .catch((err) => console.error(err));
+
+    if (!searchTerm || searchTerm === '') return data;
+
+    const find = data.filter(({ name }) => name.includes(searchTerm));
+    return res.status(OK).send(find);
+  },
+);
+
 app.get(crushRouteId, async (req, res) => {
   const { id } = req.params;
   const data = await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8');
@@ -50,14 +74,6 @@ app.get(crushRouteId, async (req, res) => {
   }
   return res.status(OK).json(result);
 });
-
-const validateToken = (req, res, next) => {
-  const { authorization } = req.headers;
-
-  if (!authorization) return res.status(UNAUTHORIZED).send(tokenDoesntFound);
-  if (authorization.length < 16) return res.status(UNAUTHORIZED).send(tokenInvalid);
-  next();
-};
 
 const validateCrushExistence = (req, res, next) => {
   const { name, age, date } = req.body;
