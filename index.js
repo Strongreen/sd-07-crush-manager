@@ -1,10 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-// const fs = require('fs');
+const fs = require('fs');
 const emailValidator = require('./_helpers/emailValidator.js');
 const generateToken = require('./_helpers/generateToken.js');
 const passwordValidator = require('./_helpers/passwordValidator.js');
 const readFilesPromise = require('./_helpers/readFilesPromise.js');
+const validToken = require('./_helpers/validToken.js');
+const {
+  validateAge,
+  validateName,
+  validateDate,
+  validateDateEmpty,
+} = require('./_helpers/validNewCrush.js');
 
 const app = express();
 app.use(bodyParser.json());
@@ -38,18 +45,32 @@ app.get('/crush/:id', (req, res) => {
 });
 
 // requirement 3
-app.post('/login', (req, res) => {
+app.post('/login', emailValidator, passwordValidator, (req, res) => {
   const token = generateToken();
-  const { email, password } = req.body;
-  const { statusEmail, messageEmail } = emailValidator(email);
-  const { statusPass, messagePass } = passwordValidator(password);
-  if (!statusEmail) {
-    res.status(400).send(messageEmail);
-  }
-  if (!statusPass) {
-    res.status(400).send(messagePass);
-  }
   res.status(200).send(token);
+});
+
+// requirement 4
+app.post('/crush',
+  validToken,
+  validateAge,
+  validateName,
+  validateDateEmpty,
+  validateDate,
+  (req, res) => {
+    const { age: newAge, date: newDate, name: newName } = req.body;
+    readFilesPromise(PATH)
+      .then((crushData) => {
+        const newId = crushData.length + 1;
+        const newCrush = { id: newId, name: newName, age: newAge, date: newDate };
+        crushData.push(newCrush);
+        const newCrushData = JSON.stringify(crushData);
+        fs.writeFile('./crush.json', newCrushData, (err) => {
+          if (err) return res.status(404).send({ message: 'Crush não adicionado' });
+        });
+        res.status(201).send(newCrush);
+      })
+      .catch(() => res.status(200).send());
 });
 
 app.listen(PORT, () => { console.log('Online'); });
