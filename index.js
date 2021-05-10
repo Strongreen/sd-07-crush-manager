@@ -65,10 +65,35 @@ app.post('/crush',
         const newCrush = { id: newId, name: newName, age: newAge, date: newDate };
         crushData.push(newCrush);
         const newCrushData = JSON.stringify(crushData);
-        fs.writeFile('./crush.json', newCrushData, (err) => {
+        fs.writeFile(PATH, newCrushData, (err) => {
           if (err) return res.status(404).send({ message: 'Crush não adicionado' });
         });
         res.status(201).send(newCrush);
+      })
+      .catch(() => res.status(200).send());
+});
+
+// requirement 5
+app.put('/crush/:id',
+  validToken,
+  validateAge,
+  validateName,
+  validateDateEmpty,
+  validateDate,
+  (req, res) => {
+    const { age: newAge, date: newDate, name: newName } = req.body;
+    const { id } = req.params;
+    readFilesPromise(PATH)
+      .then((crushData) => {
+        const currentId = parseInt(id, 10);
+        const newCrush = { id: currentId, name: newName, age: newAge, date: newDate };
+        const newCrushDataJson = crushData.filter(({ id: idcrush }) => idcrush !== currentId);
+        newCrushDataJson.push(newCrush);
+        const newCrushData = JSON.stringify(newCrushDataJson);
+        fs.writeFile(PATH, newCrushData, (err) => {
+          if (err) return res.status(404).send({ message: 'Crush não adicionado' });
+        });
+        res.status(200).send(newCrush);
       })
       .catch(() => res.status(200).send());
 });

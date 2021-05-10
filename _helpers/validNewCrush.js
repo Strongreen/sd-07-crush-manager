@@ -59,14 +59,15 @@ const validateDateEmpty = (req, res, next) => {
     res.status(400).send({
       message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
     });
-  } else {
-    const { datedAt, rate } = date;
-    if ((!datedAt) || (!rate)) {
-      res.status(400).send({
-        message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
-      });
-    }
   }
+
+  const { datedAt, rate } = date;
+  if ((!datedAt) || (rate !== 0 && !rate)) {
+    res.status(400).send({
+      message: 'O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios',
+    });
+  }
+  
   next();
 };
 
