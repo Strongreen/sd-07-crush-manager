@@ -54,7 +54,7 @@ app.get(
   async (req, res) => {
     const { q: searchTerm } = req.query;
     const data = await fs.promises.readFile(`${__dirname}/crush.json`, 'utf-8')
-      .then((result) => res.status(OK).send(JSON.parse(result)))
+      .then((result) => JSON.parse(result))
       .catch((err) => console.error(err));
 
     if (!searchTerm || searchTerm === '') return data;
