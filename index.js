@@ -6,12 +6,11 @@ const generateToken = require('./_helpers/generateToken.js');
 const passwordValidator = require('./_helpers/passwordValidator.js');
 const readFilesPromise = require('./_helpers/readFilesPromise.js');
 const validToken = require('./_helpers/validToken.js');
-const {
-  validateAge,
-  validateName,
-  validateDate,
-  validateDateEmpty,
-} = require('./_helpers/validNewCrush.js');
+const validateName = require('./_helpers/validateName.js');
+const validateAge = require('./_helpers/validateAge.js');
+const validateDateValues = require('./_helpers/validateDateValues.js');
+const validateDateEmpty = require('./_helpers/validateDateEmpty');
+const validateDateAtRateEmpty = require('./_helpers/validateDateAtRateEmpty');
 
 const app = express();
 app.use(bodyParser.json());
@@ -56,7 +55,8 @@ app.post('/crush',
   validateAge,
   validateName,
   validateDateEmpty,
-  validateDate,
+  validateDateAtRateEmpty,
+  validateDateValues,
   (req, res) => {
     const { age: newAge, date: newDate, name: newName } = req.body;
     readFilesPromise(PATH)
@@ -66,7 +66,7 @@ app.post('/crush',
         crushData.push(newCrush);
         const newCrushData = JSON.stringify(crushData);
         fs.writeFile(PATH, newCrushData, (err) => {
-          if (err) return res.status(404).send({ message: 'Crush não adicionado' });
+          if (err) res.status(404).send({ message: 'Crush não adicionado' });
         });
         res.status(201).send(newCrush);
       })
@@ -79,7 +79,8 @@ app.put('/crush/:id',
   validateAge,
   validateName,
   validateDateEmpty,
-  validateDate,
+  validateDateAtRateEmpty,
+  validateDateValues,
   (req, res) => {
     const { age: newAge, date: newDate, name: newName } = req.body;
     const { id } = req.params;
@@ -87,11 +88,11 @@ app.put('/crush/:id',
       .then((crushData) => {
         const currentId = parseInt(id, 10);
         const newCrush = { id: currentId, name: newName, age: newAge, date: newDate };
-        const newCrushDataJson = crushData.filter(({ id: idcrush }) => idcrush !== currentId);
+        const newCrushDataJson = crushData.filter(({ id: idCrush }) => idCrush !== currentId);
         newCrushDataJson.push(newCrush);
         const newCrushData = JSON.stringify(newCrushDataJson);
         fs.writeFile(PATH, newCrushData, (err) => {
-          if (err) return res.status(404).send({ message: 'Crush não adicionado' });
+          if (err) res.status(404).send({ message: 'Crush não adicionado' });
         });
         res.status(200).send(newCrush);
       })

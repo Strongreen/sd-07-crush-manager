@@ -1,9 +1,10 @@
 const fs = require('fs');
 
-const promiseReadFile = async (path) => {
+module.exports = async (path) => {
   const promise = await new Promise((resolve, reject) => {
     fs.readFile(path, (err, data) => {
       if (err) {
+        console.log('deu ruim');
         reject(err);
       }
       const crushesJson = JSON.parse(data);
@@ -12,5 +13,3 @@ const promiseReadFile = async (path) => {
   });
   return promise;
 };
-
-module.exports = promiseReadFile;
