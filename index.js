@@ -25,6 +25,25 @@ app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
 
+// requirement 7
+app.get('/crush/search',
+  validToken,
+  (req, res) => {
+    const { q } = req.query;
+    if (!q) {
+      readFilesPromise(PATH)
+        .then((resolve) => res.status(200).send(resolve))
+        .catch(() => res.status(200).send());
+    } else {
+      readFilesPromise(PATH)
+        .then((crushData) => {
+          const newCrushDataJson = crushData.filter(({ name }) => name.indexOf(q) !== -1);
+          res.status(200).send(newCrushDataJson);
+        })
+        .catch(() => res.status(200).send());
+    }
+});
+
 // requirement 1
 app.get('/crush', (req, res) => {
   readFilesPromise(PATH)
