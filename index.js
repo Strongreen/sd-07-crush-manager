@@ -18,6 +18,7 @@ app.use(bodyParser.json());
 const SUCCESS = 200;
 const PORT = '3000';
 const PATH = './crush.json';
+const CRUSH_ID = '/crush/:id';
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
@@ -32,7 +33,7 @@ app.get('/crush', (req, res) => {
 });
 
 // requirement 2
-app.get('/crush/:id', (req, res) => {
+app.get(CRUSH_ID, (req, res) => {
   const { id: idCrush } = req.params;
   readFilesPromise(PATH)
     .then((resolve) => {
@@ -92,9 +93,27 @@ app.put('/crush/:id',
         newCrushDataJson.push(newCrush);
         const newCrushData = JSON.stringify(newCrushDataJson);
         fs.writeFile(PATH, newCrushData, (err) => {
-          if (err) res.status(404).send({ message: 'Crush não adicionado' });
+          if (err) res.status(404).send({ message: 'Crush não editado' });
         });
         res.status(200).send(newCrush);
+      })
+      .catch(() => res.status(200).send());
+});
+
+// requirement 6
+app.delete(CRUSH_ID,
+  validToken,
+  (req, res) => {
+    const { id } = req.params;
+    readFilesPromise(PATH)
+      .then((crushData) => {
+        const currentId = parseInt(id, 10);
+        const newCrushDataJson = crushData.filter(({ id: idCrush }) => idCrush !== currentId);
+        const newCrushData = JSON.stringify(newCrushDataJson);
+        fs.writeFile(PATH, newCrushData, (err) => {
+          if (err) res.status(404).send({ message: 'Crush não deletado' });
+        });
+        res.status(200).send({ message: 'Crush deletado com sucesso' });
       })
       .catch(() => res.status(200).send());
 });
