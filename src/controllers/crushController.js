@@ -59,10 +59,28 @@ async function update(request, response) {
 
 async function deleteCrush(request, response) {
   const { id } = request.params;
-  const crushList = await file.readFilePromise(fileName);
-  const filteredCrushList = crushList.filter((next) => next.id !== id);
-  await fs.promises.writeFile(fileName, JSON.stringify(filteredCrushList));
-  return response.status(200).send({ message: 'Crush deletado com sucesso' });
+  try {
+    const crushList = await file.readFilePromise(fileName);
+    const filteredCrushList = crushList.filter((next) => next.id !== id);
+    await fs.promises.writeFile(fileName, JSON.stringify(filteredCrushList));
+    return response.status(200).send({ message: 'Crush deletado com sucesso' });
+  } catch (error) {
+    return response.status(400).json({ message: error.message });
+  }
 }
 
-module.exports = { index, store, update, deleteCrush };
+async function search(request, response) {
+  const { q } = request.query;
+  try {
+    const crushList = await file.readFilePromise(fileName);
+    if (q === undefined || q === '') {
+      return response.status(200).json(crushList);
+    }
+    const findedCrush = crushList.filter((crush) => (crush.name).includes(q));
+    return response.status(200).json(findedCrush);
+  } catch (error) {
+    return response.status(400).json({ message: error.message });
+  }
+}
+
+module.exports = { index, store, update, deleteCrush, search };

@@ -7,10 +7,12 @@ const sessionController = require('./controllers/sessionController');
 const routes = Router();
 
 routes.get('/crush', crushController.index);
-routes.get('/crush/:id', searchCrushController.searchById);
+routes.get('/crush/search', tokenValidation, crushController.search);
+routes.route('/crush/:id')
+.get(searchCrushController.searchById)
+.put(tokenValidation, crushController.update)
+.delete(tokenValidation, crushController.deleteCrush);
 routes.post('/login', sessionController.create);
-routes.use(tokenValidation);
-routes.post('/crush', crushController.store);
-routes.put('/crush/:id', crushController.update);
+routes.post('/crush', tokenValidation, crushController.store);
 
 module.exports = routes;
