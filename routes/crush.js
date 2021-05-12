@@ -5,8 +5,9 @@ const { readFile, writeFile } = require('fs').promises;
 const authMiddleware = require('./middlewares/auth');
 const { validateCrush, validateDate } = require('./middlewares/validate');
 
+const crushFile = 'crush.json';
 const getCrushs = async () =>
-  JSON.parse(await readFile(resolve(__dirname, '..', 'crush.json'), 'utf8'));
+  JSON.parse(await readFile(resolve(__dirname, '..', crushFile), 'utf8'));
 
 routes.get('/', async (req, res) => {
   try {
@@ -47,9 +48,29 @@ routes.post('/', async (req, res) => {
     
     const newCrushsList = [...crushs, newCrush];
     
-    await writeFile(resolve(__dirname, '..', 'crush.json'), JSON.stringify(newCrushsList, null, 2));
+    await writeFile(resolve(__dirname, '..', crushFile), JSON.stringify(newCrushsList, null, 2));
 
     return res.status(201).json(newCrush);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
+routes.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const crushs = await getCrushs();
+    const newCrush = {
+      id: parseInt(id, 10),
+      ...req.body,
+    };
+
+    const newCrushsList = crushs
+      .map((currentCrush) => (currentCrush.id === parseInt(id, 10) ? newCrush : currentCrush));
+
+    await writeFile(resolve(__dirname, '..', crushFile), JSON.stringify(newCrushsList, null, 2));
+
+    return res.status(200).json(newCrush);
   } catch (error) {
     return res.status(500).json(error);
   }

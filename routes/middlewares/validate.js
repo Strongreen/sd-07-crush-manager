@@ -11,7 +11,7 @@ const errors = {
   const minimumAge = 18;
   const dateFormat = /\d{2}[/]\d{2}[/]\d{4}/;
   
-  const isInvalidDate = (date) => !date || !date.datedAt || !date.rate;
+  const isInvalidDate = (date) => !date || !date.datedAt || (!date.rate && date.rate !== 0);
   
   module.exports = {
     validateCrush: (req, res, next) => {
