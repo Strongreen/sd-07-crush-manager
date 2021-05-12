@@ -97,8 +97,8 @@ app.post( // 4
   },
 );
 
-app.put('/:id', rescue((req, res) => { // 5
-  const crushes = JSON.parse(fs.readFileSync(`${__dirname}/../crush.json`, 'utf8'));
+app.put('/crush/:id', rescue((req, res) => { // 5
+  const crushs = JSON.parse(fs.readFileSync(`${__dirname}/../crush.json`, 'utf8'));
   const { name, age, date } = req.body;
   const { id } = req.params;
   const key = parseInt(id, 0) - 1;
@@ -108,43 +108,43 @@ app.put('/:id', rescue((req, res) => { // 5
     middlewareDateTest();
     middlewareDatedAtTest();
     middlewareRateTest();
-    crushes[key] = { name, id: parseInt(id, 0), age, date }; 
-    fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushes));
-    res.status(200).send({ id: crushes[key].id,
-      name: crushes[key].name,
-      age: crushes[key].age,
-      date: crushes[key].date });
+    crushs[key] = { name, id: parseInt(id, 0), age, date }; 
+    fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushs));
+    res.status(200).send({ id: crushs[key].id,
+      name: crushs[key].name,
+      age: crushs[key].age,
+      date: crushs[key].date });
   } catch (error) { res.status(400).send({ message: error.message }); }
 }));
 
-app.get('/crush/search', middlewareLogin, (req, res) => { // 7
-  const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');
-  const { q } = req.query;
+// app.get('/crush/search', middlewareLogin, (req, res) => { // 7
+//   const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');
+//   const { q } = req.query;
 
-  if (q === undefined) {
-    return res.status(SUCCESS).send([]);
-  } if (q === '') {
-    return res.status(SUCCESS).send(crushs);
-  }
+//   if (q === undefined) {
+//     return res.status(SUCCESS).send([]);
+//   } if (q === '') {
+//     return res.status(SUCCESS).send(crushs);
+//   }
 
-  const crushContains = crushs.filter((element) => element.name.includes(q));
+//   const crushContains = crushs.filter((element) => element.name.includes(q));
 
-  return res.status(SUCCESS).send(crushContains);
-});
+//   return res.status(SUCCESS).send(crushContains);
+// });
 
-app.delete('/crush/:id', middlewareLogin, async (req, res) => { // 7
-  const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8'); 
-  const { id } = req.params;
-  const newCrushFiltered = crushs.filter((element) => element.id !== parseInt(id, 10));
+// app.delete('/crush/:id', middlewareLogin, async (req, res) => { // 7
+//   const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8'); 
+//   const { id } = req.params;
+//   const newCrushFiltered = crushs.filter((element) => element.id !== parseInt(id, 10));
 
-  await writeFile(newCrushFiltered);
+//   await writeFile(newCrushFiltered);
 
-  return res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
-});
+//   return res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
+// });
 
-// não remova esse endpoint, e para o avaliador funcionar
-app.get('/', (_request, response) => {
-  response.status(SUCCESS).send();
-});
+// // não remova esse endpoint, e para o avaliador funcionar
+// app.get('/', (_request, response) => {
+//   response.status(SUCCESS).send();
+// });
 
 app.listen(PORT, () => { console.log('Online'); });
