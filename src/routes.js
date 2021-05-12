@@ -9,7 +9,8 @@ const routes = Router();
 routes.get('/crush', crushController.index);
 routes.get('/crush/:id', searchCrushController.searchById);
 routes.post('/login', sessionController.create);
-// routes.use(tokenValidation);
+routes.use(tokenValidation);
 routes.post('/crush', crushController.store);
+routes.put('/crush/:id', crushController.update);
 
 module.exports = routes;
