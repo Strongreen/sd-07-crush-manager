@@ -5,12 +5,12 @@ const errors = {
   EMAIL_MISSING: 'O campo "email" é obrigatório',
   EMAIL_INVALID: 'O "email" deve ter o formato "email@email.com"',
   PASS_MISSING: 'O campo "password" é obrigatório',
-  PASS_INVALID: 'O "password" deve ter pelo menos 6 caracteres',
+  PASS_INVALID: 'A "senha" deve ter pelo menos 6 caracteres',
 };
 
 routes.post('/', (req, res) => {
   const { email, password } = req.body;
-  
+
   if (!email) return res.status(400).json({ message: errors.EMAIL_MISSING });
   if (!/\w+@+\w+.com/.test(email)) return res.status(400).json({ message: errors.EMAIL_INVALID });
 

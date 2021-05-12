@@ -37,11 +37,11 @@ routes.get('/:id', async (req, res) => {
     const { id } = req.params;
     const crushs = await getCrushs();
     const crush = crushs.find(({ id: crushId }) => crushId === parseInt(id, 10));
-    
+
     if (!crush) {
       return res.status(404).json({ message: 'Crush não encontrado' });
     }
-    
+
     return res.status(200).json(crush || { message: 'Crush não encontrado' });
   } catch (error) {
     return res.status(500).json(error);
@@ -76,9 +76,9 @@ routes.post('/', async (req, res) => {
       id: crushs[crushs.length - 1].id + 1,
       ...req.body,
     };
-    
+
     const newCrushsList = [...crushs, newCrush];
-    
+
     await writeFile(resolve(__dirname, '..', crushFile), JSON.stringify(newCrushsList, null, 2));
 
     return res.status(201).json(newCrush);
