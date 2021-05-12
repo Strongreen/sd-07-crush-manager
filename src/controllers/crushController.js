@@ -41,11 +41,11 @@ async function store(request, response) {
 async function update(request, response) {
   const { name, age, date } = request.body;
   let { id } = request.params;
-  nameValidation(name);
-  ageValidation(age);
-  dateValidation(date.datedAt);
-  rateValidation(date.rate);
   try {
+    nameValidation(name);
+    ageValidation(age);
+    dateValidation(date.datedAt);
+    rateValidation(date.rate);
     const crushList = await file.readFilePromise(fileName);
     const filteredCrushList = crushList.filter((crush) => crush.id !== id);
     id = parseInt(id, 10);
