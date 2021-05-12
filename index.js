@@ -11,6 +11,7 @@ const PORT = '3000';
 app.get('/', (_request, response) => {
   response.status(SUCCESS).send();
 });
-app.use(require('./routes'));
+app.use('/login', require('./routes/login'));
+app.use('/crush', require('./routes/crush'));
 
 app.listen(PORT, () => { console.log('Online'); });
