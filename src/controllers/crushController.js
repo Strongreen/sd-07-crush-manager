@@ -38,4 +38,31 @@ async function store(request, response) {
   }
 }
 
-module.exports = { index, store };
+async function update(request, response) {
+  const { name, age, date } = request.body;
+  let { id } = request.params;
+  nameValidation(name);
+  ageValidation(age);
+  dateValidation(date.datedAt);
+  rateValidation(date.rate);
+  try {
+    const crushList = await file.readFilePromise(fileName);
+    const filteredCrushList = crushList.filter((crush) => crush.id !== id);
+    id = parseInt(id, 10);
+    await fs.promises.writeFile(fileName,
+      JSON.stringify([filteredCrushList, { id, name, age, date }]));
+    return response.status(200).json({ id, name, age, date });
+  } catch (error) {
+    return response.status(400).json({ message: error.message });
+  }
+}
+
+async function deleteCrush(request, response) {
+  const { id } = request.params;
+  const crushList = await file.readFilePromise(fileName);
+  const filteredCrushList = crushList.filter((next) => next.id !== id);
+  await fs.promises.writeFile(fileName, JSON.stringify(filteredCrushList));
+  return response.status(200).send({ message: 'Crush deletado com sucesso' });
+}
+
+module.exports = { index, store, update, deleteCrush };
