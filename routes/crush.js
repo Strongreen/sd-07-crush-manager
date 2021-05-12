@@ -35,6 +35,23 @@ routes.get('/:id', async (req, res) => {
 });
 
 routes.use(authMiddleware);
+
+routes.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const crushs = await getCrushs();
+
+    const newCrushsList = crushs
+      .filter((currentCrush) => (currentCrush.id !== parseInt(id, 10)));
+
+    await writeFile(resolve(__dirname, '..', crushFile), JSON.stringify(newCrushsList, null, 2));
+
+    return res.status(200).json({ message: 'Crush deletado com sucesso' });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+});
+
 routes.use(validateCrush);
 routes.use(validateDate);
 
