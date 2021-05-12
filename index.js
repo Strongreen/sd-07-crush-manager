@@ -41,6 +41,27 @@ const passwordTests = (password) => {
   return undefined;
 };
 
+// 1
+app.get('/crush', (req, res) => {
+  const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');  
+  res.status(SUCCESS).send(crushs);
+});
+
+// 2
+app.get('/crush/:id', (req, res) => {
+  const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');  
+  const { id } = req.params;
+  const crushId = crushs.find((element) => element.id === parseInt(id, 10));
+
+  if (crushId) {
+    res.status(SUCCESS).send(crushId);
+  }
+
+  res.status(404).send(
+    { message: 'Crush não encontrado' },
+  );
+});
+
 app.post('/login', (req, res) => { // 3
   const { email, password } = req.body;
   const resultEmailTest = emailTests(email);
@@ -74,27 +95,6 @@ app.post( // 4
     return res.status(201).send({ id, name, age, date });
   },
 );
-
-// 1
-app.get('/crush', (req, res) => {
-  const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');  
-  res.status(SUCCESS).send(crushs);
-});
-
-// 2
-app.get('/crush/:id', (req, res) => {
-  const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');  
-  const { id } = req.params;
-  const crushId = crushs.find((element) => element.id === parseInt(id, 10));
-
-  if (crushId) {
-    res.status(SUCCESS).send(crushId);
-  }
-
-  res.status(404).send(
-    { message: 'Crush não encontrado' },
-  );
-});
 
 app.get('/crush/search', middlewareLogin, (req, res) => { // 7
   const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');
