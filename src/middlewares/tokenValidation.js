@@ -1,4 +1,4 @@
-function tokenValidation(request, response, next) {
+async function tokenValidation(request, response, next) {
   const { authorization } = request.headers;
   if (!authorization) {
     return response.status(401).send({ message: 'Token não encontrado' });
