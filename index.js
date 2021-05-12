@@ -1,7 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const crypto = require('crypto');
 const { middlewareLogin, writeFile } = require('./middlewares/middlewareLogin');
+const { middlewareNameTest } = require('./middlewares/middlewareNameTest');
+const { middlewareAgeTest } = require('./middlewares/middlewareAgeTest');
+const { middlewareDateTest } = require('./middlewares/middlewareDateTest');
+const { middlewareDatedAtTest } = require('./middlewares/middlewareDatedAtTest');
+const { middlewareRateTest } = require('./middlewares/middlewareRateTest');
+
+const validatorEmail = /^\S+@\S+\.\S+$/;
 
 const fileCrushs = './crush.json';
 
@@ -10,6 +18,62 @@ app.use(bodyParser.json());
 
 const SUCCESS = 200;
 const PORT = '3000';
+
+const emailTests = (email) => {
+  if (email === undefined) {
+    const error = { message: 'O campo "email" é obrigatório' };
+    return error;
+  } if (!validatorEmail.test(email)) {
+    const error = { message: 'O "email" deve ter o formato "email@email.com"' };
+    return error;
+  }
+  return undefined;
+};
+
+const passwordTests = (password) => {
+  if (password === undefined) {
+    const error = { message: 'O campo "password" é obrigatório' };
+    return error;
+  } if (password.length < 6) {
+    const error = { message: 'A "senha" deve ter pelo menos 6 caracteres' };
+    return error;
+  }
+  return undefined;
+};
+
+app.post('/login', (req, res) => { // 3
+  const { email, password } = req.body;
+  const resultEmailTest = emailTests(email);
+  if (resultEmailTest) {
+    return res.status(400).send(resultEmailTest);
+  }
+
+  const resultPasswordTest = passwordTests(password);
+  if (resultPasswordTest) {
+    return res.status(400).send(resultPasswordTest);
+  }
+
+  const token = crypto.randomBytes(8).toString('hex');
+  return res.status(SUCCESS).send({ token });
+});
+
+app.post( // 4
+  '/crush',
+  middlewareLogin,
+  middlewareNameTest,
+  middlewareAgeTest,
+  middlewareDateTest,
+  middlewareDatedAtTest,
+  middlewareRateTest,
+  async (req, res) => {
+    const { name, age, date } = req.body;
+    const oldCrushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8'); 
+    const id = oldCrushs.length + 1;
+    const newArrayOfCrushs = [...oldCrushs, { id, name, age, date }];
+    await writeFile(newArrayOfCrushs);
+    return res.status(201).send({ id, name, age, date });
+  },
+);
 
 // 1
 app.get('/crush', (req, res) => {
@@ -32,7 +96,7 @@ app.get('/crush/:id', (req, res) => {
   );
 });
 
-app.get('/crush/search', middlewareLogin, (req, res) => {
+app.get('/crush/search', middlewareLogin, (req, res) => { // 7
   const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');
   const { q } = req.query;
 
