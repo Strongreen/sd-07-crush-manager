@@ -97,7 +97,7 @@ app.post( // 4
   },
 );
 
-app.put(
+app.put( // 5
   '/crush/:id',
   middlewareLogin,
   middlewareNameTest,
@@ -105,7 +105,7 @@ app.put(
   middlewareDateTest,
   middlewareDatedAtTest,
   middlewareRateTest,
-  rescue((req, res) => { // 5
+  rescue((req, res) => {
   const crushs = JSON.parse(fs.readFileSync(`${__dirname}/../crush.json`, 'utf8'));
   const { name, age, date } = req.body;
   const { id } = req.params;
@@ -120,6 +120,16 @@ app.put(
   } catch (error) { res.status(400).send({ message: error.message }); }
   }),
 );
+
+app.delete('/crush/:id', middlewareLogin, async (req, res) => { // 6
+  const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8'); 
+  const { id } = req.params;
+  const newCrushFiltered = crushs.filter((element) => element.id !== parseInt(id, 10));
+
+  await writeFile(newCrushFiltered);
+
+  return res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
+});
 
 // app.get('/crush/search', middlewareLogin, (req, res) => { // 7
 //   const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');
@@ -136,19 +146,9 @@ app.put(
 //   return res.status(SUCCESS).send(crushContains);
 // });
 
-// app.delete('/crush/:id', middlewareLogin, async (req, res) => { // 7
-//   const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8'); 
-//   const { id } = req.params;
-//   const newCrushFiltered = crushs.filter((element) => element.id !== parseInt(id, 10));
-
-//   await writeFile(newCrushFiltered);
-
-//   return res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
-// });
-
-// // não remova esse endpoint, e para o avaliador funcionar
-// app.get('/', (_request, response) => {
-//   response.status(SUCCESS).send();
-// });
+// não remova esse endpoint, e para o avaliador funcionar
+app.get('/', (_request, response) => {
+  response.status(SUCCESS).send();
+});
 
 app.listen(PORT, () => { console.log('Online'); });
