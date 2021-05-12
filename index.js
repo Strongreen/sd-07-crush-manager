@@ -97,8 +97,8 @@ app.post( // 4
   },
 );
 
-app.put( // 5
-  '/crush/:id',
+app.post( // 5
+  '/crush',
   middlewareLogin,
   middlewareNameTest,
   middlewareAgeTest,
