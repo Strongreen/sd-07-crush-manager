@@ -10,7 +10,7 @@ function validateEmail(email) {
 function validatePassword(password) {
   if (!password) throw new Error('O campo "password" é obrigatório');
   if (password.length < 6) {
-    throw new Error('O "password" deve ter pelo menos 6 caracteres');
+    throw new Error('A "senha" deve ter pelo menos 6 caracteres');
   }
   return true;
 }
