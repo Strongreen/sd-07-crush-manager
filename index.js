@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs').promises;
+const fs = require('fs');
 
 const fileCrushs = './crush.json';
 
@@ -16,7 +16,7 @@ app.get('/', (_request, response) => {
 });
 
 app.get('/crush', (req, res) => {
-  const crushs = JSON.parse(fs.readFile(fileCrushs), 'utf-8');  
+  const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');  
   res.status(SUCCESS).send(crushs);
 });
 
