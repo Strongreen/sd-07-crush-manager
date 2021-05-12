@@ -13,7 +13,7 @@ const middlewareLogin = (req, res, next) => {
 
 const writeFile = async (param) => (
   fs.writeFile(
-    path.resolve(__dirname, '.', 'crush.json'),
+    path.resolve(__dirname, '..', 'crush.json'),
     JSON.stringify(param),
     (err) => {
       if (err) throw err;

@@ -50,13 +50,15 @@ app.get('/crush', (req, res) => {
   res.status(SUCCESS).send(crushs);
 });
 
-app.get('/crush/search', middlewareLogin, (req, res) => { // 7
+// 7
+app.get('/crush/search', middlewareLogin, (req, res) => {
   const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');
   const { q } = req.query;
 
   if (q === undefined) {
     return res.status(SUCCESS).send([]);
-  } if (q === '') {
+  }
+  if (q === '') {
     res.status(SUCCESS).send(crushs);
   }
 
