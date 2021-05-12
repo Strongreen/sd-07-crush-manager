@@ -1,3 +1,4 @@
+const fs = require('fs');
 const file = require('../helpers/files');
 const {
   nameValidation,
@@ -18,6 +19,7 @@ async function index(request, response) {
 
 async function store(request, response) {
   const { name, age, date } = request.body;
+  let id = 1;
   try {
     if (!date) {
       throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
@@ -26,7 +28,11 @@ async function store(request, response) {
     ageValidation(age);
     dateValidation(date.datedAt);
     rateValidation(date.rate);
-    return response.send('dados validados');
+    const crushList = await file.readFilePromise(fileName);
+    if (crushList.length !== 0) id = crushList.length + 1;
+    crushList.push({ id, name, age, date });
+    await fs.promises.writeFile(fileName, JSON.stringify(crushList));
+    return response.status(201).send({ id, name, age, date });
   } catch (error) {
     return response.status(400).json({ message: error.message });
   }

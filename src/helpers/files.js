@@ -9,4 +9,10 @@ function readFilePromise(fileName) {
   });
 }
 
-module.exports = { readFilePromise };
+function writeFilePromisse(fileName, list) {
+  return new Promise(() => {
+    fs.writeFile(fileName, list);
+  });
+}
+
+module.exports = { readFilePromise, writeFilePromisse };
