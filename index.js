@@ -127,7 +127,7 @@ app.get('/crush/search', middlewareLogin, (req, res) => { // 7
     return res.status(SUCCESS).send(crushs);
   }
 
-  const crushContains = crushs.filter((element) => element.name.match(q));
+  const crushContains = crushs.filter((element) => element.name.includes(q));
 
   return res.status(SUCCESS).send(crushContains);
 });
