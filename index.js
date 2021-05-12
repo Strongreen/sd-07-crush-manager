@@ -97,8 +97,8 @@ app.post( // 4
   },
 );
 
-app.post( // 5
-  '/crush',
+app.put( // 5
+  '/:id',
   middlewareLogin,
   middlewareNameTest,
   middlewareAgeTest,
@@ -131,20 +131,20 @@ app.delete('/crush/:id', middlewareLogin, async (req, res) => { // 6
   return res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
 });
 
-// app.get('/crush/search', middlewareLogin, (req, res) => { // 7
-//   const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');
-//   const { q } = req.query;
+app.get('/crush/search', middlewareLogin, (req, res) => { // 7
+  const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');
+  const { q } = req.query;
 
-//   if (q === undefined) {
-//     return res.status(SUCCESS).send([]);
-//   } if (q === '') {
-//     return res.status(SUCCESS).send(crushs);
-//   }
+  if (q === undefined) {
+    return res.status(SUCCESS).send([]);
+  } if (q === '') {
+    return res.status(SUCCESS).send(crushs);
+  }
 
-//   const crushContains = crushs.filter((element) => element.name.includes(q));
+  const crushContains = crushs.filter((element) => element.name.includes(q));
 
-//   return res.status(SUCCESS).send(crushContains);
-// });
+  return res.status(SUCCESS).send(crushContains);
+});
 
 // não remova esse endpoint, e para o avaliador funcionar
 app.get('/', (_request, response) => {
