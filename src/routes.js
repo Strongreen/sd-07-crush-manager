@@ -12,7 +12,7 @@ routes.route('/crush/:id')
 .get(searchCrushController.searchById)
 .put(tokenValidation, crushController.update)
 .delete(tokenValidation, crushController.deleteCrush);
-routes.post('/login', tokenValidation, sessionController.create);
+routes.post('/login', sessionController.create);
 routes.post('/crush', tokenValidation, crushController.store);
 
 module.exports = routes;
