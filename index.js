@@ -104,6 +104,7 @@ app.put('/:id', rescue((req, res) => { // 5
   const key = parseInt(id, 0) - 1;
   try {
     middlewareNameTest();
+    middlewareAgeTest();
     middlewareDateTest();
     middlewareDatedAtTest();
     middlewareRateTest();
