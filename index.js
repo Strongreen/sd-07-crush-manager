@@ -60,7 +60,13 @@ app.get('/crush/search', middlewareLogin, (req, res) => { // 7
     return res.status(SUCCESS).send(crushs);
   }
 
-  const crushContains = crushs.filter((element) => element.name.includes(q));
+  const crushContains = [];
+  
+  crushs.forEach((element) => {
+    if (element.name.includes(q)) {
+      crushContains.push(element);
+    }
+  });
 
   return res.status(SUCCESS).send(crushContains);
 });
