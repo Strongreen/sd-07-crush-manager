@@ -27,7 +27,7 @@ app.get('/crush/:id', (req, res) => {
   }
 
   res.status(404).send(
-    { message: 'Crush não encontrado' }
+    { message: 'Crush não encontrado' },
   );
 });
 
