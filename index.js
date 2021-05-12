@@ -32,6 +32,21 @@ app.get('/crush/:id', (req, res) => {
   );
 });
 
+app.get('/crush/search', middlewareLogin, (req, res) => {
+  const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');
+  const { q } = req.query;
+
+  if (q === undefined) {
+    return res.status(SUCCESS).send([]);
+  } if (q === '') {
+    return res.status(SUCCESS).send(crushs);
+  }
+
+  const crushContains = crushs.filter((element) => element.name.match(q));
+
+  return res.status(SUCCESS).send(crushContains);
+});
+
 app.delete('/crush/:id', middlewareLogin, async (req, res) => { // 7
   const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8'); 
   const { id } = req.params;
