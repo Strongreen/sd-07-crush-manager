@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const crypto = require('crypto');
+const rescue = require('express-rescue');
 const { middlewareLogin, writeFile } = require('./middlewares/middlewareLogin');
 const { middlewareNameTest } = require('./middlewares/middlewareNameTest');
 const { middlewareAgeTest } = require('./middlewares/middlewareAgeTest');
@@ -95,6 +96,25 @@ app.post( // 4
     return res.status(201).send({ id, name, age, date });
   },
 );
+
+app.put('/:id', rescue((req, res) => { // 5
+  const crushes = JSON.parse(fs.readFileSync(`${__dirname}/../crush.json`, 'utf8'));
+  const { name, age, date } = req.body;
+  const { id } = req.params;
+  const key = parseInt(id, 0) - 1;
+  try {
+    middlewareNameTest();
+    middlewareDateTest();
+    middlewareDatedAtTest();
+    middlewareRateTest();
+    crushes[key] = { name, id: parseInt(id, 0), age, date }; 
+    fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushes));
+    res.status(200).send({ id: crushes[key].id,
+      name: crushes[key].name,
+      age: crushes[key].age,
+      date: crushes[key].date });
+  } catch (error) { res.status(400).send({ message: error.message }); }
+}));
 
 app.get('/crush/search', middlewareLogin, (req, res) => { // 7
   const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');
