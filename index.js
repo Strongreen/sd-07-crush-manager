@@ -123,18 +123,22 @@ app.put( // 5
   middlewareDatedAtTest,
   middlewareRateTest,
   rescue((req, res) => {
-  const crushs = JSON.parse(fs.readFileSync(`${__dirname}/../crush.json`, 'utf8'));
-  const { name, age, date } = req.body;
-  const { id } = req.params;
-  const key = parseInt(id, 0) - 1;
-  try {
-    crushs[key] = { name, id: parseInt(id, 0), age, date }; 
-    fs.promises.writeFile(`${__dirname}/../crush.json`, JSON.stringify(crushs));
-    res.status(200).send({ id: crushs[key].id,
-      name: crushs[key].name,
-      age: crushs[key].age,
-      date: crushs[key].date });
-  } catch (error) { res.status(400).send({ message: error.message }); }
+    const crushs = JSON.parse(fs.readFileSync(`${__dirname}/crush.json`, 'utf8'));
+    const { name, age, date } = req.body;
+    const { id } = req.params;
+    const key = parseInt(id, 0) - 1;
+    try {
+      crushs[key] = { name, id: parseInt(id, 0), age, date }; 
+      fs.promises.writeFile(`${__dirname}/crush.json`, JSON.stringify(crushs));
+      return (
+        res.status(200).send({ id: crushs[key].id,
+        name: crushs[key].name,
+        age: crushs[key].age,
+        date: crushs[key].date })
+      );
+    } catch (error) {
+      return res.status(400).send({ message: error.message }); 
+    }
   }),
 );
 
