@@ -42,14 +42,31 @@ const passwordTests = (password) => {
   return undefined;
 };
 
+const rota = '/crush/:id';
+
 // 1
 app.get('/crush', (req, res) => {
   const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');  
   res.status(SUCCESS).send(crushs);
 });
 
+app.get('/crush/search', middlewareLogin, (req, res) => { // 7
+  const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');
+  const { q } = req.query;
+
+  if (q === undefined) {
+    return res.status(SUCCESS).send([]);
+  } if (q === '') {
+    return res.status(SUCCESS).send(crushs);
+  }
+
+  const crushContains = crushs.filter((element) => element.name.includes(q));
+
+  return res.status(SUCCESS).send(crushContains);
+});
+
 // 2
-app.get('/crush/:id', (req, res) => {
+app.get(rota, (req, res) => {
   const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');  
   const { id } = req.params;
   const crushId = crushs.find((element) => element.id === parseInt(id, 10));
@@ -98,7 +115,7 @@ app.post( // 4
 );
 
 app.put( // 5
-  '/:id',
+  rota,
   middlewareLogin,
   middlewareNameTest,
   middlewareAgeTest,
@@ -121,7 +138,7 @@ app.put( // 5
   }),
 );
 
-app.delete('/crush/:id', middlewareLogin, async (req, res) => { // 6
+app.delete(rota, middlewareLogin, async (req, res) => { // 6
   const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8'); 
   const { id } = req.params;
   const newCrushFiltered = crushs.filter((element) => element.id !== parseInt(id, 10));
@@ -129,21 +146,6 @@ app.delete('/crush/:id', middlewareLogin, async (req, res) => { // 6
   await writeFile(newCrushFiltered);
 
   return res.status(SUCCESS).send({ message: 'Crush deletado com sucesso' });
-});
-
-app.get('/crush/search', middlewareLogin, (req, res) => { // 7
-  const crushs = JSON.parse(fs.readFileSync(fileCrushs), 'utf-8');
-  const { q } = req.query;
-
-  if (q === undefined) {
-    return res.status(SUCCESS).send([]);
-  } if (q === '') {
-    return res.status(SUCCESS).send(crushs);
-  }
-
-  const crushContains = crushs.filter((element) => element.name.includes(q));
-
-  return res.status(SUCCESS).send(crushContains);
 });
 
 // não remova esse endpoint, e para o avaliador funcionar
