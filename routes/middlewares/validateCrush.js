@@ -16,22 +16,22 @@ const isInvalidDate = (date) => !date || !date.datedAt || (!date.rate && date.ra
 module.exports = {
   validateCrush: (req, res, next) => {
     const { name, age } = req.body;
-
+  
     if (!name) return res.status(400).json({ message: errors.NAME_MISSING });
     if (name.length < 3) return res.status(400).json({ message: errors.NAME_INVALID });
-
+  
     if (!age) return res.status(400).json({ message: errors.AGE_MISSING });
     if (age < minimumAge) return res.status(400).json({ message: errors.AGE_INVALID });
     next();
   },
   validateDate: (req, res, next) => {
     const { date } = req.body;
-
+    
     if (isInvalidDate(date)) return res.status(400).json({ message: errors.DATE_MISSING });
-
+    
     const { datedAt, rate } = date;
     if (!dateFormat.test(datedAt)) return res.status(400).json({ message: errors.DATED_INVALID });
     if (rate < 1 || rate > 5) return res.status(400).json({ message: errors.RATE_INVALID });
     next();
   },
-}; 
+};

@@ -10,7 +10,7 @@ const errors = {
 
 routes.post('/', (req, res) => {
   const { email, password } = req.body;
-
+  
   if (!email) return res.status(400).json({ message: errors.EMAIL_MISSING });
   if (!/\w+@+\w+.com/.test(email)) return res.status(400).json({ message: errors.EMAIL_INVALID });
 
