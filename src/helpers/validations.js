@@ -30,10 +30,10 @@ function ageValidation(age) {
 }
 
 function dateValidation(date) {
+  const regexDate = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/;
   if (!date) {
     throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
-  }
-  const regexDate = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/;
+  } else
   if (!regexDate.test(date)) {
     throw new Error('O campo "datedAt" deve ter o formato "dd/mm/aaaa"');
   }
@@ -41,9 +41,9 @@ function dateValidation(date) {
 }
 
 function rateValidation(rate) {
-  if (!rate) {
+  if (!rate && rate !== 0) {
     throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
-  }
+  } else
   if (!(rate >= 1 && rate <= 5)) {
     throw new Error('O campo "rate" deve ser um inteiro de 1 à 5');
   }

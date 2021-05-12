@@ -44,7 +44,7 @@ async function update(request, response) {
   try {
     nameValidation(name);
     ageValidation(age);
-    dateValidation(date.datedAt);
+    dateValidation(date ? date.datedAt : undefined);
     rateValidation(date.rate);
     const crushList = await file.readFilePromise(fileName);
     const filteredCrushList = crushList.filter((crush) => crush.id !== id);
