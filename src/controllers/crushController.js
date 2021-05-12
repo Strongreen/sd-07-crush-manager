@@ -1,42 +1,35 @@
-const file = require('../utils/files');
-const generateToken = require('../utils/token');
-const { validateEmail, validatePassword } = require('../utils/validations');
+const file = require('../helpers/files');
+const {
+  nameValidation,
+  ageValidation,
+  dateValidation,
+  rateValidation } = require('../helpers/validations');
 
-const fileName = 'crush.json'; 
+const fileName = 'crush.json';
 
 async function index(request, response) {
   try {
     const arquivo = await file.readFilePromise(fileName);
     return response.status(200).json(arquivo);
   } catch (error) {
-    throw new Error('Erro ao ler o arquivo', error);    
+    throw new Error('Erro ao ler o arquivo', error);
   }
 }
 
-async function idIndex(request, response) {
-  const { id } = request.params;
+async function store(request, response) {
+  const { name, age, date } = request.body;
   try {
-    const arquivo = await file.readFilePromise(fileName);
-    const findCrush = arquivo.filter((crush) => crush.id === Number(id));
-    if (findCrush.length === 0) { 
-      return response.status(404).json({ message: 'Crush não encontrado' }); 
+    if (!date) {
+      throw new Error('O campo "date" é obrigatório e "datedAt" e "rate" não podem ser vazios');
     }
-    return response.status(200).json(findCrush[0]);
-  } catch (error) {
-    throw new Error('Erro ao ler o arquivo', error);    
-  }
-}
-
-function login(require, response) {
-  const { email, password } = require.body;
-  try {
-    if (validateEmail(email) && validatePassword(password)) {
-      const token = generateToken();
-      return response.status(200).json({ token });
-    }
+    nameValidation(name);
+    ageValidation(age);
+    dateValidation(date.datedAt);
+    rateValidation(date.rate);
+    return response.send('dados validados');
   } catch (error) {
     return response.status(400).json({ message: error.message });
   }
 }
 
-module.exports = { index, idIndex, login };
+module.exports = { index, store };
